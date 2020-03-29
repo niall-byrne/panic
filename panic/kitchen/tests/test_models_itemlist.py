@@ -23,8 +23,14 @@ class TestItemList(TestCase):
 
   @classmethod
   def setUpTestData(cls):
-    cls.objects = list()
     cls.fields = {"name": 255}
+
+  def setUp(self):
+    self.objects = list()
+
+  def tearDown(self) -> None:
+    for obj in self.objects:
+      obj.delete()
 
   def testAddItem(self):
     test_name = "Custard"

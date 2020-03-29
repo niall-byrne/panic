@@ -1,7 +1,14 @@
 [run]
 branch = True
-omit = */test*,setup.py,*/apps.py,panic/manage.py,panic/root/*
-source = .
+omit =
+    */test*,
+    */apps.py,
+    */urls.py,
+    panic/setup.py,
+    panic/manage.py,
+    panic/root/asgi.py,
+    panic/root/wsgi.py
+source = panic
 
 [report]
 precision = 1
