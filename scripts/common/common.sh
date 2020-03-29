@@ -49,7 +49,7 @@ security() {
   set -e
 
   pushd "${PROJECT_HOME}"  > /dev/null
-    bandit -r "${PROJECT_NAME}" -c .bandit.rc
+    bandit -r "${PROJECT_NAME}" -c .bandit.rc --ini .bandit
     safety check
   popd  > /dev/null
 
