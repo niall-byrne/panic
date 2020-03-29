@@ -1,6 +1,6 @@
 # Project Documentation
 
-## Panic
+## Don't Panic!
 
 A pandemic grocery management app.
 

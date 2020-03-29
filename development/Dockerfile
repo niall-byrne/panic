@@ -15,6 +15,7 @@ RUN apt-get update      && \
     build-essential        \
     curl                   \
     jq                     \
+    libpq-dev              \
     openssh-client         \
     shellcheck             \
     sudo                   \

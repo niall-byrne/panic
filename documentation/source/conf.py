@@ -16,7 +16,7 @@ if os.path.exists('../../panic'):
     sys.path.insert(0, os.path.abspath('../../panic'))
 
 # -- Project information -----------------------------------------------------
-project = 'panic'
+project = 'Don\'t Panic!'
 copyright = '2020, Niall Byrne'
 author = 'Niall Byrne'
 
