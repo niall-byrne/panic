@@ -51,3 +51,12 @@ The following environment variables can be used to customize this behavior:
 ## CLI Reference
 The CLI is enabled by default inside the container, and is also available on the host machine.
 Run the CLI without arguments to see the complete list of available commands: `$ dev`
+
+## Installing Dev CLI on a OSX host (outside the container)
+
+You need the Postgresql CLI installed, [here's](https://www.compose.com/articles/postgresql-tips-installing-the-postgresql-client/
+) how on a Mac.
+
+If you're on Mojave, you should run this command, prior to running `dev setup`:
+- `export LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib"`
+

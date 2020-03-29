@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: development/Dockerfile
-    env_file:
-      - development.env
+    ports:
+      - "127.0.0.1:8080:8080"
     volumes:
       - ${HOME}/.ssh:/home/user/.ssh
       - ${HOME}/.gitconfig:/home/user/.gitconfig
@@ -14,8 +14,12 @@ services:
       - ./:/app
     command: >
       ./panic/container_boot.sh
+    env_file:
+      - development.env
   db:
     image: postgres:12.0-alpine
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
