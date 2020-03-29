@@ -1,3 +1,5 @@
+"""Admin Command to Wait for the Database to be Accessible"""
+
 import time
 
 from django.core.management.base import BaseCommand

@@ -1,6 +1,6 @@
 [run]
 branch = True
-omit = */test*,setup.py
+omit = */test*,setup.py,*/apps.py,panic/manage.py,panic/root/*
 source = .
 
 [report]

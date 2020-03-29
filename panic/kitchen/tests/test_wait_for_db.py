@@ -1,3 +1,5 @@
+"""Test wait_for_db admin command."""
+
 from io import StringIO
 from unittest.mock import patch
 
@@ -13,18 +15,18 @@ class CommandTests(TestCase):
 
     capture = StringIO()
 
-    with patch("django.db.connection.ensure_connection") as cn:
-      cn.return_value = True
+    with patch("django.db.connection.ensure_connection") as connection:
+      connection.return_value = True
       call_command("wait_for_db", stdout=capture)
-      self.assertEqual(cn.call_count, 1)
+      self.assertEqual(connection.call_count, 1)
 
   @patch("time.sleep", return_value=True)
-  def test_wait_for_db(self, ts):
+  def test_wait_for_db(self, mock_ts):  # pylint: disable=W0613
     """Test waiting for db"""
 
     capture = StringIO()
 
-    with patch("django.db.connection.ensure_connection") as cn:
-      cn.side_effect = [OperationalError] * 5 + [True]
+    with patch("django.db.connection.ensure_connection") as connection:
+      connection.side_effect = [OperationalError] * 5 + [True]
       call_command("wait_for_db", stdout=capture)
-      self.assertEqual(cn.call_count, 6)
+      self.assertEqual(connection.call_count, 6)
