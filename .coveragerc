@@ -4,6 +4,7 @@ omit =
     */test*,
     */apps.py,
     */urls.py,
+    */migrations/*.py
     panic/setup.py,
     panic/manage.py,
     panic/root/asgi.py,
