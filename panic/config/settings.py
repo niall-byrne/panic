@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+from .settings_database import DATABASES_AVAILABLE
+from .settings_throttling import REST_FRAMEWORK_AVAILABLE
+
+# Select Runtime Environment
+ENVIRONMENT = os.environ.get('DJANGO_ENVIRONMENT', 'local')
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -72,29 +78,7 @@ WSGI_APPLICATION = 'root.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES_AVAILABLE = {
-    'local': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get("POSTGRES_DB"),
-        'USER': os.environ.get("POSTGRES_USER"),
-        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
-        'HOST': 'db',
-    },
-    'stage': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'nes_dev',
-        'USER': 'usr',
-        'PASSWORD': 'passwd',
-        'HOST': '200.144.254.136',
-    },
-    'test': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-}
-
-SELECTED_DATABASE = os.environ.get('DJANGO_SELECTION', 'local')
-DATABASES = {'default': DATABASES_AVAILABLE[SELECTED_DATABASE]}
+DATABASES = {'default': DATABASES_AVAILABLE[ENVIRONMENT]}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -135,3 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Rest Framework Throttling
+
+REST_FRAMEWORK = {'default': REST_FRAMEWORK_AVAILABLE[ENVIRONMENT]}
