@@ -17,7 +17,7 @@ class MockRequest:
 class TestShelf(TestCase):
 
   def sample_shelf(self, user=None, name="Over Sink"):
-    """Create a test user account."""
+    """Create a shelf."""
     if user is None:
       user = self.user
     shelf = Shelf.objects.create(user=user, name=name)

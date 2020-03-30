@@ -19,12 +19,12 @@ class PublicListItemsTest(TestCase):
     self.client = APIClient()
 
   def test_login_required(self):
-    """Test that login is required for retrieving tags."""
+    """Test that login is required for retrieving items."""
     res = self.client.get(LIST_URL)
 
     self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
-  def test_create_tag_login_required(self):
+  def test_create_item_login_required(self):
     payload = {"name": "Meat"}
     res = self.client.post(LIST_URL, payload)
 
@@ -60,7 +60,7 @@ class PrivateListItemsTest(TestCase):
       obj.delete()
 
   def test_retrieve_items(self):
-    """Test retrieving tags."""
+    """Test retrieving items."""
     self.create_item(name="Red Bean Dessert")
     self.create_item(name="Tofu")
 

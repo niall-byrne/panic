@@ -10,7 +10,7 @@ from ..models.shelf import Shelf
 class TestShelf(TestCase):
 
   def sample_shelf(self, user=None, name="Over Sink"):
-    """Create a test user account."""
+    """Create a test shelf."""
     if user is None:
       user = self.user
     shelf = Shelf.objects.create(user=user, name=name)

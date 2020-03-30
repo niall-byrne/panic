@@ -10,7 +10,7 @@ from ..serializers.itemlist import ItemListSerializer
 class TestItemList(TestCase):
 
   def sample_item(self, name="Red Beans"):
-    """Create a test user account."""
+    """Create a test item."""
     item = ItemList.objects.create(name=name)
     self.objects.append(item)
     return item

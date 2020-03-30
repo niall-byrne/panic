@@ -1,5 +1,9 @@
-"""Kitchen App Admin Configuration"""
+"""Kitchen Admin Models"""
 
-# from django.contrib import admin
+from django.contrib import admin
 
-# Register your models here.
+from .models.itemlist import ItemList
+from .models.shelf import Shelf
+
+admin.site.register(ItemList)
+admin.site.register(Shelf)
