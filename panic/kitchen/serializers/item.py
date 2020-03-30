@@ -1,15 +1,15 @@
-"""Serializer for the Store Model"""
+"""Serializer for the Item Model"""
 
 from rest_framework import serializers
 
-from ..models.store import Store
+from ..models.item import Item
 
 
-class StoreSerializer(serializers.ModelSerializer):
-  """Serializer for Store"""
+class ItemSerializer(serializers.ModelSerializer):
+  """Serializer for Item"""
   user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
   class Meta:
-    model = Store
+    model = Item
     fields = "__all__"
     read_only_fields = ("id",)

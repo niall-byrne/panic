@@ -11,5 +11,5 @@ class ShelfSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Shelf
-    fields = ("id", "user", "name")
+    fields = '__all__'
     read_only_fields = ("id",)

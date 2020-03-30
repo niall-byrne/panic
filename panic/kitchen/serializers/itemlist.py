@@ -10,5 +10,5 @@ class ItemListSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = ItemList
-    fields = ("id", "name")
+    fields = "__all__"
     read_only_fields = ("id",)
