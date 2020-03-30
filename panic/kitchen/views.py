@@ -3,33 +3,32 @@
 from rest_framework import mixins, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
+from .models.item import Item
 from .models.itemlist import ItemList
 from .models.shelf import Shelf
 from .models.store import Store
+from .serializers.item import ItemSerializer
 from .serializers.itemlist import ItemListSerializer
 from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
 
+AUTHENTICATION = (SessionAuthentication,)
+PERMISSION = (IsAuthenticated,)
+
 
 class ListItemsViewSet(
-    viewsets.ViewSet,
     mixins.ListModelMixin,
+    viewsets.GenericViewSet,
 ):
   """List Items AutoCompletion View"""
-
-  authentication_classes = (SessionAuthentication,)
-  permission_classes = (IsAuthenticated,)
+  serializer_class = ItemListSerializer
   queryset = ItemList.objects.all()
+  authentication_classes = AUTHENTICATION
+  permission_classes = PERMISSION
 
   def get_queryset(self):
     return self.queryset.order_by("-name")
-
-  def list(self, request, *args, **kwargs):
-    queryset = self.get_queryset()
-    serializer = ItemListSerializer(queryset, many=True)
-    return Response(serializer.data)
 
 
 class ShelfViewSet(
@@ -38,6 +37,7 @@ class ShelfViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
+  """Shelf API View"""
   serializer_class = ShelfSerializer
   queryset = Shelf.objects.all()
   authentication_classes = (SessionAuthentication,)
@@ -48,7 +48,7 @@ class ShelfViewSet(
     return queryset.filter(user=self.request.user)
 
   def perform_create(self, serializer):
-    """Create a new shelf"""
+    """Create a new Shelf+"""
     serializer.save(user=self.request.user)
 
 
@@ -58,15 +58,43 @@ class StoreViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
+  """Store API View"""
   serializer_class = StoreSerializer
   queryset = Store.objects.all()
-  authentication_classes = (SessionAuthentication,)
-  permission_classes = (IsAuthenticated,)
+  authentication_classes = AUTHENTICATION
+  permission_classes = PERMISSION
 
   def get_queryset(self):
     queryset = self.queryset.order_by("-name")
     return queryset.filter(user=self.request.user)
 
   def perform_create(self, serializer):
-    """Create a new shelf"""
+    """Create a new Store"""
+    serializer.save(user=self.request.user)
+
+
+class ItemViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+  """Item API View"""
+  serializer_class = ItemSerializer
+  queryset = Item.objects.all()
+  authentication_classes = AUTHENTICATION
+  permission_classes = PERMISSION
+
+  def get_queryset(self):
+    queryset = self.queryset.order_by("-name")
+    return queryset.filter(user=self.request.user)
+
+  def perform_create(self, serializer):
+    """Create a new Item"""
+    serializer.save(user=self.request.user)
+
+  def perform_update(self, serializer):
+    """Update a Item"""
     serializer.save(user=self.request.user)
