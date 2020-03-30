@@ -112,7 +112,7 @@ unittests() {
     if [[ $1 == "coverage" ]]; then
       shift
       set +e
-        pytest --cov-config=.coveragerc --cov-report term-missing --cov="${PROJECT_NAME}" "${PROJECT_NAME}/"
+        pytest --cov-config=.coveragerc --cov-report term-missing --cov="${PROJECT_NAME}" "${PROJECT_NAME}/" "$@"
         exit_code="$?"
         coverage html
       set -e
