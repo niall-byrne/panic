@@ -1,15 +1,15 @@
-"""Serializer for the Shelf Model"""
+"""Serializer for the Transaction Model"""
 
 from rest_framework import serializers
 
-from ..models.shelf import Shelf
+from ..models.transaction import Transaction
 
 
-class ShelfSerializer(serializers.ModelSerializer):
+class TransactionSerializer(serializers.ModelSerializer):
   """Serializer for Shelf"""
   user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
   class Meta:
-    model = Shelf
-    fields = "__all__"
+    model = Transaction
+    fields = '__all__'
     read_only_fields = ("id",)
