@@ -3,7 +3,7 @@
 from datetime import date
 
 from django.contrib.auth import get_user_model
-from django.db.utils import DataError
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from ..models.item import Item
@@ -96,5 +96,11 @@ class TestItem(TestCase):
   def testFieldLengths(self):
     local_data = dict(self.data)
     local_data.update(self.generate_overload(self.fields))
-    with self.assertRaises(DataError):
+    with self.assertRaises(ValidationError):
       _ = self.sample_item(**local_data)
+
+  def testNegativeQuantity(self):
+    item = self.sample_item(**self.data)
+    item.quantity = -5
+    with self.assertRaises(ValidationError):
+      item.save()

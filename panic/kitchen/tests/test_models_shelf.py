@@ -1,7 +1,7 @@
 """Test the Shelf Model."""
 
 from django.contrib.auth import get_user_model
-from django.db.utils import DataError
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from ..models.shelf import Shelf
@@ -57,5 +57,5 @@ class TestShelf(TestCase):
     self.assertEqual(test_name, str(item))
 
   def testFieldLengths(self):
-    with self.assertRaises(DataError):
+    with self.assertRaises(ValidationError):
       _ = self.sample_shelf(self.user, self.generate_overload(self.fields))

@@ -31,3 +31,8 @@ class Item(models.Model):
 
   def __str__(self):
     return self.name
+
+  # pylint: disable=W0221
+  def save(self, *args, **kwargs):
+    self.full_clean()
+    return super(Item, self).save(*args, **kwargs)
