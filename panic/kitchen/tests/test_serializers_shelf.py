@@ -59,7 +59,7 @@ class TestShelf(TestCase):
 
     serialized = self.serializer(shelf)
 
-    self.assertDictEqual(serialized.data, {'id': 3, 'name': 'Refrigerator'})
+    self.assertEqual(serialized.data['name'], test_value)
 
   def testSerialize(self):
     test_value = {"name": "Pantry"}

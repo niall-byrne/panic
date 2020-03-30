@@ -1,3 +1,3 @@
 """Aggregated Models"""
 
-from . import itemlist, shelf, store
+from . import item, itemlist, shelf, store

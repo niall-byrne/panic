@@ -7,9 +7,9 @@ from rest_framework.response import Response
 
 from .models.itemlist import ItemList
 from .models.shelf import Shelf
+from .models.store import Store
 from .serializers.itemlist import ItemListSerializer
 from .serializers.shelf import ShelfSerializer
-from .models.store import Store
 from .serializers.store import StoreSerializer
 
 

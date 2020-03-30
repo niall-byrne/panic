@@ -42,8 +42,7 @@ class TestItemList(TestCase):
     item = self.sample_item(test_value)
 
     serialized = self.serializer(item)
-
-    self.assertDictEqual(serialized.data, {'id': 3, 'name': 'Custard'})
+    self.assertEqual(serialized.data['name'], test_value)
 
   def testSerialize(self):
     test_value = {"name": "Grape"}

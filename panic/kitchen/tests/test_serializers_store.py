@@ -58,8 +58,7 @@ class TestStore(TestCase):
     store = self.sample_store(self.user, test_value)
 
     serialized = self.serializer(store)
-
-    self.assertDictEqual(serialized.data, {'id': 3, 'name': 'Loblaws'})
+    self.assertEqual(serialized.data['name'], test_value)
 
   def testSerialize(self):
     test_value = {"name": "A&P"}
