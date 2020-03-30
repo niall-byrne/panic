@@ -9,6 +9,8 @@ from .models.itemlist import ItemList
 from .models.shelf import Shelf
 from .serializers.itemlist import ItemListSerializer
 from .serializers.shelf import ShelfSerializer
+from .models.store import Store
+from .serializers.store import StoreSerializer
 
 
 class ListItemsViewSet(
@@ -38,6 +40,26 @@ class ShelfViewSet(
 ):
   serializer_class = ShelfSerializer
   queryset = Shelf.objects.all()
+  authentication_classes = (SessionAuthentication,)
+  permission_classes = (IsAuthenticated,)
+
+  def get_queryset(self):
+    queryset = self.queryset.order_by("-name")
+    return queryset.filter(user=self.request.user)
+
+  def perform_create(self, serializer):
+    """Create a new shelf"""
+    serializer.save(user=self.request.user)
+
+
+class StoreViewSet(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+  serializer_class = StoreSerializer
+  queryset = Store.objects.all()
   authentication_classes = (SessionAuthentication,)
   permission_classes = (IsAuthenticated,)
 

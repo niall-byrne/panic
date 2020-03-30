@@ -1,4 +1,4 @@
-"""Test the Shelf API."""
+"""Test the Store API."""
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -6,14 +6,14 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from ..models.shelf import Shelf
-from ..serializers.shelf import ShelfSerializer
+from ..models.store import Store
+from ..serializers.store import StoreSerializer
 
-SHELF_URL = reverse("kitchen:shelf-list")
+SHELF_URL = reverse("kitchen:store-list")
 
 
-class PublicShelfTest(TestCase):
-  """Test the public Shelf API"""
+class PublicStoreTest(TestCase):
+  """Test the public Store API"""
 
   def setUp(self) -> None:
     self.client = APIClient()
@@ -25,22 +25,22 @@ class PublicShelfTest(TestCase):
     self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
   def test_create_login_required(self):
-    payload = {"name": "Pantry"}
+    payload = {"name": "Loblaws"}
     res = self.client.post(SHELF_URL, payload)
 
     self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class PrivateShelfTest(TestCase):
-  """Test the authorized Shelf API"""
+class PrivateStoreTest(TestCase):
+  """Test the authorized Store API"""
 
-  def sample_shelf(self, user=None, name="Over Sink"):
-    """Create a test shelf."""
+  def sample_store(self, user=None, name="No Frills"):
+    """Create a test store."""
     if user is None:
       user = self.user
-    shelf = Shelf.objects.create(user=user, name=name)
-    self.objects.append(shelf)
-    return shelf
+    store = Store.objects.create(user=user, name=name)
+    self.objects.append(store)
+    return store
 
   @classmethod
   def setUpTestData(cls):
@@ -50,7 +50,7 @@ class PrivateShelfTest(TestCase):
         email="test@niallbyrne.ca",
         password="test123",
     )
-    cls.serializer = ShelfSerializer
+    cls.serializer = StoreSerializer
     cls.fields = {"name": 255}
 
   def setUp(self):
@@ -63,42 +63,42 @@ class PrivateShelfTest(TestCase):
       obj.delete()
 
   def test_retrieve_shelves(self):
-    """Test retrieving a list of shelves."""
-    self.sample_shelf(name="Refrigerator")
-    self.sample_shelf(name="Pantry")
+    """Test retrieving a list of stores."""
+    self.sample_store(name="No Frills")
+    self.sample_store(name="Loblaws")
 
     res = self.client.get(SHELF_URL)
 
-    shelves = Shelf.objects.all().order_by("-name")
-    serializer = ShelfSerializer(shelves, many=True)
+    shelves = Store.objects.all().order_by("-name")
+    serializer = StoreSerializer(shelves, many=True)
 
     assert len(shelves) == 2
     self.assertEqual(res.status_code, status.HTTP_200_OK)
     self.assertEqual(res.data, serializer.data)
 
-  def test_delete_shelf(self):
-    """Test deleting a shelf."""
-    delete = self.sample_shelf(name="Refrigerator")
-    self.sample_shelf(name="Pantry")
+  def test_delete_store(self):
+    """Test deleting a store."""
+    delete = self.sample_store(name="A&P")
+    self.sample_store(name="Beckers")
 
     res_delete = self.client.delete(SHELF_URL + str(delete.id) + '/')
     res_get = self.client.get(SHELF_URL)
 
-    shelves = Shelf.objects.all().order_by("-name")
-    serializer = ShelfSerializer(shelves, many=True)
+    shelves = Store.objects.all().order_by("-name")
+    serializer = StoreSerializer(shelves, many=True)
 
     assert len(shelves) == 1
     self.assertEqual(res_delete.status_code, status.HTTP_204_NO_CONTENT)
     self.assertEqual(res_get.status_code, status.HTTP_200_OK)
     self.assertEqual(res_get.data, serializer.data)
 
-  def test_create_shelf(self):
-    """Test creating a shelf."""
-    data = {"name": "Refrigerator"}
+  def test_create_store(self):
+    """Test creating a store."""
+    data = {"name": "Shoppers Drugmart"}
 
     res = self.client.post(SHELF_URL, data=data)
 
-    shelves = Shelf.objects.all().order_by("-name")
+    shelves = Store.objects.all().order_by("-name")
 
     assert len(shelves) == 1
     self.assertEqual(res.status_code, status.HTTP_201_CREATED)
