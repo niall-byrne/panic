@@ -20,12 +20,19 @@ source "$( dirname "${BASH_SOURCE[0]}" )/common/documentation.sh"
 # shellcheck source=scripts/common/django.sh
 source "$( dirname "${BASH_SOURCE[0]}" )/common/django.sh"
 
+# shellcheck source=scripts/common/stage.sh
+source "$( dirname "${BASH_SOURCE[0]}" )/common/stage.sh"
 
 case $1 in
   'build-docs')
     shift
     source_environment
     build_documentation "$@"
+    ;;
+  'deploy-stage')
+    shift
+    source_environment
+    deploy_stage "$@"
     ;;
   'lint')
     shift
@@ -53,7 +60,7 @@ case $1 in
     setup_python "$@"
     ;;
   'shortlist')
-    echo "build-docs lint lint-validate reinstall-requirements sectest setup test test-coverage update"
+    echo "build-docs deploy-stage lint lint-validate reinstall-requirements sectest setup test test-coverage update"
     ;;
   'test')
     shift

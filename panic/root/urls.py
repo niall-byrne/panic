@@ -27,7 +27,7 @@ urlpatterns = [
     path('api/v1/users/', include('rest_registration.api.urls')),
 ]
 
-if settings.ENVIRONMENT == 'local':
+if settings.ENVIRONMENT in ['local', 'stage']:
 
   SchemaView = get_schema_view(
       openapi.Info(

@@ -131,3 +131,9 @@ REST_FRAMEWORK = {'default': REST_FRAMEWORK_AVAILABLE[ENVIRONMENT]}
 # Registration
 
 REST_REGISTRATION = REST_REGISTRATION_AVAILABLE[ENVIRONMENT]
+
+# Environment Specific Settings
+
+if ENVIRONMENT == "stage":
+  # pylint: disable=W0614,W0401
+  from .settings_stage import *

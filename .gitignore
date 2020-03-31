@@ -125,3 +125,9 @@ sketch
 # End of https://www.gitignore.io/api/react,python
 
 .idea
+environments/stage*.env
+panic/static
+
+# App Engine Temporary Files
+app.yaml
+panic/requirements.txt

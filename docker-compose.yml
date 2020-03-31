@@ -15,7 +15,7 @@ services:
     command: >
       ./panic/container_boot.sh
     env_file:
-      - development.env
+      - ./environments/development.env
   db:
     image: postgres:12.0-alpine
     ports:
@@ -23,7 +23,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - development.env
+      - ./environments/development.env
 
 volumes:
   postgres_data:
