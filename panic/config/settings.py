@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_registration',
     'kitchen',
     'profile',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

@@ -6,6 +6,18 @@ A pandemic grocery management app.
 
 [![panic-automation](https://github.com/niall-byrne/panic/workflows/panic%20Automation/badge.svg)](https://github.com/niall-byrne/panic/actions)
 
+## OpenAPI Specification
+
+Once the development container is running, you can interact with the OpenApi Interface.
+
+Launch the container (instructions below) then create an admin user so you can login:
+- `cd /app/panic`
+- `python manage.py autoadmin`
+- Login via the admin interface: 
+  - http://localhost:8080/admin  (admin/admin)
+- View the OpenAPI interface: 
+  - http://localhost:8080/swagger/
+
 ## Development Dependencies
 
 You'll need to install:
