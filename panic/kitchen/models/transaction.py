@@ -54,4 +54,4 @@ class Transaction(models.Model):
       self.full_clean()
       self.item.quantity = self.item.quantity + self.quantity
       self.item.save()
-      super(Transaction, self).save(*args, **kwargs)
+      return super(Transaction, self).save(*args, **kwargs)
