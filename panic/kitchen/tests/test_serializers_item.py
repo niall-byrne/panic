@@ -76,7 +76,6 @@ class TestItem(TestCase):
     cls.serializer_data = {
         'name': "Canned Beans",
         'bestbefore': cls.today,
-        'user': cls.user.id,
         'shelf': cls.shelf.id,
         'preferred_stores': [cls.store.id],
         'price': 2.00,

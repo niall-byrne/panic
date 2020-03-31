@@ -12,4 +12,5 @@ router.register("allitems", views.ListItemsViewSet, basename="allitems")
 router.register("shelf", views.ShelfViewSet, basename="shelf")
 router.register("store", views.StoreViewSet, basename="store")
 router.register("item", views.ItemViewSet, basename="item")
+router.register("transaction", views.TransactionViewSet, basename="transaction")
 urlpatterns = [path("", include(router.urls))]

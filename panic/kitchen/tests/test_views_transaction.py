@@ -1,10 +1,12 @@
-"""Test the Transaction Serializer."""
+"""Test the Transaction API."""
 
 from datetime import date
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from rest_framework.serializers import ValidationError
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APIClient
 
 from ..models.item import Item
 from ..models.shelf import Shelf
@@ -12,14 +14,24 @@ from ..models.store import Store
 from ..models.transaction import Transaction
 from ..serializers.transaction import TransactionSerializer
 
-
-class MockRequest:
-
-  def __init__(self, user):
-    self.user = user
+TRANSACTION_URL = reverse("kitchen:transaction-list")
 
 
-class TestItem(TestCase):
+class PublicItemTest(TestCase):
+  """Test the public Transaction API"""
+
+  def setUp(self) -> None:
+    self.client = APIClient()
+
+  def test_create_login_required(self):
+    payload = {}
+    res = self.client.post(TRANSACTION_URL, data=payload)
+
+    self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class PrivateItemTest(TestCase):
+  """Test the authorized Transaction API"""
 
   # pylint: disable=R0913
   def sample_transaction(self, user, item, transaction_date, quantity):
@@ -34,15 +46,6 @@ class TestItem(TestCase):
     )
     self.objects.append(transaction)
     return transaction
-
-  @staticmethod
-  def generate_overload(fields):
-    return_list = []
-    for key, value in fields.items():
-      overloaded = dict()
-      overloaded[key] = "abc" * value
-      return_list.append(overloaded)
-    return return_list
 
   @classmethod
   def setUpTestData(cls):
@@ -70,64 +73,35 @@ class TestItem(TestCase):
                                    quantity=3)
     cls.item.preferred_stores.add(cls.store)
     cls.item.save()
-    cls.data = {
-        'item': cls.item,
-        'transaction_date': cls.today,
-        'user': cls.user,
-        'quantity': 3
-    }
     cls.serializer_data = {
         'item': cls.item.id,
         'date': cls.today,
         'quantity': 3
     }
-    cls.request = MockRequest(cls.user)
 
   def setUp(self):
     self.objects = list()
     self.item.quantity = 3
     self.item.save()
+    self.client = APIClient()
+    self.client.force_authenticate(self.user)
 
   def tearDown(self) -> None:
     for obj in self.objects:
       obj.delete()
 
-  def testDeserialize(self):
-    transaction = self.sample_transaction(**self.data)
-    serialized = self.serializer(transaction)
-    deserialized = serialized.data
+  def test_create_transaction(self):
+    """Test creating a transaction."""
+    res = self.client.post(TRANSACTION_URL, data=self.serializer_data)
 
-    self.assertEqual(deserialized['date'], str(self.today))
-    self.assertEqual(deserialized['item'], self.item.id)
-    self.assertEqual(deserialized['quantity'], self.data['quantity'])
-    assert 'user' not in deserialized
+    items = Transaction.objects.all()
+    self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
-  def testSerialize(self):
-    serialized = self.serializer(
-        context={'request': self.request},
-        data=self.serializer_data,
-    )
-    serialized.is_valid(raise_exception=True)
-    serialized.save()
-
-    query = Transaction.objects.filter(user=self.user.id)
-
-    assert len(query) == 1
-    transaction = query[0]
+    assert len(items) == 1
+    transaction = items[0]
 
     self.assertEqual(transaction.user.id, self.user.id)
     self.assertEqual(transaction.item.id, self.item.id)
     self.assertEqual(transaction.date, self.today)
     self.assertEqual(transaction.quantity, self.serializer_data['quantity'])
-
-  def testFieldLengths(self):
-    overloads = self.generate_overload(self.fields)
-    for overload in overloads:
-      local_data = dict(self.data)
-      local_data.update(overload)
-      with self.assertRaises(ValidationError):
-        serialized = self.serializer(
-            context={'request': self.request},
-            data=local_data,
-        )
-        serialized.is_valid(raise_exception=True)
+    assert transaction.item.quantity == 6  # The modified value

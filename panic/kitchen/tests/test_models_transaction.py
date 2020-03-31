@@ -100,21 +100,22 @@ class TestItem(TestCase):
     query = Transaction.objects.filter(item=self.item)
 
     assert len(query) == 1
-    purchase = query[0]
-    self.assertEqual(purchase.item.id, self.item.id)
-    self.assertEqual(purchase.date, self.today)
-    self.assertEqual(purchase.user.id, self.user.id)
-    self.assertEqual(purchase.quantity, self.positive_data['quantity'])
+    transaction = query[0]
+    self.assertEqual(transaction.item.id, self.item.id)
+    self.assertEqual(transaction.date, self.today)
+    self.assertEqual(transaction.user.id, self.user.id)
+    self.assertEqual(transaction.quantity, self.positive_data['quantity'])
+    assert transaction.item.quantity == 6  # The modified value
 
   def testOperationPositive(self):
-    purchase = self.sample_transaction(**self.positive_data)
-    self.assertEqual("Purchase", purchase.operation)
+    transaction = self.sample_transaction(**self.positive_data)
+    self.assertEqual("Purchase", transaction.operation)
 
   def testStrPositive(self):
-    purchase = self.sample_transaction(**self.positive_data)
-    string = "Purchase: %s units of %s" % (purchase.quantity,
-                                           purchase.item.name)
-    self.assertEqual(string, str(purchase))
+    transaction = self.sample_transaction(**self.positive_data)
+    string = "Purchase: %s units of %s" % (transaction.quantity,
+                                           transaction.item.name)
+    self.assertEqual(string, str(transaction))
 
   def testNegativeTransaction(self):
     self.sample_transaction(**self.negative_data)
@@ -122,21 +123,22 @@ class TestItem(TestCase):
     query = Transaction.objects.filter(item=self.item)
 
     assert len(query) == 1
-    purchase = query[0]
-    self.assertEqual(purchase.item.id, self.item.id)
-    self.assertEqual(purchase.date, self.today)
-    self.assertEqual(purchase.user.id, self.user.id)
-    self.assertEqual(purchase.quantity, self.negative_data['quantity'])
+    transaction = query[0]
+    self.assertEqual(transaction.item.id, self.item.id)
+    self.assertEqual(transaction.date, self.today)
+    self.assertEqual(transaction.user.id, self.user.id)
+    self.assertEqual(transaction.quantity, self.negative_data['quantity'])
+    assert transaction.item.quantity == 0  # The modified value
 
   def testOperationNegative(self):
-    purchase = self.sample_transaction(**self.negative_data)
-    self.assertEqual("Consumption", purchase.operation)
+    transaction = self.sample_transaction(**self.negative_data)
+    self.assertEqual("Consumption", transaction.operation)
 
   def testStrNegative(self):
-    purchase = self.sample_transaction(**self.negative_data)
-    string = "Consumption: %s units of %s" % (purchase.quantity,
-                                              purchase.item.name)
-    self.assertEqual(string, str(purchase))
+    transaction = self.sample_transaction(**self.negative_data)
+    string = "Consumption: %s units of %s" % (transaction.quantity,
+                                              transaction.item.name)
+    self.assertEqual(string, str(transaction))
 
   def testInvalidTransaction(self):
     with self.assertRaises(ValidationError):
@@ -144,6 +146,7 @@ class TestItem(TestCase):
 
     query = Transaction.objects.filter(item=self.item)
     assert len(query) == 0
+    self.item.refresh_from_db()
     assert self.item.quantity == 3  # The original value
 
   def testNeutralTransaction(self):
@@ -152,16 +155,17 @@ class TestItem(TestCase):
 
     query = Transaction.objects.filter(item=self.item)
     assert len(query) == 0
+    self.item.refresh_from_db()
     assert self.item.quantity == 3  # The original value
 
   def testOperationNeutral(self):
-    purchase = self.sample_transaction(**self.negative_data)
-    purchase.quantity = 0
-    self.assertIsNone(purchase.operation)
-    purchase.quantity = None
-    self.assertIsNone(purchase.operation)
+    transaction = self.sample_transaction(**self.negative_data)
+    transaction.quantity = 0
+    self.assertIsNone(transaction.operation)
+    transaction.quantity = None
+    self.assertIsNone(transaction.operation)
 
   def testStrNeutral(self):
-    purchase = self.sample_transaction(**self.negative_data)
-    purchase.quantity = 0
-    self.assertEqual("Invalid Transaction", str(purchase))
+    transaction = self.sample_transaction(**self.negative_data)
+    transaction.quantity = 0
+    self.assertEqual("Invalid Transaction", str(transaction))

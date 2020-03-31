@@ -8,10 +8,12 @@ from .models.item import Item
 from .models.itemlist import ItemList
 from .models.shelf import Shelf
 from .models.store import Store
+from .models.transaction import Transaction
 from .serializers.item import ItemSerializer
 from .serializers.itemlist import ItemListSerializer
 from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
+from .serializers.transaction import TransactionSerializer
 
 AUTHENTICATION = (SessionAuthentication,)
 PERMISSION = (IsAuthenticated,)
@@ -97,4 +99,19 @@ class ItemViewSet(
 
   def perform_update(self, serializer):
     """Update a Item"""
+    serializer.save(user=self.request.user)
+
+
+class TransactionViewSet(
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
+):
+  """Transaction API View"""
+  serializer_class = TransactionSerializer
+  queryset = Transaction.objects.all()
+  authentication_classes = AUTHENTICATION
+  permission_classes = PERMISSION
+
+  def perform_create(self, serializer):
+    """Create a new Transaction"""
     serializer.save(user=self.request.user)
