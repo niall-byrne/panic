@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'kitchen',
     'profile',
     'drf_yasg',
+    'frontend',
 ]
 
 MIDDLEWARE = [
@@ -136,4 +137,4 @@ REST_REGISTRATION = REST_REGISTRATION_AVAILABLE[ENVIRONMENT]
 
 if ENVIRONMENT == "stage":
   # pylint: disable=W0614,W0401
-  from .settings_stage import *
+  from .settings_stage import *  # nocover

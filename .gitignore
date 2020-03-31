@@ -131,3 +131,7 @@ panic/static
 # App Engine Temporary Files
 app.yaml
 panic/requirements.txt
+
+# Frontend
+
+panic/frontend/node_modules

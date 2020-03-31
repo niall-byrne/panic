@@ -5,6 +5,7 @@ omit =
     */apps.py,
     */urls.py,
     */migrations/*.py
+    panic/config/settings_stage.py
     panic/setup.py,
     panic/manage.py,
     panic/root/asgi.py,
@@ -15,5 +16,4 @@ source = panic
 precision = 1
 show_missing = True
 ignore_errors = True
-exclude_lines =
-    nocover
+exclude_lines = nocover

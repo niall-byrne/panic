@@ -27,8 +27,13 @@ https://app.swaggerhub.com/apis/niall-byrne/panic/1.0.0
 
 ## Frontend
 
-We're going to build a django app, that will contain the React piece.
-Integration is similar to what's shown here:
-[React Integration with Django](https://www.valentinog.com/blog/drf/)
+The frontend is embedded inside the django project, as the `frontend` app.
 
-(The frontend isn't setup yet, so there is room here to influence the design and arrangement.)
+To get started, from the top level directory of your cloned repository:
+- `cd panic/frontend`
+- `npm install` to install all node dependencies.
+- `npm run watch` to watch the files, and rebuild as needed.
+
+The frontend source folder is located at 'panic/frontend/src'.
+
+This integration is based off this article: [React Integration with Django](https://www.valentinog.com/blog/drf/)

@@ -22,6 +22,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 urlpatterns = [
+    path('', include('frontend.urls')),
     path('admin/', admin.site.urls),
     path("api/v1/", include("kitchen.urls")),
     path('api/v1/users/', include('rest_registration.api.urls')),
@@ -39,7 +40,7 @@ if settings.ENVIRONMENT in ['local', 'stage']:
           license=openapi.License(name="MPL 2.0 License"),
       ),
       public=True,
-      permission_classes=(permissions.IsAdminUser,),
+      permission_classes=(permissions.AllowAny,),
   )
 
   urlpatterns += [

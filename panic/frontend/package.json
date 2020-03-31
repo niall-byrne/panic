@@ -1,0 +1,26 @@
+{
+  "name": "panic-frontend",
+  "version": "0.0.1",
+  "description": "Frontend for the Don't Panic Grocery App.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack --mode development ./src/index.js --output ./static/frontend/main.js",
+    "watch": "webpack --mode development ./src/index.js --watch --output ./static/frontend/main.js",
+    "prod": "webpack --mode production ./src/index.js --output ./static/frontend/main.js"
+  },
+  "keywords": [],
+  "author": "niall@niallbyrne.ca",
+  "license": "MPL 2.0",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/preset-react": "^7.9.4",
+    "babel": "^6.23.0",
+    "babel-loader": "^8.1.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "webpack": "^4.42.1",
+    "webpack-bundle-tracker": "^0.4.3",
+    "webpack-cli": "^3.3.11"
+  }
+}
