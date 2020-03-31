@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 from .settings_database import DATABASES_AVAILABLE
+from .settings_registration import REST_REGISTRATION_AVAILABLE
 from .settings_throttling import REST_FRAMEWORK_AVAILABLE
 
 # Select Runtime Environment
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_registration',
     'kitchen',
     'profile',
 ]
@@ -124,3 +126,7 @@ STATIC_URL = '/static/'
 # Rest Framework Throttling
 
 REST_FRAMEWORK = {'default': REST_FRAMEWORK_AVAILABLE[ENVIRONMENT]}
+
+# Registration
+
+REST_REGISTRATION = REST_REGISTRATION_AVAILABLE[ENVIRONMENT]
