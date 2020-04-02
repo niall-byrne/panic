@@ -4,19 +4,21 @@
   "description": "Frontend for the Don't Panic Grocery App.",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --mode development ./src/index.js --output ./static/frontend/main.js",
-    "watch": "webpack --mode development ./src/index.js --watch --output ./static/frontend/main.js",
-    "prod": "webpack --mode production ./src/index.js --output ./static/frontend/main.js"
+    "dev": "set -a; source ../../environments/development_secret.env; webpack --mode development ./src/index.js --output ./static/frontend/main.js",
+    "watch": "set -a; source ../../environments/development_secret.env; webpack --mode development ./src/index.js --watch --output ./static/frontend/main.js",
+    "stage": "set -a; source ../../environments/stage_secret.env; webpack --mode production ./src/index.js --output ./static/frontend/main.js"
   },
   "keywords": [],
   "author": "niall@niallbyrne.ca",
   "license": "MPL 2.0",
   "devDependencies": {
     "@babel/core": "^7.9.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "@babel/preset-react": "^7.9.4",
     "babel": "^6.23.0",
     "babel-loader": "^8.1.0",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "webpack": "^4.42.1",
@@ -24,6 +26,7 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
+    "react-facebook-login": "^4.1.1",
     "react-google-login": "^5.1.2"
   }
 }

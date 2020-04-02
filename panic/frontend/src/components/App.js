@@ -1,81 +1,43 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { render } from "react-dom";
-import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import FacebookAuth from "./oauth/facebook.js";
+import GoogleAuth from "./oauth/google";
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = { isAuthenticated: false, user: null, token: "" };
+    this.storeLogin = this.storeLogin.bind(this);
+    this.logout = this.logout.bind(this);
+  }
 
-    constructor() {
-        super();
-        this.state = { isAuthenticated: false, user: null, token: ''};
-        this.googleResponse = this.googleResponse.bind(this);
-        this.logout = this.logout.bind(this);
-    }
+  logout() {
+    this.setState({ isAuthenticated: false, token: "", user: null });
+  }
 
-    logout() {
-        this.setState({isAuthenticated: false, token: '', user: null})
-    };
+  storeLogin(profile, token) {
+    this.setState({
+      isAuthenticated: true,
+      token: token,
+      user: profile
+    });
+  }
 
-    googleResponse(response) {
-        fetch('/api/v1/auth/social/google/', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            access_token: response['tokenObj']['access_token'],
-            code: response['tokenObj']['login_hint'],
-          })
-        }).then(response => {
-            return response.json()
-          })
-          .then(data => {
-            // console.log(response['profileObj'])
-            this.setState({
-                isAuthenticated: true,
-                token: data['key'],
-                user: response['profileObj']
-            });
-          })
-          .catch(err => {
-            console.log(err);
-          })
-    };
-
-    render() {
-        let content = this.state.isAuthenticated ?
-            (
-                <div>
-                    <p>Authenticated</p>
-                    <div>
-                        {this.state.user.email}
-                    </div>
-                    <div>
-                        <GoogleLogout
-                          clientId="339118650780-srpsm9hu7kaolv25f7cn5nnvbdcafie6.apps.googleusercontent.coms"
-                          buttonText="Logout"
-                          onLogoutSuccess={this.logout}
-                        />
-                    </div>
-                </div>
-            ) :
-            (
-                <div>
-                    <GoogleLogin
-                        clientId="339118650780-srpsm9hu7kaolv25f7cn5nnvbdcafie6.apps.googleusercontent.com"
-                        buttonText="Login"
-                        onSuccess={this.googleResponse}
-                        onFailure={this.googleResponse}
-                    />
-                </div>
-            );
-        console.log(content);
-        return (
-            <div className="App">
-                {content}
-            </div>
-        );
-    }
+  render() {
+    let content = this.state.isAuthenticated ? (
+      <div>
+        <p>Authenticated</p>
+        <div>{this.state.user.email}</div>
+        <div>Log Out Button WIP</div>
+      </div>
+    ) : (
+      <div>
+        <GoogleAuth save={this.storeLogin} />
+        <FacebookAuth save={this.storeLogin} />
+      </div>
+    );
+    return <div className="App">{content}</div>;
+  }
 }
 
 export default App;

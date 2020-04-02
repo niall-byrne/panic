@@ -125,6 +125,7 @@ sketch
 # End of https://www.gitignore.io/api/react,python
 
 .idea
+panic.code-workspace
 environments/stage*.env
 environments/*secret.env
 panic/static
