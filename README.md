@@ -44,7 +44,7 @@ This is useful for making your IDE aware of what's installed in a venv.
 - `pipenv --venv` (To get the path of the virtual environment for your IDE.)
 
 ## Environment
-The [development.env](environments/development.env) file can be modified to inject environment variable content into the container.
+The [local.env](environments/local.env) file can be modified to inject environment variable content into the container.
 
 You can override the values set in this file by setting shell ENV variables prior to starting the container:
 - `export GIT_HOOKS_PROTECTED_BRANCHES='.*'`

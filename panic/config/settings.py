@@ -139,9 +139,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Rest Framework Throttling
+# Rest Framework Configuration
 
-REST_FRAMEWORK = {'default': REST_FRAMEWORK_AVAILABLE[ENVIRONMENT]}
+REST_FRAMEWORK = REST_FRAMEWORK_AVAILABLE[ENVIRONMENT]
 
 # Registration
 

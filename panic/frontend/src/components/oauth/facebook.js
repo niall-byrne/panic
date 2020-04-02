@@ -1,7 +1,6 @@
-"use strict";
-
 import React, { Component } from "react";
 import FacebookLogin from "react-facebook-login";
+import PropTypes from "prop-types";
 
 class FacebookAuth extends Component {
   constructor(props) {
@@ -10,29 +9,32 @@ class FacebookAuth extends Component {
   }
 
   facebookAuthenticate(response) {
-    console.log(response);
+    // eslint-disable-next-line no-console
+    console.debug(response);
+    const { save } = this.props;
     fetch(`${process.env.BASE_URL}/api/v1/auth/social/facebook/`, {
       method: "POST",
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        access_token: response["accessToken"]
+        access_token: response.accessToken
       })
     })
-      .then(response => {
-        return response.json();
-      })
-      .then(data => {
+      .then(socialLoginResponse => socialLoginResponse.json())
+      .then(socialLoginResponseJSON => {
+        // eslint-disable-next-line no-console
+        console.debug(socialLoginResponseJSON);
         const profileObj = {
-          name: response["name"],
-          email: response["email"]
+          name: response.name,
+          email: response.email
         };
-        this.props.save(profileObj, data["key"]);
+        save(profileObj, socialLoginResponseJSON.key);
       })
       .catch(err => {
-        console.log(err);
+        // eslint-disable-next-line no-console
+        console.debug(err);
       });
   }
 
@@ -49,5 +51,9 @@ class FacebookAuth extends Component {
     );
   }
 }
+
+FacebookAuth.propTypes = {
+  save: PropTypes.func.isRequired
+};
 
 export default FacebookAuth;

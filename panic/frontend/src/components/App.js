@@ -1,34 +1,44 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-import FacebookAuth from "./oauth/facebook.js";
+import FacebookAuth from "./oauth/facebook";
 import GoogleAuth from "./oauth/google";
+import LogoutAuth from "./oauth/logout";
+import Shelves from './kitchen/shelves';
 
 class App extends Component {
   constructor() {
     super();
-    this.state = { isAuthenticated: false, user: null, token: "" };
+    this.state = { isAuthenticated: false, profile: null, token: null, shelves: [] };
+    this.clearLogin = this.clearLogin.bind(this);
     this.storeLogin = this.storeLogin.bind(this);
-    this.logout = this.logout.bind(this);
+    this.storeShelves = this.storeShelves.bind(this);
   }
 
-  logout() {
-    this.setState({ isAuthenticated: false, token: "", user: null });
+  clearLogin() {
+    this.setState({ isAuthenticated: false, token: null, profile: null, shelves: [] });
   }
 
   storeLogin(profile, token) {
     this.setState({
       isAuthenticated: true,
-      token: token,
-      user: profile
+      token,
+      profile
     });
   }
 
+  storeShelves(shelves) {
+    this.setState({shelves});
+  }
+
   render() {
-    let content = this.state.isAuthenticated ? (
+    const {token, profile, shelves, isAuthenticated} = this.state
+    const content = isAuthenticated ? (
       <div>
         <p>Authenticated</p>
-        <div>{this.state.user.email}</div>
-        <div>Log Out Button WIP</div>
+        <div>{profile.email}</div>
+        <LogoutAuth token={token} clear={this.clearLogin} />
+        <br />
+        <Shelves token={token} save={this.storeShelves} shelves={shelves} />
       </div>
     ) : (
       <div>
