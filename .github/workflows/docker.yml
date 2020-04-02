@@ -3,8 +3,8 @@ name: panic Automation
 on: [push]
 
 jobs:
-  build:
 
+  django:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -26,6 +26,33 @@ jobs:
     - name: Run Sec Test
       run: |
         docker-compose exec -T panic bash -l -c 'scripts/commander.sh sectest'
+    - name: Run Safety from the Host Machine
+      run: |
+        docker-compose exec -T panic bash -l -c 'pip freeze > safety.txt'
+        sudo pip3 install wheel setuptools
+        sudo pip3 install safety
+        safety check -r safety.txt
     - name: Run Unit Tests
       run: |
         docker-compose exec -T panic bash -l -c 'scripts/commander.sh test coverage'
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Node Modules
+        run: |
+          cd panic/frontend/
+          npm install
+      - name: Test Code Can Build
+        run: |
+          cd panic/frontend/
+          npm run dev
+      - name: Run Linter
+        run: |
+          cd panic/frontend/
+          npm run lint
+      - name: Sec Test
+        run: |
+          cd panic/frontend/
+          npm audit

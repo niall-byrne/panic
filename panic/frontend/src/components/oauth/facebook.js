@@ -9,9 +9,9 @@ class FacebookAuth extends Component {
   }
 
   facebookAuthenticate(response) {
+    const { save } = this.props;
     // eslint-disable-next-line no-console
     console.debug(response);
-    const { save } = this.props;
     fetch(`${process.env.BASE_URL}/api/v1/auth/social/facebook/`, {
       method: "POST",
       headers: {

@@ -8,8 +8,7 @@ class LogoutAuth extends Component {
   }
 
   performLogout() {    
-    const { clear } = this.props;
-    const { token } = this.props;
+    const { clear, token } = this.props;
     fetch(`${process.env.BASE_URL}/api/v1/auth/logout/`, {
       method: 'POST',
       headers: {

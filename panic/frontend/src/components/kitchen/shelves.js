@@ -12,8 +12,7 @@ class Shelves extends Component {
   }
 
   getAllShelves() {
-    const { token } = this.props;
-    const { save } = this.props;
+    const { token, save } = this.props;
     fetch(`${process.env.BASE_URL}/api/v1/shelf/`, {
       method: "GET",
       headers: {

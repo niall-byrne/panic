@@ -4,6 +4,7 @@
   "description": "Frontend for the Don't Panic Grocery App.",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint src",
     "dev": "set -a; source ../../environments/local_secret.env; webpack --mode development ./src/index.js --output ./static/frontend/main.js",
     "watch": "set -a; source ../../environments/local_secret.env; webpack --mode development ./src/index.js --watch --output ./static/frontend/main.js",
     "stage": "set -a; source ../../environments/stage_secret.env; webpack --mode production ./src/index.js --output ./static/frontend/main.js"

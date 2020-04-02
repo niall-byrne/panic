@@ -9,9 +9,9 @@ class GoogleAuth extends Component {
     }
 
   googleAuthenticate(response) {
+    const { save } = this.props;
     // eslint-disable-next-line no-console
     console.debug(response);
-    const { save } = this.props;
     fetch(`${process.env.BASE_URL}/api/v1/auth/social/google/`, {
       method: 'POST',
       headers: {
