@@ -22,13 +22,13 @@ class PublicListItemsTest(TestCase):
     """Test that login is required for retrieving items."""
     res = self.client.get(LIST_URL)
 
-    self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+    self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
   def test_create_item_login_required(self):
     payload = {"name": "Meat"}
     res = self.client.post(LIST_URL, payload)
 
-    self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+    self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateListItemsTest(TestCase):

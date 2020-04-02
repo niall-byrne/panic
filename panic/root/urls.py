@@ -25,7 +25,10 @@ urlpatterns = [
     path('', include('frontend.urls')),
     path('admin/', admin.site.urls),
     path("api/v1/", include("kitchen.urls")),
-    path('api/v1/users/', include('rest_registration.api.urls')),
+    path("api/v1/auth/", include('dj_rest_auth.urls')),
+    path("api/v1/auth/registration/",
+         include('dj_rest_auth.registration.urls')),
+    path("api/v1/auth/social/", include("social_accounts.urls")),
 ]
 
 if settings.ENVIRONMENT in ['local', 'stage']:

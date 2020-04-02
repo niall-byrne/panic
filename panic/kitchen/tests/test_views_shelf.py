@@ -22,13 +22,13 @@ class PublicShelfTest(TestCase):
     """Test that login is required for retrieving shelves."""
     res = self.client.get(SHELF_URL)
 
-    self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+    self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
   def test_create_login_required(self):
     payload = {"name": "Pantry"}
     res = self.client.post(SHELF_URL, payload)
 
-    self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+    self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateShelfTest(TestCase):

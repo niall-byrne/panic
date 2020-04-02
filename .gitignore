@@ -126,6 +126,7 @@ sketch
 
 .idea
 environments/stage*.env
+environments/*secret.env
 panic/static
 
 # App Engine Temporary Files
@@ -135,3 +136,4 @@ panic/requirements.txt
 # Frontend
 
 panic/frontend/node_modules
+panic/frontend/static/frontend/main.js

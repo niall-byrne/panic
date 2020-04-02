@@ -27,7 +27,7 @@ class PublicItemTest(TestCase):
     payload = {}
     res = self.client.post(TRANSACTION_URL, data=payload)
 
-    self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+    self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateItemTest(TestCase):

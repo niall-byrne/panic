@@ -16,6 +16,14 @@ https://app.swaggerhub.com/apis/niall-byrne/panic/1.0.0
 - Master will contain releases.
 - Use [commitizen](https://github.com/commitizen/cz-cli) for all commits. (It's installed in the container.)
 
+## Authentication
+
+## Registration
+https://django-allauth.readthedocs.io/en/latest/
+
+## Social Logins
+https://github.com/jazzband/dj-rest-auth
+
 ## Backend
 
 - Write unittests for management commands, views, serializers, and models
@@ -37,3 +45,4 @@ To get started, from the top level directory of your cloned repository:
 The frontend source folder is located at 'panic/frontend/src'.
 
 This integration is based off this article: [React Integration with Django](https://www.valentinog.com/blog/drf/)
+

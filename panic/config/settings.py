@@ -13,8 +13,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 from .settings_database import DATABASES_AVAILABLE
-from .settings_registration import REST_REGISTRATION_AVAILABLE
-from .settings_throttling import REST_FRAMEWORK_AVAILABLE
+from .settings_email import *  # pylint: disable=W0614,W0401
+from .settings_registration import *  # pylint: disable=W0614,W0401
+from .settings_restframework import REST_FRAMEWORK_AVAILABLE
 
 # Select Runtime Environment
 ENVIRONMENT = os.environ.get('DJANGO_ENVIRONMENT', 'local')
@@ -43,11 +44,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_registration',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
     'kitchen',
-    'profile',
     'drf_yasg',
     'frontend',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+    'dj_rest_auth.registration',
+    'social_accounts',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +68,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 ROOT_URLCONF = 'root.urls'
 
@@ -131,7 +145,9 @@ REST_FRAMEWORK = {'default': REST_FRAMEWORK_AVAILABLE[ENVIRONMENT]}
 
 # Registration
 
-REST_REGISTRATION = REST_REGISTRATION_AVAILABLE[ENVIRONMENT]
+# Sites
+
+SITE_ID = 1
 
 # Environment Specific Settings
 

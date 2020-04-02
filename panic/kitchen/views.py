@@ -1,7 +1,7 @@
 """Kitchen App Views"""
 
 from rest_framework import mixins, viewsets
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from .models.item import Item
@@ -15,7 +15,7 @@ from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
 from .serializers.transaction import TransactionSerializer
 
-AUTHENTICATION = (SessionAuthentication,)
+AUTHENTICATION = (TokenAuthentication,)
 PERMISSION = (IsAuthenticated,)
 
 
@@ -42,8 +42,8 @@ class ShelfViewSet(
   """Shelf API View"""
   serializer_class = ShelfSerializer
   queryset = Shelf.objects.all()
-  authentication_classes = (SessionAuthentication,)
-  permission_classes = (IsAuthenticated,)
+  authentication_classes = AUTHENTICATION
+  permission_classes = PERMISSION
 
   def get_queryset(self):
     queryset = self.queryset.order_by("-name")
