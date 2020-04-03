@@ -10,6 +10,7 @@ class FacebookAuth extends Component {
 
   facebookAuthenticate(response) {
     const { save } = this.props;
+    let statusCode = null;
     // eslint-disable-next-line no-console
     console.debug(response);
     fetch(`${process.env.BASE_URL}/api/v1/auth/social/facebook/`, {
@@ -22,20 +23,26 @@ class FacebookAuth extends Component {
         access_token: response.accessToken
       })
     })
-      .then(socialLoginResponse => socialLoginResponse.json())
-      .then(socialLoginResponseJSON => {
-        // eslint-disable-next-line no-console
-        console.debug(socialLoginResponseJSON);
-        const profileObj = {
-          name: response.name,
-          email: response.email
-        };
-        save(profileObj, socialLoginResponseJSON.key);
-      })
-      .catch(err => {
-        // eslint-disable-next-line no-console
-        console.debug(err);
-      });
+    .then(socialLoginResponse => {
+      statusCode = socialLoginResponse.status         
+      return socialLoginResponse.json()
+    })
+    .then(socialLoginResponseJSON => {
+      if ( statusCode!== 200 ) {
+        throw new Error(`Login: ${JSON.stringify(socialLoginResponseJSON)}`);
+      }
+      // eslint-disable-next-line no-console
+      console.debug(socialLoginResponseJSON);
+      const profileObj = {
+        name: response.name,
+        email: response.email
+      };
+      save(profileObj, socialLoginResponseJSON.key);
+    })
+    .catch(err => {
+      // eslint-disable-next-line no-console
+      console.debug(err);
+    });
   }
 
   render() {
@@ -44,6 +51,8 @@ class FacebookAuth extends Component {
         <FacebookLogin
           appId={process.env.FACEBOOK_APP_ID}
           autoLoad={false}
+          cookie={false}
+          textButton="Facebook"
           fields="name,email,picture"
           callback={this.facebookAuthenticate}
         />
