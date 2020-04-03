@@ -34,11 +34,11 @@ class Shelves extends Component {
 
   render() {
     const { shelves } = this.props 
-    const listItems = shelves.map((d) => <li key={d.name}>{d.name}</li>);
+    const listShelves= shelves.map((d) => <li key={d.name}>{d.name}</li>);
     return (
       <div>
         <span>Shelves:</span>
-        {listItems}
+        {listShelves.length > 0 ? listShelves : <li>None</li>}
       </div>
     )
   }

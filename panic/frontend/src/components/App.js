@@ -5,19 +5,35 @@ import GoogleAuth from "./oauth/google";
 import LogoutAuth from "./oauth/logout";
 import Shelves from './kitchen/shelves';
 import Stores from './kitchen/stores';
+import Items from './kitchen/items';
 
 class App extends Component {
   constructor() {
     super();
-    this.state = { isAuthenticated: false, profile: null, token: null, shelves: [], stores: [] };
+    this.state = { 
+      isAuthenticated: false, 
+      profile: null, 
+      token: null, 
+      shelves: [], 
+      stores: [], 
+      items: []
+    };
     this.clearLogin = this.clearLogin.bind(this);
     this.storeLogin = this.storeLogin.bind(this);
     this.storeShelves = this.storeShelves.bind(this);
     this.storeStores = this.storeStores.bind(this);
+    this.storeItems = this.storeItems.bind(this);
   }
 
   clearLogin() {
-    this.setState({ isAuthenticated: false, token: null, profile: null, shelves: [], stores: [] });
+    this.setState({ 
+      isAuthenticated: false, 
+      profile: null, 
+      token: null, 
+      shelves: [], 
+      stores: [], 
+      items: []
+    });
   }
 
   storeLogin(profile, token) {
@@ -36,8 +52,12 @@ class App extends Component {
     this.setState({stores});
   }
 
+  storeItems(items) {
+    this.setState({items});
+  }
+
   render() {
-    const {token, profile, shelves, stores, isAuthenticated} = this.state
+    const {isAuthenticated, token, profile, shelves, stores, items} = this.state
     const content = isAuthenticated ? (
       <div>
         <p>Authenticated</p>
@@ -46,6 +66,7 @@ class App extends Component {
         <br />
         <Shelves token={token} save={this.storeShelves} shelves={shelves} />
         <Stores token={token} save={this.storeStores} stores={stores} />
+        <Items token={token} save={this.storeItems} items={items} />
       </div>
     ) : (
       <div>

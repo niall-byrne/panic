@@ -1,19 +1,19 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-class Stores extends Component {
+class Items extends Component {
   constructor(props) {
     super(props);
-    this.getAllStores = this.getAllStores.bind(this);
+    this.getAllItem = this.getAllItems.bind(this);
   }
 
   componentDidMount() {
-    this.getAllStores();
+    this.getAllItems();
   }
 
-  getAllStores() {
+  getAllItems() {
     const { token, save } = this.props;
-    fetch(`${process.env.BASE_URL}/api/v1/store/`, {
+    fetch(`${process.env.BASE_URL}/api/v1/item/`, {
       method: "GET",
       headers: {
         'Accept': 'application/json',
@@ -33,21 +33,21 @@ class Stores extends Component {
   }
 
   render() {
-    const { stores } = this.props 
-    const listStores = stores.map((d) => <li key={d.name}>{d.name}</li>);
+    const { items } = this.props
+    const listItems = items.map((d) => <li key={d.name}>{d.name}</li>);
     return (
       <div>
-        <span>Stores:</span>
-        {listStores.length > 0 ? listStores : <li>None</li>}
+        <span>Items:</span>
+        {listItems.length > 0 ? listItems : <li>None</li>}
       </div>
     )
   }
 }
 
-Stores.propTypes = {
+Items.propTypes = {
   token: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
-  stores: PropTypes.arrayOf(PropTypes.object).isRequired
+  items: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
-export default Stores;
+export default Items;
