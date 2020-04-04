@@ -34,7 +34,13 @@ class Stores extends Component {
 
   render() {
     const { stores } = this.props 
-    const listStores = stores.map((d) => <li key={d.name}>{d.name}</li>);
+    const listStores = stores.map((d) => (
+      <li key={d.name}>
+        {`${d.id} - ${d.name} -> `}
+        <button name={`add${d.id}`} type="button">Add</button>
+        <button name={`remove${d.id}`} type="button">Remove</button>
+      </li>
+    ))
     return (
       <div>
         <span>Stores:</span>

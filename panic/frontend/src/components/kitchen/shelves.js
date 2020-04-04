@@ -34,7 +34,13 @@ class Shelves extends Component {
 
   render() {
     const { shelves } = this.props 
-    const listShelves= shelves.map((d) => <li key={d.name}>{d.name}</li>);
+    const listShelves = shelves.map((d) => (
+      <li key={d.name}>
+        {`${d.id} - ${d.name} -> `}
+        <button name={`add${d.id}`} type="button">Add</button>
+        <button name={`remove${d.id}`} type="button">Remove</button>
+      </li>
+    ))
     return (
       <div>
         <span>Shelves:</span>

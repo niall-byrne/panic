@@ -34,7 +34,13 @@ class Items extends Component {
 
   render() {
     const { items } = this.props
-    const listItems = items.map((d) => <li key={d.name}>{d.name}</li>);
+    const listItems = items.map((d) => (
+      <li key={d.name}>
+        {`${d.id} - ${d.name} - qty: ${d.quantity} -> `}
+        <button name={`add${d.id}`} type="button">Add</button>
+        <button name={`remove${d.id}`} type="button">Remove</button>
+      </li>
+    ))
     return (
       <div>
         <span>Items:</span>
