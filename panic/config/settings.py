@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'kitchen',
     'drf_yasg',
-    'frontend',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -58,6 +57,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'dj_rest_auth.registration',
     'social_accounts',
+    'frontend',
 ]
 
 MIDDLEWARE = [
