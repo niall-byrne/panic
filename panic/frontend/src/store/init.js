@@ -1,7 +1,7 @@
 const defaultState = { 
   auth : {
     isAuthenticated: false, 
-    profile: null, 
+    profile: {}, 
     token: null, 
   },
   shelves: [], 

@@ -53,7 +53,11 @@ class Stores extends Component {
 Stores.propTypes = {
   token: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
-  stores: PropTypes.arrayOf(PropTypes.object).isRequired
+  stores: PropTypes.arrayOf(PropTypes.object)
 };
+
+Stores.defaultProps = {
+  stores: []
+}
 
 export default Stores;

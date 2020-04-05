@@ -53,7 +53,11 @@ class Items extends Component {
 Items.propTypes = {
   token: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
-  items: PropTypes.arrayOf(PropTypes.object).isRequired
+  items: PropTypes.arrayOf(PropTypes.object)
 };
+
+Items.defaultProps = {
+  items: []
+}
 
 export default Items;

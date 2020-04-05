@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import FacebookAuth from "./facebook";
 import GoogleAuth from "./google";
 
-export const Login = (props) => {
+function LoginAuth(props) {
   const {save} = props
   return (     
     <div className="login">
@@ -13,11 +13,11 @@ export const Login = (props) => {
   );
 }
 
-Login.propTypes = {
+LoginAuth.propTypes = {
   save: PropTypes.func.isRequired,
 };
 
 
-export default Login;
+export default LoginAuth;
 
 

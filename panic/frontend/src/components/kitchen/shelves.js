@@ -53,7 +53,11 @@ class Shelves extends Component {
 Shelves.propTypes = {
   token: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
-  shelves: PropTypes.arrayOf(PropTypes.object).isRequired
+  shelves: PropTypes.arrayOf(PropTypes.object)
 };
+
+Shelves.defaultProps = {
+  shelves: []
+}
 
 export default Shelves;
