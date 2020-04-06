@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import PropTypes from 'prop-types';
+import { post } from '../../util/requests'
 
 class GoogleAuth extends Component {
     constructor(props) {
@@ -8,37 +9,32 @@ class GoogleAuth extends Component {
       this.googleAuthenticate = this.googleAuthenticate.bind(this);
     }
 
-  googleAuthenticate(response) {
-    const { save } = this.props;
-    let statusCode = null;
+  googleAuthenticate(authentication) {
     // eslint-disable-next-line no-console
-    console.debug(response);
-    fetch(`${process.env.BASE_URL}/api/v1/auth/social/google/`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        access_token: response.tokenObj.access_token,
-        code: response.tokenObj.login_hint,
-      })
-    })
-    .then(socialLoginResponse => {
-      statusCode = socialLoginResponse.status         
-      return socialLoginResponse.json()
-    })
-    .then(socialLoginResponseJSON => {
-      if ( statusCode!== 200 ) {
-        throw new Error(`Login: ${JSON.stringify(socialLoginResponseJSON)}`);
+    console.debug(authentication);
+    
+    // Setup Request
+    const { save } = this.props;
+    const data = {
+      access_token: authentication.tokenObj.access_token,
+      code: authentication.tokenObj.login_hint,
+    }
+    const token = null;    
+    const path = '/api/v1/auth/social/google/'
+  
+    post(path, token, data)
+    .then((response) => {
+      const [socialLoginResponse, statusCode] = response;
+      if ( statusCode!== 200 ) {        
+          throw new Error(`Login: ${statusCode} - ${JSON.stringify(socialLoginResponse)}`);
       }
       // eslint-disable-next-line no-console
-      console.debug(socialLoginResponseJSON);
+      console.debug(socialLoginResponse);
       const profileObj = {
-        name: response.profileObj.name,
-        email: response.profileObj.email
+        name: authentication.profileObj.name,
+        email: authentication.profileObj.email
       };
-      save(profileObj, socialLoginResponseJSON.key);
+      save(profileObj, socialLoginResponse.key);
     })
     .catch(err => {
       // eslint-disable-next-line no-console
