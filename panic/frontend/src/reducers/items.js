@@ -1,7 +1,10 @@
 function items(state = [], action) {
-  // eslint-disable-next-line no-console
-  console.log(state, action);
-  return state;
+  switch(action.type) {
+    case "FETCH_ITEMS":      
+      return [...action.items]
+    default:
+      return state;
+  }
 }
 
 export default items;

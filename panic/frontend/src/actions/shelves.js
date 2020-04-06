@@ -1,8 +1,8 @@
 // syncrhonize from api
-export function syncShelves(name) {
+export function syncShelves(shelves) {
   return {
     type: 'FETCH_SHELVES',
-    name
+    shelves
   }
 }
 

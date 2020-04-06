@@ -33,12 +33,12 @@ class Items extends Component {
   }
 
   render() {
-    const { items } = this.props
+    const { items, add, del } = this.props 
     const listItems = items.map((d) => (
       <li key={d.name}>
         {`${d.id} - ${d.name} - qty: ${d.quantity} -> `}
-        <button name={`add${d.id}`} type="button">Add</button>
-        <button name={`remove${d.id}`} type="button">Remove</button>
+        <button name={`add${d.id}`} onClick={() => add(d.name)} type="button">Add</button>
+        <button name={`remove${d.id}`} onClick={() => del(d.id, d.name)} type="button">Remove</button>
       </li>
     ))
     return (
@@ -53,6 +53,8 @@ class Items extends Component {
 Items.propTypes = {
   token: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
+  add: PropTypes.func.isRequired,
+  del: PropTypes.func.isRequired,
   items: PropTypes.arrayOf(PropTypes.object)
 };
 

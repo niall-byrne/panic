@@ -11,8 +11,18 @@ import Items from './kitchen/items';
 class Main extends Component {
   
   render() {
-    const {state, login, logout, shelves, stores, items} = this.props
-    const { syncShelves, syncStores, syncItems} = this.props
+    // TODO: breakout state into individual connects for each high level component
+    // shelves
+    const {syncShelves, addShelf, delShelf} = this.props
+    // items
+    const {syncItems, addItem, delItem} = this.props
+    // stores
+    const {syncStores, addStore, delStore} = this.props
+
+    // TODO: I'm unsure on how to pass state to these profile components efficiently
+    // Will do some reading
+
+    const {state, login, logout} = this.props    
     const {profile, isAuthenticated, token} = state.auth
     const content = isAuthenticated ? (
       <div>
@@ -22,9 +32,9 @@ class Main extends Component {
           <div>{profile.email}</div>
         </div>
         <LogoutAuth token={token} clear={logout} />
-        <Shelves token={token} save={syncShelves} shelves={shelves} />
-        <Stores token={token} save={syncStores} stores={stores} />
-        <Items token={token} save={syncItems} items={items} />
+        <Shelves token={token} save={syncShelves} add={addShelf} del={delShelf} shelves={state.shelves} />
+        <Stores token={token} save={syncStores} add={addStore} del={delStore} stores={state.stores} />
+        <Items token={token} save={syncItems} add={addItem} del={delItem} items={state.items} />
       </div>
     ) : (
       <div>
@@ -35,16 +45,24 @@ class Main extends Component {
   }
 }
 
+
+// TODO: This is too much state to pass down a level, using more connects might be ideal
 Main.propTypes = {
   login: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
+  addShelf: PropTypes.func.isRequired,
+  addItem: PropTypes.func.isRequired,
+  addStore: PropTypes.func.isRequired,
+  delShelf: PropTypes.func.isRequired,
+  delItem: PropTypes.func.isRequired,
+  delStore: PropTypes.func.isRequired,
   syncShelves: PropTypes.func.isRequired,
   syncStores: PropTypes.func.isRequired,
-  syncItems: PropTypes.func.isRequired,
-  shelves: PropTypes.arrayOf(PropTypes.object),
-  items: PropTypes.arrayOf(PropTypes.object),
-  stores: PropTypes.arrayOf(PropTypes.object),
+  syncItems: PropTypes.func.isRequired,  
   state: PropTypes.shape({
+    shelves: PropTypes.arrayOf(PropTypes.object),
+    items: PropTypes.arrayOf(PropTypes.object),
+    stores: PropTypes.arrayOf(PropTypes.object),
     auth: PropTypes.shape({
       token: PropTypes.string,
       isAuthenticated: PropTypes.bool.isRequired,
@@ -55,11 +73,5 @@ Main.propTypes = {
     }).isRequired
   }).isRequired
 };
-
-Main.defaultProps = {
-  items: [],
-  shelves: [],
-  stores: []
-}
 
 export default Main;

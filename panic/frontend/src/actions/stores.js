@@ -1,8 +1,8 @@
 // syncrhonize from api
-export function syncStores(name) {
+export function syncStores(stores) {
   return {
     type: 'FETCH_STORES',
-    name
+    stores
   }
 }
 

@@ -1,8 +1,8 @@
 // synchronize from api
-export function syncItems(name) {
+export function syncItems(items) {
   return {
     type: 'FETCH_ITEMS',
-    name
+    items
   }
 }
 
