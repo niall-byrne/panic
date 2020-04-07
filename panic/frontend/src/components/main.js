@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from 'prop-types';
 import LoginAuth from "./authentication/login"
 import LogoutAuth from "./authentication/logout"
-import Shelves from './kitchen/shelves';
+import StatefulShelves from './kitchen/shelves';
 import Stores from './kitchen/stores';
 import Items from './kitchen/items';
 
@@ -32,7 +32,7 @@ class Main extends Component {
           <div>{profile.email}</div>
         </div>
         <LogoutAuth token={token} clear={logout} />
-        <Shelves token={token} save={syncShelves} add={addShelf} del={delShelf} shelves={state.shelves} />
+        <StatefulShelves />
         <Stores token={token} save={syncStores} add={addStore} del={delStore} stores={state.stores} />
         <Items token={token} save={syncItems} add={addItem} del={delItem} items={state.items} />
       </div>
