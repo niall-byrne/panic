@@ -17,7 +17,4 @@ LoginAuth.propTypes = {
   save: PropTypes.func.isRequired,
 };
 
-
 export default LoginAuth;
-
-

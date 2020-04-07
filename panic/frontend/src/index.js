@@ -6,14 +6,14 @@ import { ConnectedRouter } from 'connected-react-router'
 import configureStore, { history } from './store/store'
 import defaultState from './store/init';
 
-import App from "./connects/App";
+import statefulMain from "./connects/mainState";
 
 const store = configureStore(defaultState);
 
 render(
   <Provider store={store}>
     <ConnectedRouter history={history}> 
-      <Route path="/" component={App} />
+      <Route path="/" component={statefulMain} />
     </ConnectedRouter>
   </Provider>,
   document.getElementById('app')

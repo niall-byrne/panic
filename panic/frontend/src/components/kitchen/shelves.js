@@ -1,8 +1,5 @@
 import React, { Component, createRef } from "react";
 import PropTypes from "prop-types";
-import stateWrapper from "../../connects/wrapper";
-import * as shelfActions from '../../actions/shelves'
-
 
 class Shelves extends Component {
   constructor(props) {
@@ -45,7 +42,8 @@ class Shelves extends Component {
     const { shelves, addShelf } = this.props 
     const name = this.shelfNameRef.current.value;
     const search = shelves.find(o => o.name === name);
-    if (search === undefined) addShelf(name);    
+    // Crude Validation, TODO: Improve
+    if (search === undefined && name.length > 0) addShelf(name);    
     this.shelfFormRef.current.reset();
   }
 
@@ -62,6 +60,8 @@ class Shelves extends Component {
         <button name={`remove${d.id}`} onClick={() => this.del(d)} type="button">Remove</button>
       </li> 
     ))
+    // TODO: Refactor the buttons into reusable components
+    // TODO: Refactor the form into a reusable component
     return (
       <div>
         <span>Shelves:</span>
@@ -74,15 +74,6 @@ class Shelves extends Component {
     )
   }
 }
-
-function stateFilter(state) {
-  return {
-    shelves: state.shelves,
-    auth: state.auth
-  }
-}
-
-const StatefulShelves = stateWrapper(Shelves, shelfActions, stateFilter)
 
 Shelves.propTypes = {
   syncShelves: PropTypes.func.isRequired,
@@ -98,4 +89,4 @@ Shelves.defaultProps = {
   shelves: []
 }
 
-export default StatefulShelves;
+export default Shelves;
