@@ -19,7 +19,7 @@ class Main extends Component {
     const {state, login, logout} = this.props    
     const {profile, isAuthenticated, token} = state.auth
     const content = isAuthenticated ? (
-      <div>
+      <div className="section">
         <div>
           <p>Authenticated</p>
           <div>{profile.name}</div>

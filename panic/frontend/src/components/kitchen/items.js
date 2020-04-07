@@ -42,7 +42,7 @@ class Items extends Component {
       </li>
     ))
     return (
-      <div>
+      <div className="section">
         <span>Items:</span>
         {listItems.length > 0 ? listItems : <li>None</li>}
       </div>

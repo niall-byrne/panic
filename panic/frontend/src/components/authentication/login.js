@@ -6,7 +6,7 @@ import GoogleAuth from "./google";
 function LoginAuth(props) {
   const {save} = props
   return (     
-    <div className="login">
+    <div className="section">
       <GoogleAuth save={save} />
       <FacebookAuth save={save} />
     </div>

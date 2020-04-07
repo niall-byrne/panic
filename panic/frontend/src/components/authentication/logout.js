@@ -31,7 +31,7 @@ class LogoutAuth extends Component {
 
   render() {
     return (
-      <div>
+      <div className="section">
         <button type="button" onClick={this.performLogout}>Logout</button>            
       </div>
     )

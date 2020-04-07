@@ -63,7 +63,7 @@ class Shelves extends Component {
     // TODO: Refactor the buttons into reusable components
     // TODO: Refactor the form into a reusable component
     return (
-      <div>
+      <div className="section">
         <span>Shelves:</span>
         {listShelves.length > 0 ? listShelves : <li>None</li>}
         <form ref={this.shelfFormRef} className="" onSubmit={this.add}>

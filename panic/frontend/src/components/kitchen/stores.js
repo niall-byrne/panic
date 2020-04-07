@@ -62,7 +62,7 @@ class Stores extends Component {
       </li>
     ))
     return (
-      <div>
+      <div className="section">
         <span>Stores:</span>
         {listStores.length > 0 ? listStores : <li>None</li>}
         <form ref={this.storeFormRef} className="" onSubmit={this.add}>
