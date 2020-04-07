@@ -4,7 +4,7 @@ function filterShelves(state, name) {
 
 function shelves(state = [], action) {
 
-  const mockNewShelf = {id: action.name, name: action.name}
+  const mockNewShelf = {id: (999 + state.length), name: action.name}
 
   switch(action.type) {
     case "FETCH_SHELVES":      

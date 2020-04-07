@@ -12,12 +12,11 @@ class Items extends Component {
   }
 
   getAllItems() {
-    const { token, save } = this.props;
+    const { save } = this.props;
     fetch(`${process.env.BASE_URL}/api/v1/item/`, {
       method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Authorization': `token ${token}`
+        'Accept': 'application/json'
       },
     })
       .then(apiResponse => {       
@@ -42,7 +41,7 @@ class Items extends Component {
       </li>
     ))
     return (
-      <div className="section">
+      <div className="component">
         <span>Items:</span>
         {listItems.length > 0 ? listItems : <li>None</li>}
       </div>

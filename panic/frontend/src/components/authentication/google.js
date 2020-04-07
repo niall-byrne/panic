@@ -19,10 +19,9 @@ class GoogleAuth extends Component {
       access_token: authentication.tokenObj.access_token,
       code: authentication.tokenObj.login_hint,
     }
-    const token = null;    
     const path = '/api/v1/auth/social/google/'
   
-    post(path, token, data)
+    post(path, data)
     .then((response) => {
       const [socialLoginResponse, statusCode] = response;
       if ( statusCode!== 200 ) {        
@@ -34,7 +33,7 @@ class GoogleAuth extends Component {
         name: authentication.profileObj.name,
         email: authentication.profileObj.email
       };
-      save(profileObj, socialLoginResponse.key);
+      save(profileObj);
     })
     .catch(err => {
       // eslint-disable-next-line no-console

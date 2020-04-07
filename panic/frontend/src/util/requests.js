@@ -1,13 +1,9 @@
-export function get(path, token=null) {
+export function get(path) {
   let statusCode;
 
-  const headers = token === null ? {
+  const headers = {
     'Accept': 'application/json',    
-  } : {
-    'Accept': 'application/json',
-    'Authorization': `token ${token}`
-  }
-
+  } 
   const promise = fetch(
     `${process.env.BASE_URL}${path}`, {
       method: "POST",
@@ -23,7 +19,7 @@ export function get(path, token=null) {
 };
 
 
-export function post(path, token=null, data={}) {
+export function post(path, data={}) {
 
   // eslint-disable-next-line no-console
   console.debug(`API POST:\n ${process.env.BASE_URL}${path}`)
@@ -31,14 +27,10 @@ export function post(path, token=null, data={}) {
   console.debug(`Content:\n ${JSON.stringify(data)}`)
   let statusCode;
 
-  const headers = token === null ? {
+  const headers = {
     'Accept': 'application/json',  
     'Content-Type': 'application/json'  
-  } : {
-    'Accept': 'application/json',
-    'Authorization': `token ${token}`,
-    'Content-Type': 'application/json'
-  }
+  } 
   const promise = fetch(
     `${process.env.BASE_URL}${path}`, {
       method: "POST",

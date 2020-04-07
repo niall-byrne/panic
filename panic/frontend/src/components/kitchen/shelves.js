@@ -1,5 +1,7 @@
 import React, { Component, createRef } from "react";
 import PropTypes from "prop-types";
+import RemovableRow from "./controls/removableRow"
+import AppendFormRow from "./controls/appendableRow"
 
 class Shelves extends Component {
   constructor(props) {
@@ -17,12 +19,10 @@ class Shelves extends Component {
 
   getAllShelves() {
     const { syncShelves } = this.props;
-    const { auth } = this.props;
     fetch(`${process.env.BASE_URL}/api/v1/shelf/`, {
       method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Authorization': `token ${auth.token}`
+        'Accept': 'application/json'
       },
     })
       .then(apiResponse => {       
@@ -53,23 +53,24 @@ class Shelves extends Component {
   }
 
   render() {
-    const { shelves } = this.props 
-    const listShelves = shelves.map((d) => (
-      <li key={d.name}>
-        {`${d.id} - ${d.name} -> `}
-        <button name={`remove${d.id}`} onClick={() => this.del(d)} type="button">Remove</button>
-      </li> 
+    const { shelves } = this.props
+    const refs = {
+      inputRef: this.shelfNameRef,
+      formRef: this.shelfFormRef
+    }
+    const listStores = shelves.map((d) => (
+      <RemovableRow key={d.id} row={d} controlFn={this.del} controlName="Remove" />
     ))
-    // TODO: Refactor the buttons into reusable components
-    // TODO: Refactor the form into a reusable component
+    const ul = (
+      <ul id="shelfList">
+        {listStores.length > 0 ? listStores : <li className="section">None</li>}
+        <AppendFormRow init="shelf name" refs={refs} text="Add Shelf" submit={this.add} />
+      </ul>
+    )
     return (
-      <div className="section">
+      <div className="component">
         <span>Shelves:</span>
-        {listShelves.length > 0 ? listShelves : <li>None</li>}
-        <form ref={this.shelfFormRef} className="" onSubmit={this.add}>
-          <input type="text" ref={this.shelfNameRef} placeholder="name" required />
-          <button type="button" onClick={this.add}>Add A New Shelf</button>
-        </form>  
+        {ul}
       </div>
     )
   }

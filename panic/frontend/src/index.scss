@@ -1,6 +1,13 @@
 .section {
   border: red;
   border-style: solid;
-  border-width: var(--section-borders);
+  border-width: 1px;
+  margin: 5px;
 }
 
+.component {
+  border: blue;
+  border-style: solid;
+  border-width: 1px;
+  margin: 5px;
+}

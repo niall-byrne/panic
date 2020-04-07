@@ -4,7 +4,7 @@ function filterStores(state, name) {
 
 function stores(state = [], action) {
 
-  const mockNewStore = {id: action.name, name: action.name}
+  const mockNewStore = {id: (999 + state.length), name: action.name}
 
   switch(action.type) {
     case "FETCH_STORES":      

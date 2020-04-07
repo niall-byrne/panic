@@ -19,10 +19,9 @@ class FacebookAuth extends Component {
       access_token: authentication.accessToken,
       code: authentication.userID,
     }
-    const token = null;    
     const path = '/api/v1/auth/social/facebook/'
   
-    post(path, token, data)
+    post(path, data)
     .then(response => {
       const [socialLoginResponse, statusCode] = response;
       if ( statusCode!== 200 ) {        
@@ -34,7 +33,7 @@ class FacebookAuth extends Component {
         name: authentication.name,
         email: authentication.email
       };
-      save(profileObj, socialLoginResponse.key);
+      save(profileObj);
     })
     .catch(err => {
       // eslint-disable-next-line no-console

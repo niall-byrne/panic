@@ -1,5 +1,7 @@
 import React, { Component, createRef } from "react";
 import PropTypes from "prop-types";
+import RemovableRow from "./controls/removableRow"
+import AppendFormRow from "./controls/appendableRow"
 
 class Stores extends Component {
   constructor(props) {
@@ -17,12 +19,10 @@ class Stores extends Component {
 
   getAllStores() {
     const { syncStores } = this.props;
-    const { auth } = this.props;
     fetch(`${process.env.BASE_URL}/api/v1/store/`, {
       method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Authorization': `token ${auth.token}`
+        'Accept': 'application/json'
       },
     })
       .then(apiResponse => {       
@@ -52,23 +52,25 @@ class Stores extends Component {
     delStore(shelf.id, shelf.name)
   }
 
-
   render() {
-    const { stores } = this.props 
+    const { stores } = this.props
+    const refs = {
+      inputRef: this.storeNameRef,
+      formRef: this.storeFormRef
+    }
     const listStores = stores.map((d) => (
-      <li key={d.name}>
-        {`${d.id} - ${d.name} -> `}        
-        <button name={`remove${d.id}`} onClick={() => this.del(d)} type="button">Remove</button>
-      </li>
+      <RemovableRow key={d.id} row={d} controlFn={this.del} controlName="Remove" />
     ))
+    const ul = (
+      <ul id="storeList">
+        {listStores.length > 0 ? listStores : <li className="section">None</li>}
+        <AppendFormRow init="store name" refs={refs} text="Add Store" submit={this.add} />
+      </ul>
+    )
     return (
-      <div className="section">
+      <div className="component">
         <span>Stores:</span>
-        {listStores.length > 0 ? listStores : <li>None</li>}
-        <form ref={this.storeFormRef} className="" onSubmit={this.add}>
-          <input type="text" ref={this.storeNameRef} placeholder="name" required />
-          <button type="button" onClick={this.add}>Add A New Store</button>
-        </form>  
+        {ul}
       </div>
     )
   }
