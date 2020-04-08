@@ -2,16 +2,16 @@
 export function syncStores(stores) {
   return {
     type: 'FETCH_STORES',
-    stores
-  }
+    stores,
+  };
 }
 
 // add
 export function addStore(name) {
   return {
     type: 'ADD_STORE',
-    name
-  }
+    name,
+  };
 }
 
 // remove
@@ -20,5 +20,5 @@ export function delStore(storeId, name) {
     type: 'DEL_STORE',
     storeId,
     name,
-  }
+  };
 }

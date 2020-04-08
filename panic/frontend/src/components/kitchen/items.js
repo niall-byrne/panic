@@ -1,10 +1,14 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import StatefulItemForm from '../../connects/itemForm';
+import RemovableRow from './controls/removableRow';
 
 class Items extends Component {
   constructor(props) {
     super(props);
     this.getAllItem = this.getAllItems.bind(this);
+    this.add = this.add.bind(this);
+    this.del = this.del.bind(this);
   }
 
   componentDidMount() {
@@ -12,53 +16,67 @@ class Items extends Component {
   }
 
   getAllItems() {
-    const { save } = this.props;
+    // I need to fetch all data used here
+    // Not just relying on shared state
+    // State is not a source of truth, the API is the source of truth
+
+    const { syncItems } = this.props;
     fetch(`${process.env.BASE_URL}/api/v1/item/`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        'Accept': 'application/json'
+        Accept: 'application/json',
       },
     })
-      .then(apiResponse => {       
-        return apiResponse.json()
+      .then((apiResponse) => {
+        return apiResponse.json();
       })
-      .then(apiResponseJSON => {
-        save(apiResponseJSON);
+      .then((apiResponseJSON) => {
+        syncItems(apiResponseJSON);
       })
-      .catch(err => {
+      .catch((err) => {
         // eslint-disable-next-line no-console
         console.debug(err);
       });
   }
 
+  add(formData) {
+    const { addItem } = this.props;
+    addItem(formData);
+  }
+
+  del(item) {
+    const { delItem } = this.props;
+    delItem(item.id, item.name);
+  }
+
   render() {
-    const { items, add, del } = this.props 
+    const { state } = this.props;
+    const { items } = state;
     const listItems = items.map((d) => (
-      <li key={d.name}>
-        {`${d.id} - ${d.name} - qty: ${d.quantity} -> `}
-        <button name={`add${d.id}`} onClick={() => add(d.name)} type="button">Add</button>
-        <button name={`remove${d.id}`} onClick={() => del(d.id, d.name)} type="button">Remove</button>
-      </li>
-    ))
+      <RemovableRow
+        key={d.name}
+        row={d}
+        controlFn={this.del}
+        controlName="Remove"
+      />
+    ));
     return (
       <div className="component">
         <span>Items:</span>
         {listItems.length > 0 ? listItems : <li>None</li>}
+        <StatefulItemForm submit={this.add} />
       </div>
-    )
+    );
   }
 }
 
 Items.propTypes = {
-  token: PropTypes.string.isRequired,
-  save: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  del: PropTypes.func.isRequired,
-  items: PropTypes.arrayOf(PropTypes.object)
+  syncItems: PropTypes.func.isRequired,
+  addItem: PropTypes.func.isRequired,
+  delItem: PropTypes.func.isRequired,
+  state: PropTypes.shape({
+    items: PropTypes.arrayOf(PropTypes.object),
+  }).isRequired,
 };
-
-Items.defaultProps = {
-  items: []
-}
 
 export default Items;

@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import FacebookLogin from "react-facebook-login";
-import PropTypes from "prop-types";
-import { post } from '../../util/requests'
+import React, { Component } from 'react';
+import FacebookLogin from 'react-facebook-login';
+import PropTypes from 'prop-types';
+import { post } from '../../util/requests';
 
 class FacebookAuth extends Component {
   constructor(props) {
@@ -12,33 +12,35 @@ class FacebookAuth extends Component {
   facebookAuthenticate(authentication) {
     // eslint-disable-next-line no-console
     console.debug(authentication);
-    
+
     // Setup Request
     const { save } = this.props;
     const data = {
       access_token: authentication.accessToken,
       code: authentication.userID,
-    }
-    const path = '/api/v1/auth/social/facebook/'
-  
+    };
+    const path = '/api/v1/auth/social/facebook/';
+
     post(path, data)
-    .then(response => {
-      const [socialLoginResponse, statusCode] = response;
-      if ( statusCode!== 200 ) {        
-        throw new Error(`Login: ${statusCode} - ${JSON.stringify(socialLoginResponse)}`);
-      }
-      // eslint-disable-next-line no-console
-      console.debug(socialLoginResponse);
-      const profileObj = {
-        name: authentication.name,
-        email: authentication.email
-      };
-      save(profileObj);
-    })
-    .catch(err => {
-      // eslint-disable-next-line no-console
-      console.debug(err);
-    });
+      .then((response) => {
+        const [socialLoginResponse, statusCode] = response;
+        if (statusCode !== 200) {
+          throw new Error(
+            `Login: ${statusCode} - ${JSON.stringify(socialLoginResponse)}`,
+          );
+        }
+        // eslint-disable-next-line no-console
+        console.debug(socialLoginResponse);
+        const profileObj = {
+          name: authentication.name,
+          email: authentication.email,
+        };
+        save(profileObj);
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.debug(err);
+      });
   }
 
   render() {
@@ -58,7 +60,7 @@ class FacebookAuth extends Component {
 }
 
 FacebookAuth.propTypes = {
-  save: PropTypes.func.isRequired
+  save: PropTypes.func.isRequired,
 };
 
 export default FacebookAuth;

@@ -1,9 +1,9 @@
 {
   "parser": "babel-eslint",
   "parserOptions": {
-  "sourceType": "module",
-  "allowImportExportEverywhere": false,
-   "codeFrame": false
+    "sourceType": "module",
+    "allowImportExportEverywhere": false,
+    "codeFrame": false
 },
 "extends": ["airbnb", "prettier"],
 "env": {

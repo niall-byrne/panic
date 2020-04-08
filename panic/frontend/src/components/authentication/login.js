@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 import PropTypes from 'prop-types';
-import FacebookAuth from "./facebook";
-import GoogleAuth from "./google";
+import FacebookAuth from './facebook';
+import GoogleAuth from './google';
 
 function LoginAuth(props) {
-  const {save} = props
-  return (     
+  const { save } = props;
+  return (
     <div className="component">
       <GoogleAuth save={save} />
       <FacebookAuth save={save} />

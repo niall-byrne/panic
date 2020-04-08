@@ -1,9 +1,8 @@
 // Injects State Into the Main Component
 
 import stateWrapper from './wrapper';
-import Main from '../components/main';
+import Item from '../components/kitchen/items';
 
-import * as authActions from '../actions/auth';
 import * as itemActions from '../actions/items';
 
 function stateFilter(state) {
@@ -14,11 +13,10 @@ function stateFilter(state) {
 
 function allActions() {
   return {
-    ...authActions,
     ...itemActions,
   };
 }
 
-const StatefulMain = stateWrapper(Main, allActions(), stateFilter);
+const StatefulItem = stateWrapper(Item, allActions(), stateFilter);
 
-export default StatefulMain;
+export default StatefulItem;

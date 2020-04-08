@@ -2,16 +2,16 @@
 export function syncShelves(shelves) {
   return {
     type: 'FETCH_SHELVES',
-    shelves
-  }
+    shelves,
+  };
 }
 
 // add
 export function addShelf(name) {
   return {
     type: 'ADD_SHELF',
-    name
-  }
+    name,
+  };
 }
 
 // remove
@@ -20,5 +20,5 @@ export function delShelf(shelfId, name) {
     type: 'DEL_SHELF',
     shelfId,
     name,
-  }
+  };
 }

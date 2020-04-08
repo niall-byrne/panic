@@ -1,11 +1,11 @@
-const defaultState = { 
-  auth : {
-    isAuthenticated: false, 
-    profile: {}, 
+const defaultState = {
+  auth: {
+    isAuthenticated: false,
+    profile: {},
   },
-  shelves: [], 
-  stores: [], 
-  items: []
+  shelves: [],
+  stores: [],
+  items: [],
 };
 
 export default defaultState;

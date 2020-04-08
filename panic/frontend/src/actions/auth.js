@@ -3,8 +3,8 @@ export function login(profile, token) {
   return {
     type: 'LOGIN',
     profile,
-    token
-  }
+    token,
+  };
 }
 
 // logout
@@ -12,6 +12,6 @@ export function logout(profile, token) {
   return {
     type: 'LOGOUT',
     profile,
-    token
-  }
+    token,
+  };
 }

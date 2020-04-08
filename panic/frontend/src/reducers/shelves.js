@@ -1,23 +1,19 @@
 function filterShelves(state, name) {
-  return state.filter(shelf => shelf.name !== name)
+  return state.filter((shelf) => shelf.name !== name);
 }
 
 function shelves(state = [], action) {
+  const mockNewShelf = { id: 999 + state.length, name: action.name };
 
-  const mockNewShelf = {id: (999 + state.length), name: action.name}
-
-  switch(action.type) {
-    case "FETCH_SHELVES":      
-      return [...action.shelves]
-    case "ADD_SHELF":    
+  switch (action.type) {
+    case 'FETCH_SHELVES':
+      return [...action.shelves];
+    case 'ADD_SHELF':
       // API CALL NEEDED HERE
-      return [
-        ...state,
-        {...mockNewShelf}
-      ]
-    case "DEL_SHELF":    
+      return [...state, { ...mockNewShelf }];
+    case 'DEL_SHELF':
       // API CALL NEEDED HERE
-      return filterShelves(state, action.name)
+      return filterShelves(state, action.name);
     default:
       return state;
   }

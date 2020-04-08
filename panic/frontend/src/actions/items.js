@@ -2,16 +2,16 @@
 export function syncItems(items) {
   return {
     type: 'FETCH_ITEMS',
-    items
-  }
+    items,
+  };
 }
 
 // add
-export function addItem(name) {
+export function addItem(item) {
   return {
     type: 'ADD_ITEM',
-    name
-  }
+    item,
+  };
 }
 
 // remove
@@ -20,5 +20,5 @@ export function delItem(itemID, name) {
     type: 'DEL_ITEM',
     itemID,
     name,
-  }
+  };
 }
