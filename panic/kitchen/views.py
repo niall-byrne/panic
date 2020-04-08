@@ -3,6 +3,7 @@
 from rest_framework import mixins, viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models.item import Item
 from .models.itemlist import ItemList
@@ -15,7 +16,10 @@ from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
 from .serializers.transaction import TransactionSerializer
 
-AUTHENTICATION = (TokenAuthentication,)
+AUTHENTICATION = (
+    TokenAuthentication,
+    JWTAuthentication,
+)
 PERMISSION = (IsAuthenticated,)
 
 

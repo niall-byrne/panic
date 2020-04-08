@@ -4,6 +4,7 @@ REST_FRAMEWORK_AVAILABLE = {
     'test': {},
     'local': {
         'DEFAULT_AUTHENTICATION_CLASSES': [
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
             'rest_framework.authentication.BasicAuthentication',
             'rest_framework.authentication.TokenAuthentication',
         ],
@@ -13,7 +14,7 @@ REST_FRAMEWORK_AVAILABLE = {
     },
     'stage': {
         'DEFAULT_AUTHENTICATION_CLASSES': [
-            'rest_framework.authentication.BasicAuthentication',
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
             'rest_framework.authentication.TokenAuthentication',
         ],
         'DEFAULT_THROTTLE_CLASSES': [

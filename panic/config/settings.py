@@ -14,6 +14,7 @@ import os
 
 from .settings_database import DATABASES_AVAILABLE
 from .settings_email import *  # pylint: disable=W0614,W0401
+from .settings_jwt import SIMPLE_JWT  # pylint: disable=W0611
 from .settings_registration import *  # pylint: disable=W0614,W0401
 from .settings_restframework import REST_FRAMEWORK_AVAILABLE
 
@@ -142,8 +143,8 @@ STATIC_URL = '/static/'
 # Rest Framework Configuration
 
 REST_FRAMEWORK = REST_FRAMEWORK_AVAILABLE[ENVIRONMENT]
-
-# Registration
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'panic-auth'
 
 # Sites
 
