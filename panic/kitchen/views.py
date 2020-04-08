@@ -1,9 +1,6 @@
 """Kitchen App Views"""
 
 from rest_framework import mixins, viewsets
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models.item import Item
 from .models.itemlist import ItemList
@@ -16,12 +13,6 @@ from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
 from .serializers.transaction import TransactionSerializer
 
-AUTHENTICATION = (
-    TokenAuthentication,
-    JWTAuthentication,
-)
-PERMISSION = (IsAuthenticated,)
-
 
 class ListItemsViewSet(
     mixins.ListModelMixin,
@@ -30,8 +21,6 @@ class ListItemsViewSet(
   """List Items AutoCompletion View"""
   serializer_class = ItemListSerializer
   queryset = ItemList.objects.all()
-  authentication_classes = AUTHENTICATION
-  permission_classes = PERMISSION
 
   def get_queryset(self):
     return self.queryset.order_by("-name")
@@ -46,8 +35,6 @@ class ShelfViewSet(
   """Shelf API View"""
   serializer_class = ShelfSerializer
   queryset = Shelf.objects.all()
-  authentication_classes = AUTHENTICATION
-  permission_classes = PERMISSION
 
   def get_queryset(self):
     queryset = self.queryset.order_by("-name")
@@ -67,8 +54,6 @@ class StoreViewSet(
   """Store API View"""
   serializer_class = StoreSerializer
   queryset = Store.objects.all()
-  authentication_classes = AUTHENTICATION
-  permission_classes = PERMISSION
 
   def get_queryset(self):
     queryset = self.queryset.order_by("-name")
@@ -90,8 +75,6 @@ class ItemViewSet(
   """Item API View"""
   serializer_class = ItemSerializer
   queryset = Item.objects.all()
-  authentication_classes = AUTHENTICATION
-  permission_classes = PERMISSION
 
   def get_queryset(self):
     queryset = self.queryset.order_by("-name")
@@ -113,8 +96,6 @@ class TransactionViewSet(
   """Transaction API View"""
   serializer_class = TransactionSerializer
   queryset = Transaction.objects.all()
-  authentication_classes = AUTHENTICATION
-  permission_classes = PERMISSION
 
   def perform_create(self, serializer):
     """Create a new Transaction"""

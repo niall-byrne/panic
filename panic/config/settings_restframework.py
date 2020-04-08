@@ -4,7 +4,7 @@ REST_FRAMEWORK_AVAILABLE = {
     'test': {},
     'local': {
         'DEFAULT_AUTHENTICATION_CLASSES': [
-            'rest_framework_simplejwt.authentication.JWTAuthentication',
+            'kitchen.auth.JWTCookieAuthentication',
             'rest_framework.authentication.BasicAuthentication',
             'rest_framework.authentication.TokenAuthentication',
         ],
@@ -14,8 +14,10 @@ REST_FRAMEWORK_AVAILABLE = {
     },
     'stage': {
         'DEFAULT_AUTHENTICATION_CLASSES': [
-            'rest_framework_simplejwt.authentication.JWTAuthentication',
-            'rest_framework.authentication.TokenAuthentication',
+            'kitchen.auth.JWTCookieAuthentication',
+        ],
+        'DEFAULT_PERMISSION_CLASSES': [
+            'rest_framework.permissions.IsAuthenticated',
         ],
         'DEFAULT_THROTTLE_CLASSES': [
             'rest_framework.throttling.AnonRateThrottle',
