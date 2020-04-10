@@ -7,7 +7,7 @@ deploy_stage() {
   pushd "${PROJECT_HOME}" > /dev/null
 
     # shellcheck disable=SC1091
-    source environments/stage_maintenance.env
+    source environments/stage_secret.env
 
     pushd "${PROJECT_NAME}" >/dev/null
 
