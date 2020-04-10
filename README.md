@@ -18,6 +18,10 @@ Launch the container (instructions below) then create an admin user so you can l
 - View the OpenAPI interface: 
   - http://localhost:8080/swagger/
 
+## Environment Configuration
+
+[Environment Documentation](./environments/README.md)
+
 ## Development Dependencies
 
 You'll need to install:
