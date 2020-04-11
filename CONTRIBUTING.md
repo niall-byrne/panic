@@ -7,7 +7,7 @@ Please reach out to `niall-byrne` and I'll connect you with resources.
 
 ## API Spec
 
-https://app.swaggerhub.com/apis/niall-byrne/panic/1.0.0
+https://app.swaggerhub.com/apis/niall-byrne/panic/v1
 
 ## Branching
 
