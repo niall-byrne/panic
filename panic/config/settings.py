@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+from django.contrib.messages import constants as message_constants
+
 from .settings_database import DATABASES_AVAILABLE
 from .settings_email import *  # pylint: disable=W0614,W0401
 from .settings_jwt import SIMPLE_JWT  # pylint: disable=W0611
@@ -150,8 +152,13 @@ JWT_AUTH_COOKIE = 'panic-auth'
 
 SITE_ID = 1
 
+# Default Message Level
+
+MESSAGE_LEVEL = message_constants.DEBUG
+
 # Environment Specific Settings
 
 if ENVIRONMENT == "stage":
   # pylint: disable=W0614,W0401
   from .settings_stage import *  # nocover
+  MESSAGE_LEVEL = message_constants.WARNING
