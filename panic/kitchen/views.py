@@ -2,6 +2,7 @@
 
 from rest_framework import mixins, viewsets
 
+from .controls.JWTCookies import CSRFMixin
 from .models.item import Item
 from .models.itemlist import ItemList
 from .models.shelf import Shelf
@@ -15,6 +16,7 @@ from .serializers.transaction import TransactionSerializer
 
 
 class ListItemsViewSet(
+    CSRFMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
@@ -27,6 +29,7 @@ class ListItemsViewSet(
 
 
 class ShelfViewSet(
+    CSRFMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
@@ -41,11 +44,12 @@ class ShelfViewSet(
     return queryset.filter(user=self.request.user)
 
   def perform_create(self, serializer):
-    """Create a new Shelf+"""
+    """Create a new Shelf"""
     serializer.save(user=self.request.user)
 
 
 class StoreViewSet(
+    CSRFMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
@@ -65,6 +69,7 @@ class StoreViewSet(
 
 
 class ItemViewSet(
+    CSRFMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
@@ -90,6 +95,7 @@ class ItemViewSet(
 
 
 class TransactionViewSet(
+    CSRFMixin,
     mixins.CreateModelMixin,
     viewsets.GenericViewSet,
 ):

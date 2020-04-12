@@ -1,6 +1,8 @@
-"""Stripped down cookie authenticator."""
+"""Authentication and Mixins to Enable Cookie Based JWTs"""
 
 from django.conf import settings
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
@@ -25,3 +27,11 @@ class JWTCookieAuthentication(JWTAuthentication):
 
     validated_token = self.get_validated_token(raw_token)
     return self.get_user(validated_token), validated_token
+
+
+class CSRFMixin:
+  """Ensures the endpoint is CSRF protected."""
+
+  @method_decorator(csrf_protect)
+  def dispatch(self, *args, **kwargs):
+    return super(CSRFMixin, self).dispatch(*args, **kwargs)

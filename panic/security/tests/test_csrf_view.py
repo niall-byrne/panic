@@ -39,7 +39,6 @@ class PrivateCSRFTest(TestCase):
         email="test@niallbyrne.ca",
         password="test123",
     )
-    self.objects = list()
     self.client = APIClient(enforce_csrf_checks=True)
     self.client.force_authenticate(self.user)
 

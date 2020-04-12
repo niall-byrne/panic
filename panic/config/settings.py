@@ -154,6 +154,8 @@ JWT_AUTH_COOKIE = 'panic-auth'
 
 CSRF_USE_SESSIONS = False
 CSRF_COOKIE_HTTPONLY = False
+CSRF_TRUSTED_ORIGINS = ['localhost:3000', 'localhost:8080']
+CSRF_FAILURE_VIEW = "security.views.csrf_error"
 
 # Sites
 

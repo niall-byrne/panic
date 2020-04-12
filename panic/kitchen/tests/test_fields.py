@@ -6,7 +6,7 @@ from testproject.constants import (
     ALLOWED_ATTRIBUTES,
     ALLOWED_PROTOCOLS,
     ALLOWED_STYLES,
-    ALLOWED_TAGS
+    ALLOWED_TAGS,
 )
 
 from ..fields import BlondeCharField
@@ -14,13 +14,15 @@ from ..fields import BlondeCharField
 
 class BleachContent(models.Model):
   """ Bleach test model"""
-  content = BlondeCharField(max_length=255,
-                            allowed_attributes=ALLOWED_ATTRIBUTES,
-                            allowed_protocols=ALLOWED_PROTOCOLS,
-                            allowed_styles=ALLOWED_STYLES,
-                            allowed_tags=ALLOWED_TAGS,
-                            strip_comments=True,
-                            strip_tags=True)
+  content = BlondeCharField(
+      max_length=255,
+      allowed_attributes=ALLOWED_ATTRIBUTES,
+      allowed_protocols=ALLOWED_PROTOCOLS,
+      allowed_styles=ALLOWED_STYLES,
+      allowed_tags=ALLOWED_TAGS,
+      strip_comments=True,
+      strip_tags=True,
+  )
 
 
 class TestBleachModelField(TestCase):
@@ -43,7 +45,7 @@ class TestBleachModelField(TestCase):
         'bleach_strip': """alert("Hello World")""",
         'bleach_attrs': "<a>google.com</a>",
         'bleach_styles': "<li style=\"color: white;\">item</li>",
-        'bleach_comment': ""
+        'bleach_comment': "",
     }
 
     for key, value in test_data.items():
@@ -53,15 +55,17 @@ class TestBleachModelField(TestCase):
 
 class BleachNullableContent(models.Model):
   """ Bleach test model"""
-  content = BlondeCharField(max_length=255,
-                            allowed_attributes=ALLOWED_ATTRIBUTES,
-                            allowed_protocols=ALLOWED_PROTOCOLS,
-                            allowed_styles=ALLOWED_STYLES,
-                            allowed_tags=ALLOWED_TAGS,
-                            strip_comments=True,
-                            strip_tags=True,
-                            blank=True,
-                            null=True)
+  content = BlondeCharField(
+      max_length=255,
+      allowed_attributes=ALLOWED_ATTRIBUTES,
+      allowed_protocols=ALLOWED_PROTOCOLS,
+      allowed_styles=ALLOWED_STYLES,
+      allowed_tags=ALLOWED_TAGS,
+      strip_comments=True,
+      strip_tags=True,
+      blank=True,
+      null=True,
+  )
 
 
 class TestBleachNullableModelField(TestCase):
