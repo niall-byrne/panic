@@ -1,10 +1,10 @@
-"""Test the csrf endpoint."""
+"""Test the CSRF endpoint."""
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from django.contrib.auth import get_user_model
 
 CSRF_URL = reverse("security:csrf")
 
@@ -35,9 +35,9 @@ class PrivateCSRFTest(TestCase):
 
   def setUp(self):
     self.user = get_user_model().objects.create_user(
-      username="testuser",
-      email="test@niallbyrne.ca",
-      password="test123",
+        username="testuser",
+        email="test@niallbyrne.ca",
+        password="test123",
     )
     self.objects = list()
     self.client = APIClient(enforce_csrf_checks=True)

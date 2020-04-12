@@ -1,9 +1,10 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+"""Security App Views"""
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class CSRFview(APIView):

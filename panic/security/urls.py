@@ -1,6 +1,7 @@
-"""Url Patterns for the Social Accounts App"""
+"""Security App Urls"""
 
 from django.urls import path
+
 from .views import CSRFview
 
 app_name = "security"
