@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
+from ..fields import BlondeCharField
 
 from .shelf import Shelf
 from .store import Store
@@ -16,7 +17,7 @@ TWOPLACES = Decimal(10)**-2
 
 class Item(models.Model):
   """Items used for AutoCompletion"""
-  name = models.CharField(max_length=255)
+  name = BlondeCharField(max_length=255)
   bestbefore = models.DateField()
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
