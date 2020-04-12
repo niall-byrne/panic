@@ -50,6 +50,16 @@ class TestShelf(TestCase):
     self.assertEqual(query[0].name, test_name)
     self.assertEqual(query[0].user.id, self.user.id)
 
+  def testUnique(self):
+    test_name = "Above Sink"
+    _ = self.sample_shelf(self.user, test_name)
+
+    with self.assertRaises(ValidationError):
+      _ = self.sample_shelf(self.user, test_name)
+
+    query = Shelf.objects.filter(name=test_name)
+    assert len(query) == 1
+
   def testAddShelfInjection(self):
     test_name = "Refrigerator<script>alert('hi');</script>"
     sanitized_name = "Refrigerator&lt;script&gt;alert('hi');&lt;/script&gt;"

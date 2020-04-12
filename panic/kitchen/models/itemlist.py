@@ -7,7 +7,7 @@ from ..fields import BlondeCharField
 
 class ItemList(models.Model):
   """Items used for AutoCompletion"""
-  name = BlondeCharField(max_length=255)
+  name = BlondeCharField(max_length=255, unique=True)
 
   def __str__(self):
     return self.name

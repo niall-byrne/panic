@@ -13,6 +13,11 @@ class Shelf(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   name = BlondeCharField(max_length=255)
 
+  class Meta:
+    constraints = [
+        models.UniqueConstraint(fields=['user', 'name'], name='shelf per user')
+    ]
+
   def __str__(self):
     return self.name
 

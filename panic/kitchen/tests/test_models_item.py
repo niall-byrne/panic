@@ -85,6 +85,15 @@ class TestItem(TestCase):
     self.assertEqual(item.price, self.data['price'])
     self.assertEqual(item.quantity, self.data['quantity'])
 
+  def testUnique(self):
+    _ = self.sample_item(**self.data)
+
+    with self.assertRaises(ValidationError):
+      _ = self.sample_item(**self.data)
+
+    query = Item.objects.filter(name=self.data['name'])
+    assert len(query) == 1
+
   def testAddItemInjection(self):
     injection_attack = dict(self.data)
     injection_attack['name'] = "Canned Beans<script>alert('hi');</script>"

@@ -41,6 +41,16 @@ class TestItemList(TestCase):
     assert len(query) == 1
     self.assertEqual(query[0].name, test_name)
 
+  def testUnique(self):
+    test_name = "Custard"
+    _ = self.sample_item(test_name)
+
+    with self.assertRaises(ValidationError):
+      _ = self.sample_item(test_name)
+
+    query = ItemList.objects.filter(name=test_name)
+    assert len(query) == 1
+
   def testItemInjection(self):
     test_name = "Broccoli<script>alert('hi');</script>"
     sanitized_name = "Broccoli&lt;script&gt;alert('hi');&lt;/script&gt;"

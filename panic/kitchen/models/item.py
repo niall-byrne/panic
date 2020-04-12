@@ -17,7 +17,7 @@ TWOPLACES = Decimal(10)**-2
 
 class Item(models.Model):
   """Items used for AutoCompletion"""
-  name = BlondeCharField(max_length=255)
+  name = BlondeCharField(max_length=255, unique=True)
   bestbefore = models.DateField()
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
@@ -29,6 +29,11 @@ class Item(models.Model):
           MinValueValidator(0),
       ],
   )
+
+  class Meta:
+    constraints = [
+        models.UniqueConstraint(fields=['user', 'name'], name='item per user')
+    ]
 
   def __str__(self):
     return self.name
