@@ -85,9 +85,26 @@ class TestItem(TestCase):
     self.assertEqual(item.price, self.data['price'])
     self.assertEqual(item.quantity, self.data['quantity'])
 
-    preferred_stores = item.preferred_stores.all()
-    assert len(preferred_stores) == 1
-    self.assertEqual(preferred_stores[0].id, self.store.id)
+  def testAddItemInjection(self):
+    injection_attack = dict(self.data)
+    injection_attack['name'] = "Canned Beans<script>alert('hi');</script>"
+    sanitized_name = "Canned Beans&lt;script&gt;alert('hi');&lt;/script&gt;"
+
+    _ = self.sample_item(**injection_attack)
+
+    query = Item.objects.filter(name=injection_attack['name']).count()
+    assert query == 0
+
+    query = Item.objects.filter(name=sanitized_name)
+    assert len(query) == 1
+
+    item = query[0]
+    self.assertEqual(item.name, sanitized_name)
+    self.assertEqual(item.bestbefore, self.today)
+    self.assertEqual(item.user.id, self.user.id)
+    self.assertEqual(item.shelf.id, self.shelf.id)
+    self.assertEqual(item.price, self.data['price'])
+    self.assertEqual(item.quantity, self.data['quantity'])
 
   def testStr(self):
     item = self.sample_item(**self.data)

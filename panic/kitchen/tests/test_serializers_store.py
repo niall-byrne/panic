@@ -61,7 +61,7 @@ class TestStore(TestCase):
     self.assertEqual(serialized.data['name'], test_value)
 
   def testSerialize(self):
-    test_value = {"name": "A&P"}
+    test_value = {"name": "Super Store"}
 
     serialized = self.serializer(
         context={'request': self.request},
@@ -72,11 +72,11 @@ class TestStore(TestCase):
 
     self.assertEqual(serialized.data['name'], test_value['name'])
 
-    query = Store.objects.filter(name="A&P")
+    query = Store.objects.filter(name=test_value['name'])
 
     assert len(query) == 1
     self.assertEqual(query[0].user.id, self.user.id)
-    self.assertEqual(query[0].name, "A&P")
+    self.assertEqual(query[0].name, test_value['name'])
 
   def testFieldLengths(self):
     overloads = self.generate_overload(self.fields)

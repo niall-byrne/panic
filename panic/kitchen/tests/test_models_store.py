@@ -40,7 +40,7 @@ class TestStore(TestCase):
     for obj in self.objects:
       obj.delete()
 
-  def testAddItem(self):
+  def testAddStore(self):
     test_name = "Loblaws"
     _ = self.sample_store(self.user, test_name)
 
@@ -48,6 +48,17 @@ class TestStore(TestCase):
 
     assert len(query) == 1
     self.assertEqual(query[0].name, test_name)
+    self.assertEqual(query[0].user.id, self.user.id)
+
+  def testAddStoreInjection(self):
+    test_name = "Loblaws<script>alert('hi');</script>"
+    sanitized_name = "Loblaws&lt;script&gt;alert('hi');&lt;/script&gt;"
+    _ = self.sample_store(self.user, test_name)
+
+    query = Store.objects.filter(name=sanitized_name)
+
+    assert len(query) == 1
+    self.assertEqual(query[0].name, sanitized_name)
     self.assertEqual(query[0].user.id, self.user.id)
 
   def testStr(self):

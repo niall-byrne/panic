@@ -41,6 +41,17 @@ class TestItemList(TestCase):
     assert len(query) == 1
     self.assertEqual(query[0].name, test_name)
 
+  def testItemInjection(self):
+    test_name = "Broccoli<script>alert('hi');</script>"
+    sanitized_name = "Broccoli&lt;script&gt;alert('hi');&lt;/script&gt;"
+
+    _ = self.sample_item(test_name)
+
+    query = ItemList.objects.filter(name=sanitized_name)
+
+    assert len(query) == 1
+    self.assertEqual(query[0].name, sanitized_name)
+
   def testStr(self):
     test_name = "Beer"
     item = self.sample_item(test_name)

@@ -43,7 +43,7 @@ class PrivateCSRFTest(TestCase):
     self.client = APIClient(enforce_csrf_checks=True)
     self.client.force_authenticate(self.user)
 
-  def test_retrive_csrf(self):
+  def test_retrieve_message(self):
     resp = self.client.get(CSRF_URL)
 
     self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
