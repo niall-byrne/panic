@@ -78,6 +78,23 @@ class TestStore(TestCase):
     self.assertEqual(query[0].user.id, self.user.id)
     self.assertEqual(query[0].name, test_value['name'])
 
+  def testUniqueConstraint(self):
+    test_value = {"name": "Super Store"}
+
+    serialized = self.serializer(
+        context={'request': self.request},
+        data=test_value,
+    )
+    serialized.is_valid(raise_exception=True)
+    serialized.save()
+
+    serialized2 = self.serializer(
+        context={'request': self.request},
+        data=test_value,
+    )
+    with self.assertRaises(ValidationError):
+      serialized2.is_valid(raise_exception=True)
+
   def testFieldLengths(self):
     overloads = self.generate_overload(self.fields)
     for overload in overloads:

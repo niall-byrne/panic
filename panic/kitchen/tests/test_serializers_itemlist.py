@@ -51,6 +51,17 @@ class TestItemList(TestCase):
 
     self.assertEqual(serialized.data['name'], test_value['name'])
 
+  def testUniqueConstraint(self):
+    test_value = {"name": "Grape"}
+
+    serialized = self.serializer(data=test_value,)
+    serialized.is_valid(raise_exception=True)
+    serialized.save()
+
+    serialized2 = self.serializer(data=test_value,)
+    with self.assertRaises(ValidationError):
+      serialized2.is_valid(raise_exception=True)
+
   def testFieldLengths(self):
     overloads = self.generate_overload(self.fields)
     for overload in overloads:

@@ -1,6 +1,7 @@
 """Serializer for the Item Model"""
 
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from ..models.item import Item
 
@@ -13,3 +14,7 @@ class ItemSerializer(serializers.ModelSerializer):
     model = Item
     fields = "__all__"
     read_only_fields = ("id",)
+    validators = [
+        UniqueTogetherValidator(queryset=Item.objects.all(),
+                                fields=['user', 'name'])
+    ]

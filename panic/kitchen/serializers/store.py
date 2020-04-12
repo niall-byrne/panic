@@ -1,6 +1,7 @@
 """Serializer for the Store Model"""
 
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from ..models.store import Store
 
@@ -13,3 +14,7 @@ class StoreSerializer(serializers.ModelSerializer):
     model = Store
     fields = "__all__"
     read_only_fields = ("id",)
+    validators = [
+        UniqueTogetherValidator(queryset=Store.objects.all(),
+                                fields=['user', 'name'])
+    ]

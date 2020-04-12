@@ -126,9 +126,20 @@ class TestItem(TestCase):
     self.assertEqual(item.price, self.serializer_data['price'])
     self.assertEqual(item.quantity, self.serializer_data['quantity'])
 
-    preferred_stores = item.preferred_stores.all()
-    assert len(preferred_stores) == 1
-    self.assertEqual(preferred_stores[0].id, self.store.id)
+  def testUniqueConstraint(self):
+    serialized = self.serializer(
+        context={'request': self.request},
+        data=self.serializer_data,
+    )
+    serialized.is_valid(raise_exception=True)
+    serialized.save()
+
+    serialized2 = self.serializer(
+        context={'request': self.request},
+        data=self.serializer_data,
+    )
+    with self.assertRaises(ValidationError):
+      serialized2.is_valid(raise_exception=True)
 
   def testFieldLengths(self):
     overloads = self.generate_overload(self.fields)
