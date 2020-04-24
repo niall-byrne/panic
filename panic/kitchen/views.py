@@ -2,7 +2,7 @@
 
 from rest_framework import mixins, viewsets
 
-from .controls.JWTCookies import CSRFMixin
+from spa_security.auth_cookie import CSRFMixin
 from .models.item import Item
 from .models.itemlist import ItemList
 from .models.shelf import Shelf

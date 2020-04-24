@@ -3,7 +3,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from ..fields import BlondeCharField
+from spa_security.fields import BlondeCharField
 
 User = get_user_model()
 

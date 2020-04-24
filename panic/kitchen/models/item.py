@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from ..fields import BlondeCharField
+from spa_security.fields import BlondeCharField
 from .shelf import Shelf
 from .store import Store
 

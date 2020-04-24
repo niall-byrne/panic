@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from ..fields import BlondeCharField
+from spa_security.fields import BlondeCharField
 
 
 class ItemList(models.Model):

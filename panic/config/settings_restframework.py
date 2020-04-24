@@ -4,7 +4,7 @@ REST_FRAMEWORK_AVAILABLE = {
     'test': {},
     'local': {
         'DEFAULT_AUTHENTICATION_CLASSES': [
-            'kitchen.controls.JWTCookies.JWTCookieAuthentication',
+            'spa_security.auth_cookie.JWTCookieAuthentication',
             'rest_framework.authentication.BasicAuthentication',
             'rest_framework.authentication.TokenAuthentication',
         ],
@@ -14,7 +14,7 @@ REST_FRAMEWORK_AVAILABLE = {
     },
     'stage': {
         'DEFAULT_AUTHENTICATION_CLASSES': [
-            'kitchen.controls.JWTCookies.JWTCookieAuthentication',
+            'spa_security.auth_cookie.JWTCookieAuthentication',
         ],
         'DEFAULT_PERMISSION_CLASSES': [
             'rest_framework.permissions.IsAuthenticated',

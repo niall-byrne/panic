@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-CSRF_URL = reverse("security:csrf")
+CSRF_URL = reverse("spa_security:csrf")
 
 
 class PublicCSRFTest(TestCase):

@@ -9,7 +9,7 @@ from rest_framework.status import HTTP_200_OK
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework.views import APIView
 
-from ..controls.JWTCookies import CSRFMixin
+from ..auth_cookie import CSRFMixin
 
 
 class Placebo(APIView):

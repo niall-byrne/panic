@@ -59,7 +59,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
     'dj_rest_auth.registration',
-    'security',
+    'spa_security',
     'social_accounts',
     'frontend',
     'django_bleach',
@@ -157,7 +157,7 @@ JWT_AUTH_COOKIE = 'panic-auth'
 CSRF_USE_SESSIONS = False
 CSRF_COOKIE_HTTPONLY = False
 CSRF_TRUSTED_ORIGINS = ['localhost:3000', 'localhost:8080']
-CSRF_FAILURE_VIEW = "security.views.csrf_error"
+CSRF_FAILURE_VIEW = "spa_security.views.csrf_error"
 
 # CORS
 
