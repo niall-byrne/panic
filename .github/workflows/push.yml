@@ -35,6 +35,13 @@ jobs:
     - name: Run Unit Tests
       run: |
         docker-compose exec -T panic bash -l -c 'scripts/commander.sh test coverage'
+    - name: Report Job Status
+      if: always()
+      run: |
+        if [[ $status == "Failure" ]]; then curl -X POST -H 'Content-type: application/json' --data '{"text":"Backend build has failed!"}' "${WEBHOOK_URL}"; fi
+      env:
+        status: ${{job.status}}
+        WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   frontend:
     runs-on: ubuntu-latest
@@ -56,3 +63,11 @@ jobs:
         run: |
           cd panic/frontend/
           npm audit
+      - name: Report Job Status
+        if: always()
+        run: |
+          if [[ $status == "Failure" ]]; then curl -X POST -H 'Content-type: application/json' --data '{"text":"Frontend build has failed!"}' "${WEBHOOK_URL}"; fi
+        env:
+          status: ${{job.status}}
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
