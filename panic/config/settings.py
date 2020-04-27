@@ -61,7 +61,6 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     'spa_security',
     'social_accounts',
-    'frontend',
     'django_bleach',
 ]
 

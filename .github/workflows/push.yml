@@ -42,32 +42,3 @@ jobs:
       env:
         status: ${{job.status}}
         WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-
-  frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install Node Modules
-        run: |
-          cd panic/frontend/
-          npm install
-      - name: Test Code Can Build
-        run: |
-          cd panic/frontend/
-          npm run dev
-      - name: Run Linter
-        run: |
-          cd panic/frontend/
-          npm run lint
-      - name: Sec Test
-        run: |
-          cd panic/frontend/
-          npm audit
-      - name: Report Job Status
-        if: always()
-        run: |
-          if [[ $status == "Failure" ]]; then curl -X POST -H 'Content-type: application/json' --data '{"text":"Frontend build has failed!"}' "${WEBHOOK_URL}"; fi
-        env:
-          status: ${{job.status}}
-          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-

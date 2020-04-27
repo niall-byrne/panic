@@ -18,11 +18,15 @@ https://app.swaggerhub.com/apis/niall-byrne/panic/v1
 
 ## Authentication
 
-## Registration
+#### Registration Library
 https://django-allauth.readthedocs.io/en/latest/
 
-## Social Logins
+#### Social Logins Library
 https://github.com/jazzband/dj-rest-auth
+
+#### Security Implementation
+
+[panic/spa_security/README.md](panic/spa_security/README.md)
 
 ## Backend
 
@@ -35,14 +39,5 @@ https://github.com/jazzband/dj-rest-auth
 
 ## Frontend
 
-The frontend is embedded inside the django project, as the `frontend` app.
-
-To get started, from the top level directory of your cloned repository:
-- `cd panic/frontend`
-- `npm install` to install all node dependencies.
-- `npm run watch` to watch the files, and rebuild as needed.
-
-The frontend source folder is located at 'panic/frontend/src'.
-
-This integration is based off this article: [React Integration with Django](https://www.valentinog.com/blog/drf/)
-
+Now decoupled - repository pending.
+Please see the API Spec and the [spa_security]((panic/spa_security/README.md)) documentation for integration instructions.
