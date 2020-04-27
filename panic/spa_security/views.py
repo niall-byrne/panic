@@ -12,7 +12,7 @@ class CSRFview(APIView):
 
   @method_decorator(ensure_csrf_cookie)
   def get(self, request):
-    """Returns a 204, and set the CSRF Cookie."""
+    """Returns a 204, and sets the CSRF Cookie."""
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -28,9 +28,7 @@ class CSRFview(APIView):
     'TRACE',
 ])
 def csrf_error(request, reason=""):  # pylint: disable=W0613
-  """Return a 403, and tell the user to retry.
-  Don't let them give up too easily.  And be kind.
-  """
+  """Returns a 403 with a custom error message."""
   return Response(
       {"error": "Refresh csrf and try again."},
       status=status.HTTP_403_FORBIDDEN,

@@ -30,7 +30,7 @@ class JWTCookieAuthentication(JWTAuthentication):
 
 
 class CSRFMixin:
-  """Ensures the endpoint is CSRF protected."""
+  """Ensures the endpoint performs CSRF validation, or returns an error."""
 
   @method_decorator(csrf_protect)
   def dispatch(self, *args, **kwargs):

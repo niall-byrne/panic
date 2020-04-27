@@ -156,7 +156,7 @@ JWT_AUTH_COOKIE = 'panic-auth'
 
 CSRF_USE_SESSIONS = False
 CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = ['localhost:3000', 'localhost:8080']
+CSRF_TRUSTED_ORIGINS = ['localhost']
 CSRF_FAILURE_VIEW = "spa_security.views.csrf_error"
 
 # CORS

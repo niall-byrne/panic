@@ -5,4 +5,4 @@ from django_bleach.models import BleachField
 
 
 class BlondeCharField(models.CharField, BleachField):
-  pass
+  """A django_bleach derived char field, with appropriate protection."""
