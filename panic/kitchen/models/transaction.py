@@ -48,7 +48,7 @@ class Transaction(models.Model):
       }])
     super().clean()
 
-  # pylint: disable=W0221
+  # pylint: disable=W0222
   def save(self, *args, **kwargs):
     with transaction.atomic():
       self.full_clean()

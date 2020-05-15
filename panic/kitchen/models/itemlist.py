@@ -10,9 +10,9 @@ class ItemList(models.Model):
   name = BlondeCharField(max_length=255, unique=True)
 
   def __str__(self):
-    return self.name
+    return str(self.name)
 
-  # pylint: disable=W0221
+  # pylint: disable=W0222
   def save(self, *args, **kwargs):
     self.full_clean()
     return super(ItemList, self).save(*args, **kwargs)
