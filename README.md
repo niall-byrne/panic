@@ -2,7 +2,7 @@
 
 ## Don't Panic!
 
-A pandemic grocery management app.
+A kitchen inventory management app.
 
 [![panic-automation](https://github.com/niall-byrne/panic/workflows/panic%20Automation/badge.svg)](https://github.com/niall-byrne/panic/actions)
 
