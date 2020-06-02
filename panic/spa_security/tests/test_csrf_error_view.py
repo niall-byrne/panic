@@ -1,5 +1,6 @@
 """Test the CSRF endpoint."""
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework import status
@@ -22,13 +23,13 @@ class PublicCSRFErrorTest(TestCase):
     resp = self.csrf_error(self.get)
 
     self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
-    self.assertNotIn('csrftoken', resp.cookies)
+    self.assertNotIn(settings.CSRF_COOKIE_NAME, resp.cookies)
 
   def test_create_login_required(self):
     resp = self.csrf_error(self.post)
 
     self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
-    self.assertNotIn('csrftoken', resp.cookies)
+    self.assertNotIn(settings.CSRF_COOKIE_NAME, resp.cookies)
 
 
 class PrivateCSRFErrorTest(TestCase):
@@ -50,13 +51,13 @@ class PrivateCSRFErrorTest(TestCase):
   def test_trigger_message_on_post(self):
     resp = self.csrf_error(self.post)
     self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
-    self.assertNotIn('csrftoken', resp.cookies)
+    self.assertNotIn(settings.CSRF_COOKIE_NAME, resp.cookies)
     self.assertEqual(resp.data, {'error': 'Refresh csrf and try again.'})
 
   def test_trigger_message_on_get(self):
     resp = self.csrf_error(self.get)
     self.assertEqual(resp.status_code, status.HTTP_403_FORBIDDEN)
-    self.assertNotIn('csrftoken', resp.cookies)
+    self.assertNotIn(settings.CSRF_COOKIE_NAME, resp.cookies)
     self.assertEqual(resp.data, {'error': 'Refresh csrf and try again.'})
 
   def tearDown(self):

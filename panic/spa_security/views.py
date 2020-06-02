@@ -1,7 +1,6 @@
 """Security App Views"""
 
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.middleware.csrf import get_token
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -10,10 +9,10 @@ from rest_framework.views import APIView
 
 class CSRFview(APIView):
 
-  @method_decorator(ensure_csrf_cookie)
   def get(self, request):
-    """Returns a 204, and sets the CSRF Cookie."""
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    """Returns a 200, and containing CSRF Token."""
+    token = get_token(request)
+    return Response({"token": token}, status=status.HTTP_200_OK)
 
 
 @api_view([
