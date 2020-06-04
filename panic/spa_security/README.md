@@ -30,6 +30,9 @@ This can surely work with a broader range of versions, YMMV.  Test!
 4. **CSRF Token Generation View:**
     - presents an authenticated view which returns a CSRF token as a cookie
     - `spa-security.views.CSRFview`
+5. **Compliant SameSite Cookies:**
+    - Correctly sets the SameSite "None" option on reponses
+    - the "Secure" cookie flag can be toggled on and off via the setting "REST_COOKIES_SECURE"
 
 ## Configuration / Example Usage
 
@@ -124,6 +127,22 @@ urlpatterns = [
     "...",
 ]
 ```
+
+### 5. SameSite Cookies
+
+This existing Django setting for CSRF, will now render correctly on reponses:
+```python
+CSRF_COOKIE_SAMESITE = None
+```
+
+Toggle the secure option on both the JWT Authentication Cookie and the CSRF Cookie by using this Django setting:
+```python
+REST_COOKIES_SECURE = True
+JWT_AUTH_COOKIE_SAMESITE = None  # (None, "Lax", "Strict")
+```
+
+The JWT Authentication Cookies are SameSite 'None' by default.
+
 
 Authenticated requests to this endpoint will be sent a cookie containing the CSRF value.
 Ensure you are configuring the cookie [name](https://docs.djangoproject.com/en/3.0/ref/settings/#std:setting-CSRF_COOKIE_NAME) you really want.

@@ -65,6 +65,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'spa_security.auth_cookie.SameSiteMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -149,7 +150,8 @@ STATIC_URL = '/static/'
 
 REST_FRAMEWORK = REST_FRAMEWORK_AVAILABLE[ENVIRONMENT]
 REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'panic-auth'
+JWT_AUTH_COOKIE = 'panic_auth'
+JWT_AUTH_COOKIE_SAMESITE = None
 
 # CSRF
 
@@ -160,6 +162,8 @@ CSRF_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = ['localhost', '127.0.0.1']
 CSRF_FAILURE_VIEW = "spa_security.views.csrf_error"
 CSRF_COOKIE_NAME = "panic_csrf"
+
+REST_COOKIES_SECURE = False  # Development
 
 # CORS
 
