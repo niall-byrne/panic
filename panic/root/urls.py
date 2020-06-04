@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from allauth.socialaccount.views import connections, signup
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib import admin
@@ -29,6 +30,10 @@ urlpatterns = [
          include('dj_rest_auth.registration.urls')),
     path("api/v1/auth/", include("spa_security.urls")),
     path("api/v1/auth/social/", include("social_accounts.urls")),
+    path("api/v1/auth/social/signup/", signup, name='socialaccount_signup'),
+    path("api/v1/auth/social/connect/",
+         connections,
+         name='socialaccount_connections'),
 ]
 
 if settings.ENVIRONMENT in ['local', 'stage']:
