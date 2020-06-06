@@ -66,7 +66,7 @@ class PrivateItemTest(TestCase):
         name="Pantry",
     )
     cls.item = Item.objects.create(name="Canned Beans",
-                                   bestbefore=cls.today,
+                                   shelf_life=99,
                                    user=cls.user,
                                    shelf=cls.shelf,
                                    price=2.00,

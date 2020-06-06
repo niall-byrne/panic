@@ -3,7 +3,7 @@
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from spa_security.fields import BlondeCharField
@@ -13,12 +13,12 @@ from .store import Store
 User = get_user_model()
 
 TWOPLACES = Decimal(10)**-2
+EXPIRARY_MAXIMUM = 365 * 3
 
 
 class Item(models.Model):
   """Items used for AutoCompletion"""
   name = BlondeCharField(max_length=255, unique=True)
-  bestbefore = models.DateField()
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
   preferred_stores = models.ManyToManyField(Store)
@@ -27,6 +27,13 @@ class Item(models.Model):
       default=0,
       validators=[
           MinValueValidator(0),
+      ],
+  )
+  shelf_life = models.IntegerField(
+      default=7,
+      validators=[
+          MinValueValidator(1),
+          MaxValueValidator(EXPIRARY_MAXIMUM),
       ],
   )
 

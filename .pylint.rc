@@ -12,7 +12,7 @@ profile=no
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
-ignore=manage.py,node_modules,static
+ignore=manage.py,node_modules,static,migrations
 ignore-patterns=.*_pb2.py,.*.sh
 
 # Pickle collected data for later comparisons.

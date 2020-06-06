@@ -1,7 +1,5 @@
 """Test the Item Serializer."""
 
-from datetime import date
-
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.serializers import ValidationError
@@ -21,14 +19,14 @@ class MockRequest:
 class TestItem(TestCase):
 
   # pylint: disable=R0913
-  def sample_item(self, user, name, bestbefore, shelf, preferred_stores, price,
+  def sample_item(self, user, name, shelf_life, shelf, preferred_stores, price,
                   quantity):
     """Create a test item."""
     if user is None:
       user = self.user
     item = Item.objects.create(name=name,
                                user=user,
-                               bestbefore=bestbefore,
+                               shelf_life=shelf_life,
                                shelf=shelf,
                                price=price,
                                quantity=quantity)
@@ -49,7 +47,6 @@ class TestItem(TestCase):
   @classmethod
   def setUpTestData(cls):
     cls.serializer = ItemSerializer
-    cls.today = date.today()
     cls.fields = {"name": 255}
     cls.user = get_user_model().objects.create_user(
         username="testuser",
@@ -66,7 +63,7 @@ class TestItem(TestCase):
     )
     cls.data = {
         'name': "Canned Beans",
-        'bestbefore': cls.today,
+        'shelf_life': 99,
         'user': cls.user,
         'shelf': cls.shelf,
         'preferred_stores': cls.store,
@@ -75,7 +72,7 @@ class TestItem(TestCase):
     }
     cls.serializer_data = {
         'name': "Canned Beans",
-        'bestbefore': cls.today,
+        'shelf_life': 109,
         'shelf': cls.shelf.id,
         'preferred_stores': [cls.store.id],
         'price': 2.00,
@@ -98,7 +95,7 @@ class TestItem(TestCase):
     price = '2.00'
 
     self.assertEqual(deserialized['name'], self.data['name'])
-    self.assertEqual(deserialized['bestbefore'], str(self.today))
+    self.assertEqual(deserialized['shelf_life'], self.data['shelf_life'])
     self.assertEqual(deserialized['shelf'], self.shelf.id)
     self.assertEqual(deserialized['price'], price)
     self.assertEqual(deserialized['quantity'], self.data['quantity'])
@@ -120,7 +117,7 @@ class TestItem(TestCase):
     item = query[0]
 
     self.assertEqual(item.name, self.serializer_data['name'])
-    self.assertEqual(item.bestbefore, self.today)
+    self.assertEqual(item.shelf_life, self.serializer_data['shelf_life'])
     self.assertEqual(item.user.id, self.user.id)
     self.assertEqual(item.shelf.id, self.shelf.id)
     self.assertEqual(item.price, self.serializer_data['price'])

@@ -1,7 +1,5 @@
 """Test the Item API."""
 
-from datetime import date
-
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -45,14 +43,14 @@ class PrivateItemTest(TestCase):
   """Test the authorized Item API"""
 
   # pylint: disable=R0913
-  def sample_item(self, user, name, bestbefore, shelf, preferred_stores, price,
+  def sample_item(self, user, name, shelf_life, shelf, preferred_stores, price,
                   quantity):
     """Create a test item."""
     if user is None:
       user = self.user
     item = Item.objects.create(name=name,
                                user=user,
-                               bestbefore=bestbefore,
+                               shelf_life=shelf_life,
                                shelf=shelf,
                                price=price,
                                quantity=quantity)
@@ -64,7 +62,6 @@ class PrivateItemTest(TestCase):
   @classmethod
   def setUpTestData(cls):
     cls.serializer = ItemSerializer
-    cls.today = date.today()
     cls.fields = {"name": 255}
     cls.user = get_user_model().objects.create_user(
         username="testuser",
@@ -85,7 +82,7 @@ class PrivateItemTest(TestCase):
     )
     cls.data1 = {
         'name': "Canned Beans",
-        'bestbefore': cls.today,
+        'shelf_life': 99,
         'user': cls.user,
         'shelf': cls.shelf,
         'preferred_stores': cls.store,
@@ -94,7 +91,7 @@ class PrivateItemTest(TestCase):
     }
     cls.data2 = {
         'name': "Lasagna Noodles",
-        'bestbefore': cls.today,
+        'shelf_life': 104,
         'user': cls.user,
         'shelf': cls.shelf,
         'preferred_stores': cls.store,
@@ -103,7 +100,7 @@ class PrivateItemTest(TestCase):
     }
     cls.serializer_data = {
         'name': "Microwave Dinner",
-        'bestbefore': cls.today,
+        'shelf_life': 109,
         'user': cls.user.id,
         'shelf': cls.fridge.id,
         'preferred_stores': [cls.store.id],
@@ -161,7 +158,7 @@ class PrivateItemTest(TestCase):
     item = items[0]
 
     self.assertEqual(item.name, self.serializer_data['name'])
-    self.assertEqual(item.bestbefore, self.today)
+    self.assertEqual(item.shelf_life, self.serializer_data['shelf_life'])
     self.assertEqual(item.user.id, self.user.id)
     self.assertEqual(item.shelf.id, self.fridge.id)
     self.assertEqual(item.price, self.serializer_data['price'])
@@ -188,7 +185,7 @@ class PrivateItemTest(TestCase):
 
     # Check All Fields
     self.assertEqual(item.name, self.serializer_data['name'])
-    self.assertEqual(item.bestbefore, self.today)
+    self.assertEqual(item.shelf_life, self.serializer_data['shelf_life'])
     self.assertEqual(item.user.id, self.user.id)
     self.assertEqual(item.shelf.id, self.fridge.id)
     self.assertEqual(item.price, self.serializer_data['price'])
