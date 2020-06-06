@@ -1,8 +1,10 @@
 """Kitchen App Views"""
 
+from django_filters import rest_framework as filters
 from rest_framework import mixins, viewsets
 
 from spa_security.auth_cookie import CSRFMixin
+from .filters import ItemFilter
 from .models.item import Item
 from .models.itemlist import ItemList
 from .models.shelf import Shelf
@@ -86,6 +88,8 @@ class ItemViewSet(
   """Item API View"""
   serializer_class = ItemSerializer
   queryset = Item.objects.all()
+  filter_backends = (filters.DjangoFilterBackend,)
+  filterset_class = ItemFilter
 
   @openapi_ready
   def get_queryset(self):

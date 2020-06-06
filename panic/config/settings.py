@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'dj_rest_auth',
     'corsheaders',
     'kitchen',
@@ -146,9 +147,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Session
+
+SESSION_COOKIE_SAMESITE = "Strict"
+
 # Rest Framework Configuration
 
 REST_FRAMEWORK = REST_FRAMEWORK_AVAILABLE[ENVIRONMENT]
+REST_COOKIES_SECURE = False  # Development
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'panic_auth'
 JWT_AUTH_COOKIE_SAMESITE = None
@@ -163,8 +169,6 @@ CSRF_TRUSTED_ORIGINS = ['localhost', '127.0.0.1']
 CSRF_FAILURE_VIEW = "spa_security.views.csrf_error"
 CSRF_COOKIE_NAME = "panic_csrf"
 
-REST_COOKIES_SECURE = False  # Development
-
 # CORS
 
 CORS_ALLOW_CREDENTIALS = True
@@ -176,7 +180,7 @@ SITE_ID = 1
 
 # Default Message Level
 
-MESSAGE_LEVEL = message_constants.DEBUG
+MESSAGE_LEVEL = message_constants.WARNING
 
 # Environment Specific Settings
 
