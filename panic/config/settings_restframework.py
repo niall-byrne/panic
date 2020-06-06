@@ -10,7 +10,9 @@ REST_FRAMEWORK_AVAILABLE = {
         ],
         'DEFAULT_PERMISSION_CLASSES': [
             'rest_framework.permissions.IsAuthenticated',
-        ]
+        ],
+        'DEFAULT_FILTER_BACKENDS':
+            ('django_filters.rest_framework.DjangoFilterBackend',),
     },
     'stage': {
         'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -26,6 +28,8 @@ REST_FRAMEWORK_AVAILABLE = {
         'DEFAULT_THROTTLE_RATES': {
             'anon': '5/minute',
             'user': '15/minute'
-        }
+        },
+        'DEFAULT_FILTER_BACKENDS':
+            ('django_filters.rest_framework.DjangoFilterBackend',),
     },
 }

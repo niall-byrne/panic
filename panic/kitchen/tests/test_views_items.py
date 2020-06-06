@@ -3,6 +3,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -12,6 +13,11 @@ from ..models.store import Store
 from ..serializers.item import ItemSerializer
 
 ITEM_URL = reverse("kitchen:item-list")
+
+
+def item_url_with_params(query_kwargs):
+  base_url = reverse("kitchen:item-list")
+  return '{}?{}'.format(base_url, urlencode(query_kwargs))
 
 
 class PublicItemTest(TestCase):
@@ -68,9 +74,13 @@ class PrivateItemTest(TestCase):
         email="test@niallbyrne.ca",
         password="test123",
     )
-    cls.store = Store.objects.create(
+    cls.store1 = Store.objects.create(
         user=cls.user,
         name="No Frills",
+    )
+    cls.store2 = Store.objects.create(
+        user=cls.user,
+        name="Food Basics",
     )
     cls.shelf = Shelf.objects.create(
         user=cls.user,
@@ -85,7 +95,7 @@ class PrivateItemTest(TestCase):
         'shelf_life': 99,
         'user': cls.user,
         'shelf': cls.shelf,
-        'preferred_stores': cls.store,
+        'preferred_stores': cls.store1,
         'price': 2.00,
         'quantity': 3
     }
@@ -94,7 +104,7 @@ class PrivateItemTest(TestCase):
         'shelf_life': 104,
         'user': cls.user,
         'shelf': cls.shelf,
-        'preferred_stores': cls.store,
+        'preferred_stores': cls.store2,
         'price': 2.00,
         'quantity': 3
     }
@@ -103,7 +113,7 @@ class PrivateItemTest(TestCase):
         'shelf_life': 109,
         'user': cls.user.id,
         'shelf': cls.fridge.id,
-        'preferred_stores': [cls.store.id],
+        'preferred_stores': [cls.store1.id],
         'price': 2.00,
         'quantity': 3
     }
@@ -128,6 +138,35 @@ class PrivateItemTest(TestCase):
     serializer = ItemSerializer(items, many=True)
 
     assert len(items) == 2
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+    self.assertEqual(res.data, serializer.data)
+
+  def test_retrieve_items_by_store(self):
+    """Test retrieving a list of items, filtered by store."""
+    self.sample_item(**self.data1)
+    self.sample_item(**self.data2)
+
+    url = item_url_with_params({"preferred_stores": self.store1.id})
+    res = self.client.get(url)
+
+    items = Item.objects.all().order_by("-name")
+    serializer = ItemSerializer(
+        items.filter(preferred_stores__in=[self.store1.id]), many=True)
+
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+    self.assertEqual(res.data, serializer.data)
+
+  def test_retrieve_items_by_shelf(self):
+    """Test retrieving a list of items, filtered by shelf."""
+    self.sample_item(**self.data1)
+    self.sample_item(**self.data2)
+
+    url = item_url_with_params({"shelf": self.shelf.id})
+    res = self.client.get(url)
+
+    items = Item.objects.all().order_by("-name")
+    serializer = ItemSerializer(items.filter(shelf=self.shelf.id), many=True)
+
     self.assertEqual(res.status_code, status.HTTP_200_OK)
     self.assertEqual(res.data, serializer.data)
 
@@ -166,7 +205,7 @@ class PrivateItemTest(TestCase):
 
     preferred_stores = item.preferred_stores.all()
     assert len(preferred_stores) == 1
-    self.assertEqual(preferred_stores[0].id, self.store.id)
+    self.assertEqual(preferred_stores[0].id, self.store1.id)
 
   def test_update_item(self):
     """Test updating a item."""
@@ -193,7 +232,7 @@ class PrivateItemTest(TestCase):
 
     preferred_stores = item.preferred_stores.all()
     assert len(preferred_stores) == 1
-    self.assertEqual(preferred_stores[0].id, self.store.id)
+    self.assertEqual(preferred_stores[0].id, self.store1.id)
 
     # Update Object and Confirm It is Updated
     original.refresh_from_db()
