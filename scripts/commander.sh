@@ -17,9 +17,6 @@ source "$( dirname "${BASH_SOURCE[0]}" )/common/documentation.sh"
 
 # Add Additional Functionality Via Imports Here
 
-# shellcheck source=scripts/common/django.sh
-source "$( dirname "${BASH_SOURCE[0]}" )/common/django.sh"
-
 # shellcheck source=scripts/common/stage.sh
 source "$( dirname "${BASH_SOURCE[0]}" )/common/stage.sh"
 

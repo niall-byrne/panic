@@ -9,7 +9,7 @@ lint() {
   set -e
 
   pushd "${PROJECT_HOME}"  > /dev/null
-    yapf -i --recursive --exclude 'frontend' --exclude '**/*_pb2.py' --style='{based_on_style: google, INDENT_WIDTH: 2, ALIGN_CLOSING_BRACKET_WITH_VISUAL_INDENT: false, DEDENT_CLOSING_BRACKETS: false}' "${PROJECT_NAME}/"
+    yapf -i --recursive --exclude '**/*_pb2.py' --style='{based_on_style: google, INDENT_WIDTH: 2, ALIGN_CLOSING_BRACKET_WITH_VISUAL_INDENT: false, DEDENT_CLOSING_BRACKETS: false}' "${PROJECT_NAME}/"
     isort -y
   popd  > /dev/null
 
@@ -23,9 +23,7 @@ lint_check() {
 
   pushd "${PROJECT_HOME}"  > /dev/null
     isort -c
-    pushd "${PROJECT_NAME}" > /dev/null
-      pylint --rcfile ../.pylint.rc -j 2 "${PROJECT_NAME}"
-    popd > /dev/null
+    pytest --pylint --pylint-rcfile=.pylint.rc --pylint-jobs=2 "${PROJECT_NAME}"
     shellcheck -x scripts/*.sh
     shellcheck -x scripts/common/*.sh
   popd  > /dev/null
