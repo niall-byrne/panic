@@ -13,6 +13,7 @@ from .serializers.itemlist import ItemListSerializer
 from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
 from .serializers.transaction import TransactionSerializer
+from .swagger import openapi_ready
 
 
 class ListItemsViewSet(
@@ -24,6 +25,7 @@ class ListItemsViewSet(
   serializer_class = ItemListSerializer
   queryset = ItemList.objects.all()
 
+  @openapi_ready
   def get_queryset(self):
     return self.queryset.order_by("-name")
 
@@ -39,10 +41,12 @@ class ShelfViewSet(
   serializer_class = ShelfSerializer
   queryset = Shelf.objects.all()
 
+  @openapi_ready
   def get_queryset(self):
     queryset = self.queryset.order_by("-name")
     return queryset.filter(user=self.request.user)
 
+  @openapi_ready
   def perform_create(self, serializer):
     """Create a new Shelf"""
     serializer.save(user=self.request.user)
@@ -59,10 +63,12 @@ class StoreViewSet(
   serializer_class = StoreSerializer
   queryset = Store.objects.all()
 
+  @openapi_ready
   def get_queryset(self):
     queryset = self.queryset.order_by("-name")
     return queryset.filter(user=self.request.user)
 
+  @openapi_ready
   def perform_create(self, serializer):
     """Create a new Store"""
     serializer.save(user=self.request.user)
@@ -81,14 +87,17 @@ class ItemViewSet(
   serializer_class = ItemSerializer
   queryset = Item.objects.all()
 
+  @openapi_ready
   def get_queryset(self):
     queryset = self.queryset.order_by("-name")
     return queryset.filter(user=self.request.user)
 
+  @openapi_ready
   def perform_create(self, serializer):
     """Create a new Item"""
     serializer.save(user=self.request.user)
 
+  @openapi_ready
   def perform_update(self, serializer):
     """Update a Item"""
     serializer.save(user=self.request.user)
@@ -103,6 +112,7 @@ class TransactionViewSet(
   serializer_class = TransactionSerializer
   queryset = Transaction.objects.all()
 
+  @openapi_ready
   def perform_create(self, serializer):
     """Create a new Transaction"""
     serializer.save(user=self.request.user)
