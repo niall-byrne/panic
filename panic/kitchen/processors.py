@@ -10,7 +10,7 @@ class TransactionProcessor:
 
   def __init__(self, instance):
     self.quantity = instance.item.quantity
-    self.oldest = instance.date
+    self.oldest = now()
     self.expired = 0
     self.next_to_expire = 0
     self.instance = instance

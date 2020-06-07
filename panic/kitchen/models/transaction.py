@@ -60,11 +60,13 @@ class Transaction(models.Model):
         if remaining < 1:
           break
         processor.quantity = remaining
+      if processor.next_to_expire < 1:
+        processor.oldest = now()
 
+    self.item.next_expiry_quantity = processor.next_to_expire
     self.item.next_expiry_date = (processor.oldest +
                                   timedelta(days=self.item.shelf_life))
-    self.item.expired = processor.expired
-    self.item.next_expiry_quantity = processor.next_to_expire
+    self.item.expired = max(processor.expired, 0)
 
   def update_related_item_quantity(self):
     self.item.quantity = self.item.quantity + self.quantity
