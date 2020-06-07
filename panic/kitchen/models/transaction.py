@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.utils.timezone import now
 
+from ..processors import TransactionProcessor
 from .item import Item
 
 User = get_user_model()
@@ -44,42 +45,26 @@ class Transaction(models.Model):
       )
     return "Invalid Transaction"
 
-  def is_expired(self, selection):
-    if now().date() >= (selection.date + timedelta(days=self.item.shelf_life)):
-      return True
-    return False
-
   def update_related_item_expiry(self):
     """Calculates the expiry of the oldest purchase in your inventory of a
     specific item.  Creates a count of expired items, and marks a quantity of
     items as "next to expire".
     """
-    quantity = self.item.quantity
-    oldest = self.date
-    expired = 0
-    next_to_expire = 0
+    processor = TransactionProcessor(self)
 
-    if quantity > 1:
+    if processor.quantity > 1:
       query_set = self.__class__.objects.filter(
           item=self.item).order_by("-date")
       for record in query_set:
-        remaining = quantity
-        if record.quantity > 0:
-          oldest = record.date
-          remaining = quantity - record.quantity
-          if self.is_expired(record):
-            expired = expired + record.quantity
-          else:
-            next_to_expire = min(remaining + record.quantity, record.quantity)
-        else:
-          expired = expired + record.quantity
+        remaining = processor.reconcile_transaction(record)
         if remaining < 1:
           break
-        quantity = remaining
+        processor.quantity = remaining
 
-    self.item.next_expiry_date = (oldest + timedelta(days=self.item.shelf_life))
-    self.item.expired = expired
-    self.item.next_expiry_quantity = next_to_expire
+    self.item.next_expiry_date = (processor.oldest +
+                                  timedelta(days=self.item.shelf_life))
+    self.item.expired = processor.expired
+    self.item.next_expiry_quantity = processor.next_to_expire
 
   def update_related_item_quantity(self):
     self.item.quantity = self.item.quantity + self.quantity
