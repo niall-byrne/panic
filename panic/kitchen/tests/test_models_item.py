@@ -4,7 +4,13 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from ..models.item import Item
+from ..models.item import (
+    MAXIMUM_QUANTITY,
+    MAXIMUM_SHELF_LIFE,
+    MINIMUM_QUANTITY,
+    MINIMUM_SHELF_LIFE,
+    Item,
+)
 from ..models.shelf import Shelf
 from ..models.store import Store
 
@@ -125,17 +131,55 @@ class TestItem(TestCase):
   def testNegativeQuantity(self):
     item = self.sample_item(**self.data)
     item.quantity = -5
+    assert item.quantity < MINIMUM_QUANTITY
+    with self.assertRaises(ValidationError):
+      item.save()
+
+  def testEnormousQuantity(self):
+    item = self.sample_item(**self.data)
+    item.quantity = 9000000
+    assert item.quantity > MAXIMUM_QUANTITY
     with self.assertRaises(ValidationError):
       item.save()
 
   def testShelfLifeRestrictionsLow(self):
     item = self.sample_item(**self.data)
     item.shelf_life = 0
+    assert item.shelf_life < MINIMUM_SHELF_LIFE
     with self.assertRaises(ValidationError):
       item.save()
 
   def testShelfLifeRestrictionsHigh(self):
     item = self.sample_item(**self.data)
     item.shelf_life = 9000
+    assert item.shelf_life > MAXIMUM_SHELF_LIFE
+    with self.assertRaises(ValidationError):
+      item.save()
+
+  def test_next_expiry_quantity_low(self):
+    item = self.sample_item(**self.data)
+    item.next_expiry_quantity = -5
+    assert item.next_expiry_quantity < MINIMUM_QUANTITY
+    with self.assertRaises(ValidationError):
+      item.save()
+
+  def test_next_expiry_quantity_high(self):
+    item = self.sample_item(**self.data)
+    item.next_expiry_quantity = 9000000
+    assert item.next_expiry_quantity > MAXIMUM_QUANTITY
+    with self.assertRaises(ValidationError):
+      item.save()
+
+  def test_expired_low(self):
+    item = self.sample_item(**self.data)
+    item.expired = -5
+    assert item.expired < MINIMUM_QUANTITY
+    with self.assertRaises(ValidationError):
+      item.save()
+
+  def test_expired_high(self):
+    item = self.sample_item(**self.data)
+    item.expired = 9000000
+    assert item.expired > MAXIMUM_QUANTITY
     with self.assertRaises(ValidationError):
       item.save()

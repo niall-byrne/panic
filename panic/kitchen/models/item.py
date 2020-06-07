@@ -1,10 +1,12 @@
-"""Simple ItemList Model for AutoCompletion"""
+"""Items used for Kitchen Inventory"""
 
+from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils.timezone import now
 
 from spa_security.fields import BlondeCharField
 from .shelf import Shelf
@@ -13,11 +15,19 @@ from .store import Store
 User = get_user_model()
 
 TWOPLACES = Decimal(10)**-2
-EXPIRARY_MAXIMUM = 365 * 3
+MAXIMUM_QUANTITY = 10000
+MINIMUM_QUANTITY = 0
+MINIMUM_SHELF_LIFE = 1
+MAXIMUM_SHELF_LIFE = 365 * 3
+DEFAULT_SHELF_LIFE = 7
+
+
+def default_expiry():
+  return now() + timedelta(days=DEFAULT_SHELF_LIFE)
 
 
 class Item(models.Model):
-  """Items used for AutoCompletion"""
+  """Items used for Kitchen Inventory"""
   name = BlondeCharField(max_length=255, unique=True)
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
@@ -26,14 +36,32 @@ class Item(models.Model):
   quantity = models.IntegerField(
       default=0,
       validators=[
-          MinValueValidator(0),
+          MinValueValidator(MINIMUM_QUANTITY),
+          MaxValueValidator(MAXIMUM_QUANTITY),
       ],
   )
   shelf_life = models.IntegerField(
-      default=7,
+      default=DEFAULT_SHELF_LIFE,
       validators=[
-          MinValueValidator(1),
-          MaxValueValidator(EXPIRARY_MAXIMUM),
+          MinValueValidator(MINIMUM_SHELF_LIFE),
+          MaxValueValidator(MAXIMUM_SHELF_LIFE),
+      ],
+  )
+
+  # These 3 fields are recalculated on each transaction
+  next_expiry_date = models.DateField(default=default_expiry)
+  next_expiry_quantity = models.IntegerField(
+      default=0,
+      validators=[
+          MinValueValidator(MINIMUM_QUANTITY),
+          MaxValueValidator(MAXIMUM_QUANTITY)
+      ],
+  )
+  expired = models.IntegerField(
+      default=0,
+      validators=[
+          MinValueValidator(MINIMUM_QUANTITY),
+          MaxValueValidator(MAXIMUM_QUANTITY)
       ],
   )
 

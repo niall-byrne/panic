@@ -13,7 +13,12 @@ class ItemSerializer(serializers.ModelSerializer):
   class Meta:
     model = Item
     fields = "__all__"
-    read_only_fields = ("id",)
+    read_only_fields = (
+        "id",
+        "next_expiry_date",
+        "next_expiry_quantity",
+        "expired",
+    )
     validators = [
         UniqueTogetherValidator(queryset=Item.objects.all(),
                                 fields=['user', 'name'])
