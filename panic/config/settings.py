@@ -182,6 +182,10 @@ SITE_ID = 1
 
 MESSAGE_LEVEL = message_constants.WARNING
 
+# Bleach
+
+BLEACH_RESTORE_LIST = {"&amp;": "&"}
+
 # Environment Specific Settings
 
 if ENVIRONMENT == "stage":

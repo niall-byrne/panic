@@ -21,7 +21,8 @@ This can surely work with a broader range of versions, YMMV.  Test!
 1. **Bleached Char Fields for Models:**
     - protects char fields from javascript injection, has standard char field properties and validators
     - `spa_security.fields.BlondeCharField`
-2. **DRF Authentication via JWT over HTTP Cookies:**
+    - provides BLEACH_RESTORE_LIST, as a dictionary of key, value pairs that allow restoring specify bleached values
+2. **DRF Authentication via JWT over HTTP Cookies:**s
     - allows use of http only cookies, which cannot be accessed client side
     - `spa-security.auth_cookie.JWTCookieAuthentication`
 3. **View CSRF Cookie Protection:**
