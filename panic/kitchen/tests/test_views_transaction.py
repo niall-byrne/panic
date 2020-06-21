@@ -73,11 +73,7 @@ class PrivateItemTest(TestCase):
                                    quantity=3)
     cls.item.preferred_stores.add(cls.store)
     cls.item.save()
-    cls.serializer_data = {
-        'item': cls.item.id,
-        'date': cls.today,
-        'quantity': 3
-    }
+    cls.serializer_data = {'item': cls.item.id, 'quantity': 3}
 
   def setUp(self):
     self.objects = list()
