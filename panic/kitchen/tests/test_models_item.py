@@ -49,6 +49,12 @@ class TestItem(TestCase):
         email="test@niallbyrne.ca",
         password="test123",
     )
+    cls.second_user = get_user_model().objects.create_user(
+        username="testuser2",
+        email="test2@niallbyrne.ca",
+        password="test123",
+    )
+
     cls.store = Store.objects.create(
         user=cls.user,
         name="No Frills",
@@ -57,6 +63,16 @@ class TestItem(TestCase):
         user=cls.user,
         name="Pantry",
     )
+
+    cls.second_store = Store.objects.create(
+        user=cls.second_user,
+        name="No Frills",
+    )
+    cls.second_shelf = Shelf.objects.create(
+        user=cls.second_user,
+        name="Pantry",
+    )
+
     cls.data = {
         'name': "Canned Beans",
         'shelf_life': 99,
@@ -183,3 +199,14 @@ class TestItem(TestCase):
     assert item.expired > MAXIMUM_QUANTITY
     with self.assertRaises(ValidationError):
       item.save()
+
+  def test_two_users_with_the_same_item_name(self):
+    item1 = self.sample_item(**self.data)
+
+    second_item_definition = dict(self.data)
+    second_item_definition['user'] = self.second_user
+    second_item_definition['shelf'] = self.second_shelf
+    second_item_definition['preferred_stores'] = self.second_store
+    item2 = self.sample_item(**second_item_definition)
+
+    self.assertEqual(item1.name, item2.name)

@@ -28,7 +28,7 @@ def default_expiry():
 
 class Item(models.Model):
   """Items used for Kitchen Inventory"""
-  name = BlondeCharField(max_length=255, unique=True)
+  name = BlondeCharField(max_length=255)
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
   preferred_stores = models.ManyToManyField(Store)
