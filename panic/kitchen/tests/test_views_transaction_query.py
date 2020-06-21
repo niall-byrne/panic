@@ -14,11 +14,11 @@ from ..models.store import Store
 from ..models.transaction import Transaction
 from ..serializers.transaction import TransactionSerializer
 
-TRANSACTION_QUERY_URL = "kitchen:transaction-query"
+TRANSACTION_QUERY_URL = "kitchen:transaction-detail"
 
 
 def transaction_query_url(item):
-  return reverse(TRANSACTION_QUERY_URL, kwargs={'item': item})
+  return reverse(TRANSACTION_QUERY_URL, kwargs={'pk': item})
 
 
 class PublicTransactionQueryTest(TestCase):

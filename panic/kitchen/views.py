@@ -1,7 +1,10 @@
 """Kitchen App Views"""
 
 from django_filters import rest_framework as filters
-from rest_framework import generics, mixins, viewsets
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import mixins, viewsets
+from rest_framework.response import Response
 
 from spa_security.auth_cookie import CSRFMixin
 from .filters import ItemFilter
@@ -107,9 +110,18 @@ class ItemViewSet(
     serializer.save(user=self.request.user)
 
 
+custom_transaction_view_parm = openapi.Parameter(
+    'id',
+    openapi.IN_PATH,
+    description="the item id to find transactions for",
+    type=openapi.TYPE_INTEGER,
+)
+
+
 class TransactionViewSet(
     CSRFMixin,
     mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
   """Transaction API View"""
@@ -117,18 +129,21 @@ class TransactionViewSet(
   queryset = Transaction.objects.all()
 
   @openapi_ready
+  def get_queryset(self):
+    item = self.kwargs['pk']
+    queryset = self.queryset.order_by("-date")
+    return queryset.filter(user=self.request.user, item=item)
+
+  @openapi_ready
   def perform_create(self, serializer):
     """Create a new Transaction"""
     serializer.save(user=self.request.user)
 
-
-class TransactionQueryableViewSet(CSRFMixin, generics.ListAPIView):
-  """Queryable Transaction API View"""
-  serializer_class = TransactionSerializer
-  queryset = Transaction.objects.all()
-
   @openapi_ready
-  def get_queryset(self):
-    item = self.kwargs['item']
-    queryset = self.queryset.order_by("-date")
-    return queryset.filter(user=self.request.user, item=item)
+  @swagger_auto_schema(manual_parameters=[custom_transaction_view_parm],
+                       responses={200: TransactionSerializer(many=True)})
+  def retrieve(self, request, *args, **kwargs):  # pylint: disable=W0613
+    """Retrieve transactions by Item."""
+    queryset = self.get_queryset()
+    serializer = self.get_serializer(queryset, many=True)
+    return Response(serializer.data)
