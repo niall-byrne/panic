@@ -1,7 +1,7 @@
 """Kitchen App Views"""
 
 from django_filters import rest_framework as filters
-from rest_framework import mixins, viewsets
+from rest_framework import generics, mixins, viewsets
 
 from spa_security.auth_cookie import CSRFMixin
 from .filters import ItemFilter
@@ -120,3 +120,15 @@ class TransactionViewSet(
   def perform_create(self, serializer):
     """Create a new Transaction"""
     serializer.save(user=self.request.user)
+
+
+class TransactionQueryableViewSet(CSRFMixin, generics.ListAPIView):
+  """Queryable Transaction API View"""
+  serializer_class = TransactionSerializer
+  queryset = Transaction.objects.all()
+
+  @openapi_ready
+  def get_queryset(self):
+    item = self.kwargs['item']
+    queryset = self.queryset.order_by("-date")
+    return queryset.filter(user=self.request.user, item=item)

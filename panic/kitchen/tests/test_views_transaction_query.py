@@ -132,3 +132,18 @@ class PrivateItemTest(TestCase):
     assert len(items) == 2
     self.assertEqual(res.status_code, status.HTTP_200_OK)
     self.assertEqual(res.data, serializer.data)
+
+  def test_list_transactions_by_item_opposite_selection(self):
+    """Test retrieving a list of transactions by item id."""
+    self.sample_transaction(**self.object_def1)
+    self.sample_transaction(**self.object_def2)
+    self.sample_transaction(**self.object_def3)
+
+    res = self.client.get(transaction_query_url(self.item2.id))
+
+    items = Transaction.objects.filter(item=self.item2).order_by("-date")
+    serializer = TransactionSerializer(items, many=True)
+
+    assert len(items) == 1
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+    self.assertEqual(res.data, serializer.data)

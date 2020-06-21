@@ -13,4 +13,10 @@ router.register("shelf", views.ShelfViewSet, basename="shelf")
 router.register("store", views.StoreViewSet, basename="store")
 router.register("item", views.ItemViewSet, basename="item")
 router.register("transaction", views.TransactionViewSet, basename="transaction")
-urlpatterns = [path("", include(router.urls))]
+
+urlpatterns = [
+    path("transaction_query/<int:item>/",
+         views.TransactionQueryableViewSet.as_view(),
+         name="transaction-query"),
+    path("", include(router.urls))
+]
