@@ -231,6 +231,64 @@ class TestTransactionReconciliation(TestCase):
       obj.delete()
 
   @freeze_time("2020-01-14")
+  def test_first_transaction_on_item_expired(self):
+    newitem = Item.objects.create(name="Green Jello",
+                                  shelf_life=99,
+                                  user=self.user,
+                                  shelf=self.shelf,
+                                  price=2.00,
+                                  quantity=0)
+    newitem.preferred_stores.add(self.store)
+    newitem.save()
+    self.objects.append(newitem)
+
+    transaction0 = {
+        'item': newitem,
+        'date': datetime(2000, 2, 1).date(),
+        'user': self.user,
+        'quantity': 1
+    }
+
+    transaction = self.sample_transaction(**transaction0)
+
+    self.assertEqual(
+        transaction.item.next_expiry_date,
+        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+
+    self.assertEqual(transaction.item.next_expiry_quantity, 0)
+
+    self.assertEqual(transaction.item.expired, 1)
+
+  @freeze_time("2020-01-14")
+  def test_first_transaction_on_item_not_yet_expired(self):
+    newitem = Item.objects.create(name="Green Jello",
+                                  shelf_life=99,
+                                  user=self.user,
+                                  shelf=self.shelf,
+                                  price=2.00,
+                                  quantity=0)
+    newitem.preferred_stores.add(self.store)
+    newitem.save()
+    self.objects.append(newitem)
+
+    transaction0 = {
+        'item': newitem,
+        'date': datetime(2020, 1, 12).date(),
+        'user': self.user,
+        'quantity': 1
+    }
+
+    transaction = self.sample_transaction(**transaction0)
+
+    self.assertEqual(
+        transaction.item.next_expiry_date,
+        transaction0['date'] + timedelta(days=transaction.item.shelf_life))
+
+    self.assertEqual(transaction.item.next_expiry_quantity, 1)
+
+    self.assertEqual(transaction.item.expired, 0)
+
+  @freeze_time("2020-01-14")
   def test_next_expiry_date_expired_items_1(self):
     self.item.quantity = 0
     self.item.save()

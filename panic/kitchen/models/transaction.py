@@ -52,7 +52,7 @@ class Transaction(models.Model):
     """
     processor = TransactionProcessor(self)
 
-    if processor.quantity > 1:
+    if processor.quantity > 0:
       query_set = self.__class__.objects.filter(
           item=self.item).order_by("-date")
       for record in query_set:
