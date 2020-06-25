@@ -2,6 +2,7 @@
 
 import os
 
+from corsheaders.defaults import default_headers
 from django.contrib.messages import constants as message_constants
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -21,7 +22,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-CURRENT_DOMAIN = 'panic-stage.appspot.com'
+CURRENT_DOMAIN = os.environ.get("STAGE_HOSTNAME", None)
 CURRENT_PROTOCOL = 'https'
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
@@ -33,3 +34,6 @@ JWT_AUTH_COOKIE_SAMESITE = "Strict"
 CSRF_COOKIE_SAMESITE = "Strict"
 SESSION_COOKIE_SAMESITE = "Strict"
 CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = ['stage.grocerypanic.com']
+
+CORS_ALLOW_HEADERS = default_headers + ('Access-Control-Allow-Origin',)
