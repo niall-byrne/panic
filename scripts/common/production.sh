@@ -25,7 +25,6 @@ deploy_prod() {
           echo "  ${key}: \"${value}\"" >> app.yaml
         done < "../environments/prod.env"
         gcloud app deploy --version v1
-        cat app.yaml
         rm app.yaml
         rm requirements.txt
 
