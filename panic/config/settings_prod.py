@@ -1,4 +1,4 @@
-"""Stage Settings Overrides"""
+"""Production Settings Overrides"""
 
 import os
 
@@ -22,7 +22,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-CURRENT_DOMAIN = os.environ.get("STAGE_HOSTNAME", None)
+CURRENT_DOMAIN = os.environ.get("PROD_HOSTNAME", None)
 CURRENT_PROTOCOL = 'https'
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
@@ -34,9 +34,9 @@ JWT_AUTH_COOKIE_SAMESITE = "Strict"
 CSRF_COOKIE_SAMESITE = "Strict"
 SESSION_COOKIE_SAMESITE = "Strict"
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = ['stage.grocerypanic.com', 'demo.grocerypanic.com']
+CSRF_TRUSTED_ORIGINS = ['grocerypanic.com']
 
-JWT_AUTH_COOKIE = 'panic_auth_stage'
-CSRF_COOKIE_NAME = "panic_csrf_stage"
+JWT_AUTH_COOKIE = 'panic_auth_prod'
+CSRF_COOKIE_NAME = "panic_csrf_prod"
 
 CORS_ALLOW_HEADERS = default_headers + ('Access-Control-Allow-Origin',)

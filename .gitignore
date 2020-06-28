@@ -126,8 +126,11 @@ sketch
 
 .idea
 panic.code-workspace
+environments/admin*.env
 environments/stage*.env
+environments/prod*.env
 environments/*secret.env
+
 panic/static
 
 # App Engine Temporary Files
@@ -138,3 +141,9 @@ panic/requirements.txt
 
 panic/frontend/node_modules
 panic/frontend/static/frontend/main.js
+
+# Prod
+
+terraform-account.json
+scripts/common/.archive
+

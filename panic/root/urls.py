@@ -23,7 +23,6 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path("api/v1/", include("kitchen.urls")),
     path("api/v1/auth/", include('dj_rest_auth.urls')),
     path("api/v1/auth/registration/",
@@ -36,7 +35,8 @@ urlpatterns = [
          name='socialaccount_connections'),
 ]
 
-if settings.ENVIRONMENT in ['local', 'stage']:
+if settings.ENVIRONMENT in ['local', 'stage', 'admin']:
+  urlpatterns = [path('admin/', admin.site.urls)] + urlpatterns
 
   SchemaView = get_schema_view(
       openapi.Info(

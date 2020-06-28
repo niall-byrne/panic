@@ -20,6 +20,9 @@ source "$( dirname "${BASH_SOURCE[0]}" )/common/documentation.sh"
 # shellcheck source=scripts/common/stage.sh
 source "$( dirname "${BASH_SOURCE[0]}" )/common/stage.sh"
 
+# shellcheck source=scripts/common/production.sh
+source "$( dirname "${BASH_SOURCE[0]}" )/common/production.sh"
+
 case $1 in
   'build-docs')
     shift
@@ -30,6 +33,11 @@ case $1 in
     shift
     source_environment
     deploy_stage "$@"
+    ;;
+   'deploy-prod')
+    shift
+    source_environment
+    deploy_prod "$@"
     ;;
   'lint')
     shift
@@ -57,7 +65,7 @@ case $1 in
     setup_python "$@"
     ;;
   'shortlist')
-    echo "build-docs deploy-stage lint lint-validate reinstall-requirements sectest setup test test-coverage update"
+    echo "build-docs deploy-prod deploy-stage lint lint-validate reinstall-requirements sectest setup test test-coverage update"
     ;;
   'test')
     shift
@@ -76,6 +84,8 @@ case $1 in
   *)
     echo "Valid Commands:"
     echo ' - build-docs              (Build Documentation)'
+    echo ' - deploy-prod             (Deploy to Cloud RUn)'
+    echo ' - deploy-stage            (Deploy to App Engine)'
     echo ' - lint                    (Run the linter)'
     echo ' - lint-validate           (Validate linting)'
     echo ' - reinstall-requirements  (Reinstall Packages'

@@ -1,0 +1,23 @@
+# For Connecting to the Django Admin Interface on Remote Instances
+version: "3"
+
+services:
+  panic:
+    build:
+      context: .
+      dockerfile: development/Dockerfile
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ${HOME}/.ssh:/home/user/.ssh
+      - ${HOME}/.gitconfig:/home/user/.gitconfig
+      - ${HOME}/.gitconfig_global:/home/user/.gitconfig_global
+      - ./:/app
+    command: >
+      ./panic/container_boot.sh admin
+    env_file:
+      - ./environments/prod.env
+      - ./environments/admin.env
+
+volumes:
+  postgres_data:

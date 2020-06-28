@@ -191,3 +191,11 @@ BLEACH_RESTORE_LIST = {"&amp;": "&"}
 if ENVIRONMENT == "stage":
   # pylint: disable=W0614,W0401
   from .settings_stage import *  # nocover
+
+if ENVIRONMENT == "prod":
+  # pylint: disable=W0614,W0401
+  from .settings_prod import *  # nocover
+
+if ENVIRONMENT == "admin":
+  # pylint: disable=W0614,W0401
+  from .settings_admin import *  # nocover

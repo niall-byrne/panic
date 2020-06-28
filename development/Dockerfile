@@ -22,6 +22,9 @@ RUN apt-get update      && \
     tig                    \
     vim
 
+RUN curl https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 > /usr/bin/cloud_sql_proxy \
+ && chmod +x /usr/bin/cloud_sql_proxy
+
 # Setup directories
 RUN mkdir -p /home/user /app
 WORKDIR /app

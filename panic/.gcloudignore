@@ -6,6 +6,3 @@ __pycache__/
 
 # Ignored by the build system
 /setup.cfg
-
-# Node
-frontend/node_modules

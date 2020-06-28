@@ -27,4 +27,5 @@ DATABASES_AVAILABLE = {
     'local': DATABASES_CONFIGURATIONS['remote'],
     'stage': DATABASES_CONFIGURATIONS['remote'],
     'prod': DATABASES_CONFIGURATIONS['remote'],
+    'admin': DATABASES_CONFIGURATIONS['remote'],
 }
