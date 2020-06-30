@@ -3,7 +3,7 @@
 from datetime import date
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -147,3 +147,12 @@ class PrivateItemTest(TestCase):
     assert len(items) == 1
     self.assertEqual(res.status_code, status.HTTP_200_OK)
     self.assertEqual(res.data, serializer.data)
+
+  @override_settings(MAXIMUM_TRANSACTIONS=10)
+  def test_transactions_limited_correctly(self):
+    """Test that retrieving a list of transactions is limited correctly."""
+    for _ in range(0, 11):
+      self.sample_transaction(**self.object_def1)
+
+    res = self.client.get(transaction_query_url(self.item1.id))
+    self.assertEqual(len(res.data), 10)

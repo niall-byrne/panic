@@ -187,6 +187,10 @@ MESSAGE_LEVEL = message_constants.WARNING
 
 BLEACH_RESTORE_LIST = {"&amp;": "&"}
 
+# Application Settings
+
+MAXIMUM_TRANSACTIONS = 50
+
 # Environment Specific Settings
 
 if ENVIRONMENT == "stage":

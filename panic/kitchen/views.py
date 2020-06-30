@@ -1,5 +1,6 @@
 """Kitchen App Views"""
 
+from django.conf import settings
 from django_filters import rest_framework as filters
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -144,6 +145,6 @@ class TransactionViewSet(
                        responses={200: TransactionSerializer(many=True)})
   def retrieve(self, request, *args, **kwargs):  # pylint: disable=W0613
     """Retrieve transactions by Item."""
-    queryset = self.get_queryset()
+    queryset = self.get_queryset()[:settings.MAXIMUM_TRANSACTIONS]
     serializer = self.get_serializer(queryset, many=True)
     return Response(serializer.data)
