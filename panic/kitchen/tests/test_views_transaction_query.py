@@ -14,11 +14,14 @@ from ..models.store import Store
 from ..models.transaction import Transaction
 from ..serializers.transaction import TransactionSerializer
 
-TRANSACTION_QUERY_URL = "kitchen:transaction-detail"
+TRANSACTION_QUERY_URL = "kitchen:transaction-query-list"
 
 
-def transaction_query_url(item):
-  return reverse(TRANSACTION_QUERY_URL, kwargs={'pk': item})
+def transaction_query_url(item, other=None):
+  kwargs = {'parent_lookup_item': item}
+  if other:
+    kwargs.update(other)
+  return reverse(TRANSACTION_QUERY_URL, kwargs=kwargs)
 
 
 class PublicTransactionQueryTest(TestCase):

@@ -6,6 +6,7 @@ django-filter>=2.2.0,<2.3.0
 django-bleach>=0.6.1,<0.7.0
 django-cors-headers>=3.2.1,<3.3.0
 dj-rest-auth[with_social]>=1.0.0,<1.1.0
+drf-extensions>=0.6.0,<0.7.0
 drf-yasg>=1.17.1,<1.18.0
 psycopg2>=2.8.4,<2.9.0
 pytz>=2019.3
