@@ -36,10 +36,6 @@ class ListItemsViewSet(
   queryset = ItemList.objects.all()
   pagination_class = ItemNamePagination
 
-  @openapi_ready
-  def get_queryset(self):
-    return self.queryset.order_by("-name")
-
 
 class ShelfViewSet(
     CSRFMixin,
@@ -55,7 +51,7 @@ class ShelfViewSet(
 
   @openapi_ready
   def get_queryset(self):
-    queryset = self.queryset.order_by("-name")
+    queryset = self.queryset
     return queryset.filter(user=self.request.user)
 
   @openapi_ready
@@ -78,7 +74,7 @@ class StoreViewSet(
 
   @openapi_ready
   def get_queryset(self):
-    queryset = self.queryset.order_by("-name")
+    queryset = self.queryset
     return queryset.filter(user=self.request.user)
 
   @openapi_ready
@@ -105,7 +101,7 @@ class ItemViewSet(
 
   @openapi_ready
   def get_queryset(self):
-    queryset = self.queryset.order_by("-name")
+    queryset = self.queryset
     return queryset.filter(user=self.request.user)
 
   @openapi_ready
@@ -155,5 +151,5 @@ class TransactionQueryViewSet(
   @openapi_ready
   def get_queryset(self):
     item = self.kwargs['parent_lookup_item']
-    queryset = self.queryset.order_by("-date")
+    queryset = self.queryset
     return queryset.filter(user=self.request.user, item=item)
