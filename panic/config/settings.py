@@ -189,7 +189,10 @@ BLEACH_RESTORE_LIST = {"&amp;": "&"}
 
 # Application Settings
 
-MAXIMUM_TRANSACTIONS = 50
+PAGE_SIZE = 50
+PAGE_SIZE_MAX = 100
+PAGE_SIZE_PARAM = "page_size"
+CURSOR_QUERY_PARAM = "cursor"
 
 # Environment Specific Settings
 

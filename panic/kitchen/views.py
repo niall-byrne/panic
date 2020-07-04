@@ -1,6 +1,5 @@
 """Kitchen App Views"""
 
-from django.conf import settings
 from django_filters import rest_framework as filters
 from drf_yasg import openapi
 from rest_framework import mixins, viewsets
@@ -12,6 +11,13 @@ from .models.itemlist import ItemList
 from .models.shelf import Shelf
 from .models.store import Store
 from .models.transaction import Transaction
+from .pagination import (
+    ItemNamePagination,
+    ItemPagination,
+    ShelfPagination,
+    StorePagination,
+    TransactionQueryPagination,
+)
 from .serializers.item import ItemSerializer
 from .serializers.itemlist import ItemListSerializer
 from .serializers.shelf import ShelfSerializer
@@ -28,6 +34,7 @@ class ListItemsViewSet(
   """List Items AutoCompletion View"""
   serializer_class = ItemListSerializer
   queryset = ItemList.objects.all()
+  pagination_class = ItemNamePagination
 
   @openapi_ready
   def get_queryset(self):
@@ -44,6 +51,7 @@ class ShelfViewSet(
   """Shelf API View"""
   serializer_class = ShelfSerializer
   queryset = Shelf.objects.all()
+  pagination_class = ShelfPagination
 
   @openapi_ready
   def get_queryset(self):
@@ -66,6 +74,7 @@ class StoreViewSet(
   """Store API View"""
   serializer_class = StoreSerializer
   queryset = Store.objects.all()
+  pagination_class = StorePagination
 
   @openapi_ready
   def get_queryset(self):
@@ -92,6 +101,7 @@ class ItemViewSet(
   queryset = Item.objects.all()
   filter_backends = (filters.DjangoFilterBackend,)
   filterset_class = ItemFilter
+  pagination_class = ItemPagination
 
   @openapi_ready
   def get_queryset(self):
@@ -140,10 +150,10 @@ class TransactionQueryViewSet(
   """Transaction API Query by Item View"""
   serializer_class = TransactionSerializer
   queryset = Transaction.objects.all()
+  pagination_class = TransactionQueryPagination
 
   @openapi_ready
   def get_queryset(self):
     item = self.kwargs['parent_lookup_item']
     queryset = self.queryset.order_by("-date")
-    return queryset.filter(user=self.request.user,
-                           item=item)[:settings.MAXIMUM_TRANSACTIONS]
+    return queryset.filter(user=self.request.user, item=item)

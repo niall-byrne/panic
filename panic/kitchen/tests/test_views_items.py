@@ -16,8 +16,7 @@ ITEM_URL = reverse("kitchen:item-list")
 
 
 def item_url_with_params(query_kwargs):
-  base_url = reverse("kitchen:item-list")
-  return '{}?{}'.format(base_url, urlencode(query_kwargs))
+  return '{}?{}'.format(ITEM_URL, urlencode(query_kwargs))
 
 
 class PublicItemTest(TestCase):
@@ -127,7 +126,7 @@ class PrivateItemTest(TestCase):
     for obj in self.objects:
       obj.delete()
 
-  def test_retrieve_items(self):
+  def test_list_items(self):
     """Test retrieving a list of items."""
     self.sample_item(**self.data1)
     self.sample_item(**self.data2)
@@ -139,9 +138,34 @@ class PrivateItemTest(TestCase):
 
     assert len(items) == 2
     self.assertEqual(res.status_code, status.HTTP_200_OK)
+    self.assertEqual(res.data['results'], serializer.data)
+
+  def test_retrieve_single_item(self):
+    """Test retrieving a single item."""
+    first = self.sample_item(**self.data1)
+    self.sample_item(**self.data2)
+
+    res = self.client.get(ITEM_URL + str(first.id) + "/")
+
+    items = Item.objects.get(id=first.id)
+    serializer = ItemSerializer(items)
+
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
     self.assertEqual(res.data, serializer.data)
 
-  def test_retrieve_items_by_store(self):
+  def test_list_items_paginated_correctly(self):
+    """Test that retrieving a list of items is paginated correctly."""
+    for index in range(0, 11):
+      data = dict(self.data1)
+      data['name'] += str(index)
+      self.sample_item(**data)
+
+    res = self.client.get(item_url_with_params({"page_size": 10}))
+    self.assertEqual(len(res.data['results']), 10)
+    self.assertIsNotNone(res.data['next'])
+    self.assertIsNone(res.data['previous'])
+
+  def test_list_items_by_store(self):
     """Test retrieving a list of items, filtered by store."""
     self.sample_item(**self.data1)
     self.sample_item(**self.data2)
@@ -154,9 +178,9 @@ class PrivateItemTest(TestCase):
         items.filter(preferred_stores__in=[self.store1.id]), many=True)
 
     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    self.assertEqual(res.data, serializer.data)
+    self.assertEqual(res.data['results'], serializer.data)
 
-  def test_retrieve_items_by_shelf(self):
+  def test_list_items_by_shelf(self):
     """Test retrieving a list of items, filtered by shelf."""
     self.sample_item(**self.data1)
     self.sample_item(**self.data2)
@@ -168,7 +192,7 @@ class PrivateItemTest(TestCase):
     serializer = ItemSerializer(items.filter(shelf=self.shelf.id), many=True)
 
     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    self.assertEqual(res.data, serializer.data)
+    self.assertEqual(res.data['results'], serializer.data)
 
   def test_delete_item(self):
     """Test deleting a item."""
@@ -184,7 +208,7 @@ class PrivateItemTest(TestCase):
     assert len(items) == 1
     self.assertEqual(res_delete.status_code, status.HTTP_204_NO_CONTENT)
     self.assertEqual(res_get.status_code, status.HTTP_200_OK)
-    self.assertEqual(res_get.data, serializer.data)
+    self.assertEqual(res_get.data['results'], serializer.data)
 
   def test_create_item(self):
     """Test creating a item."""

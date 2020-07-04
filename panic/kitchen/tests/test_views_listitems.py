@@ -3,6 +3,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -10,6 +11,10 @@ from ..models.itemlist import ItemList
 from ..serializers.itemlist import ItemListSerializer
 
 LIST_URL = reverse("kitchen:allitems-list")
+
+
+def item_url_with_params(query_kwargs):
+  return '{}?{}'.format(LIST_URL, urlencode(query_kwargs))
 
 
 class PublicListItemsTest(TestCase):
@@ -59,7 +64,7 @@ class PrivateListItemsTest(TestCase):
     for obj in self.objects:
       obj.delete()
 
-  def test_retrieve_items(self):
+  def test_list_items(self):
     """Test retrieving items."""
     self.create_item(name="Red Bean Dessert")
     self.create_item(name="Tofu")
@@ -70,4 +75,15 @@ class PrivateListItemsTest(TestCase):
     serializer = ItemListSerializer(tags, many=True)
 
     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    self.assertEqual(res.data, serializer.data)
+    self.assertEqual(res.data['results'], serializer.data)
+
+  def test_list_items_paginated_correctly(self):
+    """Test that retrieving a list of items is paginated correctly."""
+    for index in range(0, 11):
+      data = "name" + str(index)
+      self.create_item(name=data)
+
+    res = self.client.get(item_url_with_params({"page_size": 10}))
+    self.assertEqual(len(res.data['results']), 10)
+    self.assertIsNotNone(res.data['next'])
+    self.assertIsNone(res.data['previous'])

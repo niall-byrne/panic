@@ -3,8 +3,9 @@
 from datetime import date
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
+from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -17,11 +18,9 @@ from ..serializers.transaction import TransactionSerializer
 TRANSACTION_QUERY_URL = "kitchen:transaction-query-list"
 
 
-def transaction_query_url(item, other=None):
-  kwargs = {'parent_lookup_item': item}
-  if other:
-    kwargs.update(other)
-  return reverse(TRANSACTION_QUERY_URL, kwargs=kwargs)
+def transaction_query_url(item, query_kwargs={}):  # pylint: disable=W0102
+  base_url = reverse(TRANSACTION_QUERY_URL, kwargs={'parent_lookup_item': item})
+  return '{}?{}'.format(base_url, urlencode(query_kwargs))
 
 
 class PublicTransactionQueryTest(TestCase):
@@ -134,7 +133,7 @@ class PrivateItemTest(TestCase):
 
     assert len(items) == 2
     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    self.assertEqual(res.data, serializer.data)
+    self.assertEqual(res.data['results'], serializer.data)
 
   def test_list_transactions_by_item_opposite_selection(self):
     """Test retrieving a list of transactions by item id."""
@@ -149,13 +148,15 @@ class PrivateItemTest(TestCase):
 
     assert len(items) == 1
     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    self.assertEqual(res.data, serializer.data)
+    self.assertEqual(res.data['results'], serializer.data)
 
-  @override_settings(MAXIMUM_TRANSACTIONS=10)
-  def test_transactions_limited_correctly(self):
+  def test_transactions_paginated_correctly(self):
     """Test that retrieving a list of transactions is limited correctly."""
     for _ in range(0, 11):
       self.sample_transaction(**self.object_def1)
 
-    res = self.client.get(transaction_query_url(self.item1.id))
-    self.assertEqual(len(res.data), 10)
+    res = self.client.get(
+        transaction_query_url(self.item1.id, {"page_size": 10}))
+    self.assertEqual(len(res.data['results']), 10)
+    self.assertIsNotNone(res.data['next'])
+    self.assertIsNone(res.data['previous'])

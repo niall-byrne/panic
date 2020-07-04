@@ -3,13 +3,18 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from ..models.store import Store
 from ..serializers.store import StoreSerializer
 
-SHELF_URL = reverse("kitchen:store-list")
+STORE_URL = reverse("kitchen:store-list")
+
+
+def store_url_with_params(query_kwargs):
+  return '{}?{}'.format(STORE_URL, urlencode(query_kwargs))
 
 
 class PublicStoreTest(TestCase):
@@ -20,13 +25,13 @@ class PublicStoreTest(TestCase):
 
   def test_login_required(self):
     """Test that login is required for retrieving shelves."""
-    res = self.client.get(SHELF_URL)
+    res = self.client.get(STORE_URL)
 
     self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
   def test_create_login_required(self):
     payload = {"name": "Loblaws"}
-    res = self.client.post(SHELF_URL, payload)
+    res = self.client.post(STORE_URL, payload)
 
     self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -62,27 +67,38 @@ class PrivateStoreTest(TestCase):
     for obj in self.objects:
       obj.delete()
 
-  def test_retrieve_shelves(self):
+  def test_list_stores(self):
     """Test retrieving a list of stores."""
     self.sample_store(name="No Frills")
     self.sample_store(name="Loblaws")
 
-    res = self.client.get(SHELF_URL)
+    res = self.client.get(STORE_URL)
 
     shelves = Store.objects.all().order_by("-name")
     serializer = StoreSerializer(shelves, many=True)
 
     assert len(shelves) == 2
     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    self.assertEqual(res.data, serializer.data)
+    self.assertEqual(res.data['results'], serializer.data)
+
+  def test_list_stores_paginated_correctly(self):
+    """Test that retrieving a list of stores is limited correctly."""
+    for index in range(0, 11):
+      data = "storename" + str(index)
+      self.sample_store(name=data)
+
+    res = self.client.get(store_url_with_params({"page_size": 10}))
+    self.assertEqual(len(res.data['results']), 10)
+    self.assertIsNotNone(res.data['next'])
+    self.assertIsNone(res.data['previous'])
 
   def test_delete_store(self):
     """Test deleting a store."""
     delete = self.sample_store(name="A&P")
     self.sample_store(name="Beckers")
 
-    res_delete = self.client.delete(SHELF_URL + str(delete.id) + '/')
-    res_get = self.client.get(SHELF_URL)
+    res_delete = self.client.delete(STORE_URL + str(delete.id) + '/')
+    res_get = self.client.get(STORE_URL)
 
     shelves = Store.objects.all().order_by("-name")
     serializer = StoreSerializer(shelves, many=True)
@@ -90,13 +106,13 @@ class PrivateStoreTest(TestCase):
     assert len(shelves) == 1
     self.assertEqual(res_delete.status_code, status.HTTP_204_NO_CONTENT)
     self.assertEqual(res_get.status_code, status.HTTP_200_OK)
-    self.assertEqual(res_get.data, serializer.data)
+    self.assertEqual(res_get.data['results'], serializer.data)
 
   def test_create_store(self):
     """Test creating a store."""
     data = {"name": "Shoppers Drugmart"}
 
-    res = self.client.post(SHELF_URL, data=data)
+    res = self.client.post(STORE_URL, data=data)
 
     shelves = Store.objects.all().order_by("-name")
 
