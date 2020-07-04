@@ -3,6 +3,14 @@
 from django_filters import rest_framework as simple_filters
 
 from .models.item import Item
+from .models.transaction import Transaction
+
+
+class TransactionFilter(simple_filters.FilterSet):
+
+  class Meta:
+    model = Transaction
+    fields = ['item']
 
 
 class ItemFilter(simple_filters.FilterSet):

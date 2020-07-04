@@ -5,6 +5,7 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -15,6 +16,10 @@ from ..models.transaction import Transaction
 from ..serializers.transaction import TransactionSerializer
 
 TRANSACTION_URL = reverse("kitchen:transaction-list")
+
+
+def transaction_query_url(query_kwargs={}):  # pylint: disable=W0102
+  return '{}?{}'.format(TRANSACTION_URL, urlencode(query_kwargs))
 
 
 class PublicItemTest(TestCase):
@@ -65,20 +70,46 @@ class PrivateItemTest(TestCase):
         user=cls.user,
         name="Pantry",
     )
-    cls.item = Item.objects.create(name="Canned Beans",
-                                   shelf_life=99,
-                                   user=cls.user,
-                                   shelf=cls.shelf,
-                                   price=2.00,
-                                   quantity=3)
-    cls.item.preferred_stores.add(cls.store)
-    cls.item.save()
-    cls.serializer_data = {'item': cls.item.id, 'quantity': 3}
+    cls.item1 = Item.objects.create(name="Canned Beans",
+                                    shelf_life=99,
+                                    user=cls.user,
+                                    shelf=cls.shelf,
+                                    price=2.00,
+                                    quantity=3)
+    cls.item1.preferred_stores.add(cls.store)
+    cls.item1.save()
+    cls.item2 = Item.objects.create(name="Bananas",
+                                    shelf_life=99,
+                                    user=cls.user,
+                                    shelf=cls.shelf,
+                                    price=2.00,
+                                    quantity=3)
+    cls.item2.preferred_stores.add(cls.store)
+    cls.item2.save()
+    cls.serializer_data = {'item': cls.item1.id, 'quantity': 3}
+    cls.object_def1 = {
+        'user': cls.user,
+        'transaction_date': cls.today,
+        'item': cls.item1,
+        'quantity': 5
+    }
+    cls.object_def2 = {
+        'user': cls.user,
+        'transaction_date': cls.today,
+        'item': cls.item1,
+        'quantity': 5
+    }
+    cls.object_def3 = {
+        'user': cls.user,
+        'transaction_date': cls.today,
+        'item': cls.item2,
+        'quantity': 5
+    }
 
   def setUp(self):
     self.objects = list()
-    self.item.quantity = 3
-    self.item.save()
+    self.item1.quantity = 3
+    self.item1.save()
     self.client = APIClient()
     self.client.force_authenticate(self.user)
 
@@ -97,7 +128,66 @@ class PrivateItemTest(TestCase):
     transaction = items[0]
 
     self.assertEqual(transaction.user.id, self.user.id)
-    self.assertEqual(transaction.item.id, self.item.id)
+    self.assertEqual(transaction.item.id, self.item1.id)
     self.assertEqual(transaction.date, self.today)
     self.assertEqual(transaction.quantity, self.serializer_data['quantity'])
     assert transaction.item.quantity == 6  # The modified value
+
+  def test_list_all_transactions(self):
+    """Test retrieving a list of all user transactions."""
+    self.sample_transaction(**self.object_def1)
+    self.sample_transaction(**self.object_def2)
+    self.sample_transaction(**self.object_def3)
+
+    res = self.client.get(transaction_query_url())
+
+    items = Transaction.objects.all().order_by("-date")
+    serializer = TransactionSerializer(items, many=True)
+
+    assert len(items) == 3
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+    self.assertEqual(res.data['results'], serializer.data)
+
+  def test_list_transactions_by_item_filter(self):
+    """Test retrieving a list of transactions by item id."""
+    self.sample_transaction(**self.object_def1)
+    self.sample_transaction(**self.object_def2)
+    self.sample_transaction(**self.object_def3)
+
+    res = self.client.get(transaction_query_url({"item": self.item1.id}))
+
+    items = Transaction.objects.filter(item=self.item1).order_by("-date")
+    serializer = TransactionSerializer(items, many=True)
+
+    assert len(items) == 2
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+    self.assertEqual(res.data['results'], serializer.data)
+
+  def test_list_transactions_by_another_item_filter(self):
+    """Test retrieving a list of transactions by item id."""
+    self.sample_transaction(**self.object_def1)
+    self.sample_transaction(**self.object_def2)
+    self.sample_transaction(**self.object_def3)
+
+    res = self.client.get(transaction_query_url({"item": self.item2.id}))
+
+    items = Transaction.objects.filter(item=self.item2).order_by("-date")
+    serializer = TransactionSerializer(items, many=True)
+
+    assert len(items) == 1
+    self.assertEqual(res.status_code, status.HTTP_200_OK)
+    self.assertEqual(res.data['results'], serializer.data)
+
+  def test_list_transactions_paginated_correctly(self):
+    """Test that retrieving a list of transactions is limited correctly."""
+    for _ in range(0, 11):
+      self.sample_transaction(**self.object_def1)
+
+    res = self.client.get(
+        transaction_query_url({
+            "item": self.item1.id,
+            "page_size": 10
+        }))
+    self.assertEqual(len(res.data['results']), 10)
+    self.assertIsNotNone(res.data['next'])
+    self.assertIsNone(res.data['previous'])

@@ -5,7 +5,7 @@ from drf_yasg import openapi
 from rest_framework import mixins, viewsets
 
 from spa_security.auth_cookie import CSRFMixin
-from .filters import ItemFilter
+from .filters import ItemFilter, TransactionFilter
 from .models.item import Item
 from .models.itemlist import ItemList
 from .models.shelf import Shelf
@@ -126,30 +126,22 @@ custom_transaction_view_parm = openapi.Parameter(
 class TransactionViewSet(
     CSRFMixin,
     mixins.CreateModelMixin,
+    mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
   """Transaction API View"""
   serializer_class = TransactionSerializer
   queryset = Transaction.objects.all()
+  filter_backends = (filters.DjangoFilterBackend,)
+  filterset_class = TransactionFilter
+  pagination_class = TransactionQueryPagination
+
+  @openapi_ready
+  def get_queryset(self):
+    queryset = self.queryset
+    return queryset.filter(user=self.request.user)
 
   @openapi_ready
   def perform_create(self, serializer):
     """Create a new Transaction"""
     serializer.save(user=self.request.user)
-
-
-class TransactionQueryViewSet(
-    CSRFMixin,
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet,
-):
-  """Transaction API Query by Item View"""
-  serializer_class = TransactionSerializer
-  queryset = Transaction.objects.all()
-  pagination_class = TransactionQueryPagination
-
-  @openapi_ready
-  def get_queryset(self):
-    item = self.kwargs['parent_lookup_item']
-    queryset = self.queryset
-    return queryset.filter(user=self.request.user, item=item)
