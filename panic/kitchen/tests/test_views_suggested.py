@@ -7,10 +7,10 @@ from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from ..models.itemlist import ItemList
-from ..serializers.itemlist import ItemListSerializer
+from ..models.suggested import SuggestedItem
+from ..serializers.suggested import SuggestedItemSerializer
 
-LIST_URL = reverse("kitchen:allitems-list")
+LIST_URL = reverse("kitchen:suggested-list")
 
 
 def item_url_with_params(query_kwargs):
@@ -18,7 +18,7 @@ def item_url_with_params(query_kwargs):
 
 
 class PublicListItemsTest(TestCase):
-  """Test the public ListItems API"""
+  """Test the public Suggested Items API"""
 
   def setUp(self) -> None:
     self.client = APIClient()
@@ -37,12 +37,12 @@ class PublicListItemsTest(TestCase):
 
 
 class PrivateListItemsTest(TestCase):
-  """Test the authorized ListItems API"""
+  """Test the authorized Suggested Items API"""
 
   def create_item(self, name):
-    tag = ItemList.objects.create(name=name)
-    self.objects.append(tag)
-    return tag
+    item = SuggestedItem.objects.create(name=name)
+    self.objects.append(item)
+    return item
 
   @classmethod
   def setUpTestData(cls):
@@ -52,7 +52,7 @@ class PrivateListItemsTest(TestCase):
         email="test@niallbyrne.ca",
         password="test123",
     )
-    cls.serializer = ItemListSerializer
+    cls.serializer = SuggestedItemSerializer
     cls.fields = {"name": 255}
 
   def setUp(self):
@@ -65,20 +65,20 @@ class PrivateListItemsTest(TestCase):
       obj.delete()
 
   def test_list_items(self):
-    """Test retrieving items."""
+    """Test retrieving item names."""
     self.create_item(name="Red Bean Dessert")
     self.create_item(name="Tofu")
 
     res = self.client.get(LIST_URL)
 
-    tags = ItemList.objects.all().order_by("-name")
-    serializer = ItemListSerializer(tags, many=True)
+    items = SuggestedItem.objects.all().order_by("-name")
+    serializer = self.serializer(items, many=True)
 
     self.assertEqual(res.status_code, status.HTTP_200_OK)
     self.assertEqual(res.data['results'], serializer.data)
 
   def test_list_items_paginated_correctly(self):
-    """Test that retrieving a list of items is paginated correctly."""
+    """Test that retrieving a list of item names is paginated correctly."""
     for index in range(0, 11):
       data = "name" + str(index)
       self.create_item(name=data)

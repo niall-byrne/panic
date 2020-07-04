@@ -1,17 +1,17 @@
-"""Test the ItemList Serializer."""
+"""Test the SuggestedItem Serializer."""
 
 from django.test import TestCase
 from rest_framework.serializers import ValidationError
 
-from ..models.itemlist import ItemList
-from ..serializers.itemlist import ItemListSerializer
+from ..models.suggested import SuggestedItem
+from ..serializers.suggested import SuggestedItemSerializer
 
 
 class TestItemList(TestCase):
 
   def sample_item(self, name="Red Beans"):
     """Create a test item."""
-    item = ItemList.objects.create(name=name)
+    item = SuggestedItem.objects.create(name=name)
     self.objects.append(item)
     return item
 
@@ -27,7 +27,7 @@ class TestItemList(TestCase):
   @classmethod
   def setUpTestData(cls):
     cls.objects = list()
-    cls.serializer = ItemListSerializer
+    cls.serializer = SuggestedItemSerializer
     cls.fields = {"name": 255}
 
   def setUp(self):

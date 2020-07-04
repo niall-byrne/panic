@@ -8,7 +8,7 @@ from . import views
 app_name = "kitchen"
 
 router = routers.SimpleRouter()
-router.register("allitems", views.ListItemsViewSet, basename="allitems")
+router.register("suggested", views.SuggestedItemViewSet, basename="suggested")
 router.register("shelf", views.ShelfViewSet, basename="shelf")
 router.register("store", views.StoreViewSet, basename="store")
 router.register("item", views.ItemViewSet, basename="item")

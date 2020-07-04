@@ -3,14 +3,14 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from ..models.itemlist import ItemList
+from ..models.suggested import SuggestedItem
 
 
 class TestItemList(TestCase):
 
   def sample_item(self, name="Red Beans"):
     """Create a test user account."""
-    item = ItemList.objects.create(name=name)
+    item = SuggestedItem.objects.create(name=name)
     self.objects.append(item)
     return item
 
@@ -36,7 +36,7 @@ class TestItemList(TestCase):
     test_name = "Custard"
     _ = self.sample_item(test_name)
 
-    query = ItemList.objects.filter(name=test_name)
+    query = SuggestedItem.objects.filter(name=test_name)
 
     assert len(query) == 1
     self.assertEqual(query[0].name, test_name)
@@ -48,7 +48,7 @@ class TestItemList(TestCase):
     with self.assertRaises(ValidationError):
       _ = self.sample_item(test_name)
 
-    query = ItemList.objects.filter(name=test_name)
+    query = SuggestedItem.objects.filter(name=test_name)
     assert len(query) == 1
 
   def testItemInjection(self):
@@ -57,7 +57,7 @@ class TestItemList(TestCase):
 
     _ = self.sample_item(test_name)
 
-    query = ItemList.objects.filter(name=sanitized_name)
+    query = SuggestedItem.objects.filter(name=sanitized_name)
 
     assert len(query) == 1
     self.assertEqual(query[0].name, sanitized_name)

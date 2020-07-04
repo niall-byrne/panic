@@ -7,9 +7,9 @@ from rest_framework import mixins, viewsets
 from spa_security.auth_cookie import CSRFMixin
 from .filters import ItemFilter, TransactionFilter
 from .models.item import Item
-from .models.itemlist import ItemList
 from .models.shelf import Shelf
 from .models.store import Store
+from .models.suggested import SuggestedItem
 from .models.transaction import Transaction
 from .pagination import (
     ItemNamePagination,
@@ -19,21 +19,21 @@ from .pagination import (
     TransactionQueryPagination,
 )
 from .serializers.item import ItemSerializer
-from .serializers.itemlist import ItemListSerializer
 from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
+from .serializers.suggested import SuggestedItemSerializer
 from .serializers.transaction import TransactionSerializer
 from .swagger import openapi_ready
 
 
-class ListItemsViewSet(
+class SuggestedItemViewSet(
     CSRFMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
-  """List Items AutoCompletion View"""
-  serializer_class = ItemListSerializer
-  queryset = ItemList.objects.all()
+  """Suggested Items List View"""
+  serializer_class = SuggestedItemSerializer
+  queryset = SuggestedItem.objects.all()
   pagination_class = ItemNamePagination
 
 
