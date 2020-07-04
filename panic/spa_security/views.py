@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 class CSRFview(APIView):
 
   def get(self, request):
-    """Returns a 200, and containing CSRF Token."""
+    """Returns a 200, and a message containing the CSRF Token."""
     token = get_token(request)
     return Response({"token": token}, status=status.HTTP_200_OK)
 
@@ -27,7 +27,7 @@ class CSRFview(APIView):
     'TRACE',
 ])
 def csrf_error(request, reason=""):  # pylint: disable=W0613
-  """Returns a 403 with a custom error message."""
+  """Returns a 403, and a custom error message."""
   return Response(
       {"error": "Refresh csrf and try again."},
       status=status.HTTP_403_FORBIDDEN,
