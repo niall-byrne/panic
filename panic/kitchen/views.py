@@ -12,8 +12,8 @@ from .models.store import Store
 from .models.suggested import SuggestedItem
 from .models.transaction import Transaction
 from .pagination import (
-    ItemNamePagination,
     ItemPagination,
+    ItemSuggestionPagination,
     ShelfPagination,
     StorePagination,
     TransactionQueryPagination,
@@ -34,7 +34,7 @@ class SuggestedItemViewSet(
   """Suggested Items List View"""
   serializer_class = SuggestedItemSerializer
   queryset = SuggestedItem.objects.all()
-  pagination_class = ItemNamePagination
+  pagination_class = ItemSuggestionPagination
 
 
 class ShelfViewSet(

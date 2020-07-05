@@ -70,4 +70,4 @@ class TestItemList(TestCase):
 
   def testFieldLengths(self):
     with self.assertRaises(ValidationError):
-      _ = self.sample_item(self.generate_overload(self.fields))
+      _ = self.sample_item(**self.generate_overload(self.fields))

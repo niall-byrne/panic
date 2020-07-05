@@ -12,7 +12,7 @@ class ShelfSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Shelf
-    fields = "__all__"
+    exclude = ('index',)
     read_only_fields = ("id",)
     validators = [
         UniqueTogetherValidator(queryset=Shelf.objects.all(),

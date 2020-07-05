@@ -71,7 +71,7 @@ class PrivateListItemsTest(TestCase):
 
     res = self.client.get(LIST_URL)
 
-    items = SuggestedItem.objects.all().order_by("-name")
+    items = SuggestedItem.objects.all().order_by("name")
     serializer = self.serializer(items, many=True)
 
     self.assertEqual(res.status_code, status.HTTP_200_OK)

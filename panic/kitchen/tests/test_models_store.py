@@ -14,6 +14,7 @@ class TestStore(TestCase):
     if user is None:
       user = self.user
     store = Store.objects.create(user=user, name=name)
+    store.save()
     self.objects.append(store)
     return store
 
@@ -47,6 +48,7 @@ class TestStore(TestCase):
     query = Store.objects.filter(name=test_name)
 
     assert len(query) == 1
+    self.assertEqual(query[0].index, test_name.lower())
     self.assertEqual(query[0].name, test_name)
     self.assertEqual(query[0].user.id, self.user.id)
 
@@ -79,4 +81,4 @@ class TestStore(TestCase):
 
   def testFieldLengths(self):
     with self.assertRaises(ValidationError):
-      _ = self.sample_store(self.user, self.generate_overload(self.fields))
+      _ = self.sample_store(self.user, **self.generate_overload(self.fields))

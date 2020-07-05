@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.timezone import now
+from naturalsortfield import NaturalSortField
 
 from spa_security.fields import BlondeCharField
 from .shelf import Shelf
@@ -20,6 +21,7 @@ MINIMUM_QUANTITY = 0
 MINIMUM_SHELF_LIFE = 1
 MAXIMUM_SHELF_LIFE = 365 * 3
 DEFAULT_SHELF_LIFE = 7
+MAX_LENGTH = 255
 
 
 def default_expiry():
@@ -28,7 +30,11 @@ def default_expiry():
 
 class Item(models.Model):
   """Items used for Kitchen Inventory"""
-  name = BlondeCharField(max_length=255)
+  index = NaturalSortField(
+      for_field="name",
+      max_length=MAX_LENGTH,
+  )  # Pagination Index
+  name = BlondeCharField(max_length=MAX_LENGTH)
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   shelf = models.ForeignKey(Shelf, on_delete=models.CASCADE)
   preferred_stores = models.ManyToManyField(Store)
@@ -68,6 +74,9 @@ class Item(models.Model):
   class Meta:
     constraints = [
         models.UniqueConstraint(fields=['user', 'name'], name='item per user')
+    ]
+    indexes = [
+        models.Index(fields=['index']),
     ]
 
   def __str__(self):

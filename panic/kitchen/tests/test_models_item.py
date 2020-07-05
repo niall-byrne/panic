@@ -97,6 +97,7 @@ class TestItem(TestCase):
 
     assert len(query) == 1
     item = query[0]
+    self.assertEqual(item.index, self.data['name'].lower())
     self.assertEqual(item.name, self.data['name'])
     self.assertEqual(item.shelf_life, self.data['shelf_life'])
     self.assertEqual(item.user.id, self.user.id)
@@ -127,6 +128,7 @@ class TestItem(TestCase):
     assert len(query) == 1
 
     item = query[0]
+    self.assertEqual(item.index, sanitized_name.lower())
     self.assertEqual(item.name, sanitized_name)
     self.assertEqual(item.shelf_life, self.data['shelf_life'])
     self.assertEqual(item.user.id, self.user.id)

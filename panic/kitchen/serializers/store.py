@@ -12,7 +12,7 @@ class StoreSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Store
-    fields = "__all__"
+    exclude = ('index',)
     read_only_fields = ("id",)
     validators = [
         UniqueTogetherValidator(queryset=Store.objects.all(),
