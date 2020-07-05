@@ -41,10 +41,10 @@ In addition to the `base` files, each environment has a set of `secret` files th
 ```
 EMAIL_ADDRESS=<gmail account for sending emails>
 EMAIL_PASSWORD=<gmail account password>
-GOOGLE_CLIENT_ID=<google service account for oauth logins>
-GOOGLE_CLIENT_KEY=<google client key for oauth logins>
-FACEBOOK_APP_ID=<facebook app id for oauth logins>
-FACEBOOK_APP_SECRET=<google client key for oauth logins>
+GOOGLE_ID=<google service account for oauth logins>
+GOOGLE_SECRET_KEY=<google client key for oauth logins>
+FACEBOOK_ID=<facebook app id for oauth logins>
+FACEBOOK_SECRET_KEY=<facebook app secret for oauth logins>
 BASE_URL="http://localhost:8080"
 ```
 

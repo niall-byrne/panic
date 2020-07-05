@@ -6,33 +6,47 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-  """Bootstraps the Social Authentication by populating social logins based on
+  """Bootstraps Social Authentication by populating social logins based on
   environment variables.
 
-  - Generate Social Login Authorization::
+  - Generate Social Login Authorization:
 
-    ./manage.py autosocial
+    ./manage.py autosocial [PROVIDER]
 
   - Credentials:
-    client_id: ENV -> GOOGLE_CLIENT_ID
-    secret:    ENV -> GOOGLE_CLIENT_KEY
+    client_id: ENV -> %PROVIDER%_ID
+    secret:    ENV -> %PROVIDER%_SECRET_KEY
  """
   help = 'Adds social app configuration without user interaction.'
 
+  def add_arguments(self, parser):
+    parser.add_argument('provider',
+                        nargs=1,
+                        type=str,
+                        choices=['google', 'facebook'])
+
   def handle(self, *args, **options):
+    provider = options['provider'][0]
 
-    query = SocialApp.objects.all().filter(provider='google').count()
+    client_id = os.getenv(('%s_ID' % provider).upper(), None)
+    secret = os.getenv(('%s_SECRET_KEY' % provider).upper(), None)
+
+    if client_id is None or secret is None:
+      self.stderr.write(self.style.ERROR('The required env vars are not set.'))
+      return
+
+    query = SocialApp.objects.all().filter(provider=provider).count()
     if query > 0:
-      self.stdout.write(self.style.ERROR('The social app already exists.'))
-    else:
+      self.stderr.write(self.style.ERROR('The social app already exists.'))
+      return
 
-      social_app = SocialApp(provider='google',
-                             name='playcounts3',
-                             client_id=os.getenv('GOOGLE_CLIENT_ID', ''),
-                             secret=os.getenv('GOOGLE_CLIENT_KEY', ''))
+    social_app = SocialApp(provider=provider,
+                           name='%s oauth login' % provider,
+                           client_id=client_id,
+                           secret=secret)
 
-      social_app.save()
-      social_app.sites.add(1)
+    social_app.save()
+    social_app.sites.add(1)
 
-      self.stdout.write(
-          self.style.SUCCESS('Successfully created social app account.'))
+    self.stdout.write(
+        self.style.SUCCESS('Successfully created social app account.'))
