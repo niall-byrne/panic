@@ -9,6 +9,7 @@ from django.db.utils import OperationalError
 
 class Command(BaseCommand):
   """Django command that waits for database to be available"""
+  help = 'Pauses for database connectivity before proceeding.'
 
   def handle(self, *args, **options):
     """Handle the command"""
