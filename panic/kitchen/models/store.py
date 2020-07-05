@@ -2,20 +2,30 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from naturalsortfield import NaturalSortField
 
 from spa_security.fields import BlondeCharField
 
 User = get_user_model()
 
+MAX_LENGTH = 255
+
 
 class Store(models.Model):
   """User Store Model"""
+  index = NaturalSortField(
+      for_field="name",
+      max_length=MAX_LENGTH,
+  )  # Pagination Index
   user = models.ForeignKey(User, on_delete=models.CASCADE)
-  name = BlondeCharField(max_length=255)
+  name = BlondeCharField(max_length=MAX_LENGTH)
 
   class Meta:
     constraints = [
         models.UniqueConstraint(fields=['user', 'name'], name='store per user')
+    ]
+    indexes = [
+        models.Index(fields=['index']),
     ]
 
   def __str__(self):

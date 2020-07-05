@@ -14,6 +14,7 @@ class TestShelf(TestCase):
     if user is None:
       user = self.user
     shelf = Shelf.objects.create(user=user, name=name)
+    shelf.save()
     self.objects.append(shelf)
     return shelf
 
@@ -47,6 +48,7 @@ class TestShelf(TestCase):
     query = Shelf.objects.filter(name=test_name)
 
     assert len(query) == 1
+    self.assertEqual(query[0].index, test_name.lower())
     self.assertEqual(query[0].name, test_name)
     self.assertEqual(query[0].user.id, self.user.id)
 
@@ -68,6 +70,7 @@ class TestShelf(TestCase):
     query = Shelf.objects.filter(name=sanitized_name)
 
     assert len(query) == 1
+    self.assertEqual(query[0].index, sanitized_name.lower())
     self.assertEqual(query[0].name, sanitized_name)
     self.assertEqual(query[0].user.id, self.user.id)
 
@@ -79,4 +82,4 @@ class TestShelf(TestCase):
 
   def testFieldLengths(self):
     with self.assertRaises(ValidationError):
-      _ = self.sample_shelf(self.user, self.generate_overload(self.fields))
+      _ = self.sample_shelf(self.user, **self.generate_overload(self.fields))

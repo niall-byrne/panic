@@ -133,7 +133,7 @@ class PrivateItemTest(TestCase):
 
     res = self.client.get(ITEM_URL)
 
-    items = Item.objects.all().order_by("-name")
+    items = Item.objects.all().order_by("index")
     serializer = ItemSerializer(items, many=True)
 
     assert len(items) == 2
@@ -173,7 +173,7 @@ class PrivateItemTest(TestCase):
     url = item_url_with_params({"preferred_stores": self.store1.id})
     res = self.client.get(url)
 
-    items = Item.objects.all().order_by("-name")
+    items = Item.objects.all().order_by("index")
     serializer = ItemSerializer(
         items.filter(preferred_stores__in=[self.store1.id]), many=True)
 
@@ -188,7 +188,7 @@ class PrivateItemTest(TestCase):
     url = item_url_with_params({"shelf": self.shelf.id})
     res = self.client.get(url)
 
-    items = Item.objects.all().order_by("-name")
+    items = Item.objects.all().order_by("index")
     serializer = ItemSerializer(items.filter(shelf=self.shelf.id), many=True)
 
     self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -202,7 +202,7 @@ class PrivateItemTest(TestCase):
     res_delete = self.client.delete(ITEM_URL + str(delete.id) + '/')
     res_get = self.client.get(ITEM_URL)
 
-    items = Item.objects.all().order_by("-name")
+    items = Item.objects.all().order_by("index")
     serializer = ItemSerializer(items, many=True)
 
     assert len(items) == 1
@@ -214,7 +214,7 @@ class PrivateItemTest(TestCase):
     """Test creating a item."""
     res = self.client.post(ITEM_URL, data=self.serializer_data)
 
-    items = Item.objects.all().order_by("-name")
+    items = Item.objects.all().order_by("index")
     self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
     assert len(items) == 1
@@ -240,7 +240,7 @@ class PrivateItemTest(TestCase):
     # Ensure the original object has wrong data
     self.assertNotEqual(original.name, self.serializer_data['name'])
 
-    items = Item.objects.all().order_by("-name")
+    items = Item.objects.all().order_by("index")
     self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     assert len(items) == 1

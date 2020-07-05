@@ -12,7 +12,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Item
-    fields = "__all__"
+    exclude = ('index',)
     read_only_fields = (
         "id",
         "next_expiry_date",

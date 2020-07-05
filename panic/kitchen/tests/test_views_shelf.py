@@ -74,7 +74,7 @@ class PrivateShelfTest(TestCase):
 
     res = self.client.get(SHELF_URL)
 
-    shelves = Shelf.objects.all().order_by("-name")
+    shelves = Shelf.objects.all().order_by("index")
     serializer = ShelfSerializer(shelves, many=True)
 
     assert len(shelves) == 2
@@ -100,7 +100,7 @@ class PrivateShelfTest(TestCase):
     res_delete = self.client.delete(SHELF_URL + str(delete.id) + '/')
     res_get = self.client.get(SHELF_URL)
 
-    shelves = Shelf.objects.all().order_by("-name")
+    shelves = Shelf.objects.all().order_by("index")
     serializer = ShelfSerializer(shelves, many=True)
 
     assert len(shelves) == 1
@@ -114,7 +114,7 @@ class PrivateShelfTest(TestCase):
 
     res = self.client.post(SHELF_URL, data=data)
 
-    shelves = Shelf.objects.all().order_by("-name")
+    shelves = Shelf.objects.all().order_by("index")
 
     assert len(shelves) == 1
     self.assertEqual(res.status_code, status.HTTP_201_CREATED)
