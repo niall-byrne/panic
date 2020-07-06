@@ -16,7 +16,7 @@ class TransactionProcessor:
     self.instance = instance
 
   def is_expired(self, selection):
-    if now().date() >= (selection.date +
+    if now().date() >= (selection.datetime.date() +
                         timedelta(days=self.instance.item.shelf_life)):
       return True
     return False
@@ -29,7 +29,7 @@ class TransactionProcessor:
     """
     remaining = self.quantity
     if record.quantity > 0:
-      self.oldest = record.date
+      self.oldest = record.datetime.date()
       remaining -= record.quantity
       if self.is_expired(record):
         self.expired = self.expired + record.quantity

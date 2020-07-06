@@ -23,8 +23,13 @@ class Transaction(models.Model):
   """Inventory Transaction Model"""
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   item = models.ForeignKey(Item, on_delete=models.CASCADE)
-  date = models.DateField(default=now)
+  datetime = models.DateTimeField(default=now)
   quantity = models.IntegerField(validators=[validate_quantity])
+
+  class Meta:
+    indexes = [
+        models.Index(fields=['datetime']),
+    ]
 
   @property
   def operation(self):
@@ -54,7 +59,7 @@ class Transaction(models.Model):
 
     if processor.quantity > 0:
       query_set = self.__class__.objects.filter(
-          item=self.item).order_by("-date")
+          item=self.item).order_by("-datetime")
       for record in query_set:
         remaining = processor.reconcile_transaction(record)
         if remaining < 1:
