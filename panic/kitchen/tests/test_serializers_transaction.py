@@ -1,9 +1,12 @@
 """Test the Transaction Serializer."""
 
-from datetime import date
+import datetime
 
+import pytz
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
+from freezegun import freeze_time
 from rest_framework.serializers import ValidationError
 
 from ..models.item import Item
@@ -19,6 +22,11 @@ class MockRequest:
     self.user = user
 
 
+def deserialize_datetime(string):
+  return pytz.utc.localize(
+      datetime.datetime.strptime(string, "%Y-%m-%dT%H:%M:%SZ"))
+
+
 class TestItem(TestCase):
 
   # pylint: disable=R0913
@@ -29,7 +37,7 @@ class TestItem(TestCase):
     transaction = Transaction.objects.create(
         item=item,
         user=user,
-        date=transaction_date,
+        datetime=transaction_date,
         quantity=quantity,
     )
     self.objects.append(transaction)
@@ -45,9 +53,10 @@ class TestItem(TestCase):
     return return_list
 
   @classmethod
+  @freeze_time('2020-01-14')
   def setUpTestData(cls):
     cls.serializer = TransactionSerializer
-    cls.today = date.today()
+    cls.today = timezone.now()
     cls.fields = {"name": 255}
     cls.user = get_user_model().objects.create_user(
         username="testuser",
@@ -78,7 +87,7 @@ class TestItem(TestCase):
     }
     cls.serializer_data = {
         'item': cls.item.id,
-        'date': cls.today,
+        'datetime': cls.today,
         'quantity': 3
     }
     cls.request = MockRequest(cls.user)
@@ -97,7 +106,7 @@ class TestItem(TestCase):
     serialized = self.serializer(transaction)
     deserialized = serialized.data
 
-    self.assertEqual(deserialized['date'], str(self.today))
+    self.assertEqual(deserialize_datetime(deserialized['datetime']), self.today)
     self.assertEqual(deserialized['item'], self.item.id)
     self.assertEqual(deserialized['quantity'], self.data['quantity'])
     assert 'user' not in deserialized
@@ -117,7 +126,7 @@ class TestItem(TestCase):
 
     self.assertEqual(transaction.user.id, self.user.id)
     self.assertEqual(transaction.item.id, self.item.id)
-    self.assertEqual(transaction.date, self.today)
+    self.assertEqual(transaction.datetime, self.today)
     self.assertEqual(transaction.quantity, self.serializer_data['quantity'])
 
   def testFieldLengths(self):

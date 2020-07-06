@@ -1,11 +1,12 @@
 """Test the Item Model."""
 
-from datetime import date as getDate
 from datetime import datetime, timedelta
 
+import pytz
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.utils import timezone
 from freezegun import freeze_time
 
 from ..models.item import Item
@@ -14,19 +15,23 @@ from ..models.store import Store
 from ..models.transaction import Transaction
 
 
+def fixture_create_transaction(user, item, date_object, quantity):
+  """Create a test item."""
+  transaction = Transaction.objects.create(
+      item=item,
+      user=user,
+      datetime=date_object,
+      quantity=quantity,
+  )
+  return transaction
+
+
 class TestTransaction(TestCase):
 
   # pylint: disable=R0913
-  def sample_transaction(self, user, item, date, quantity):
+  def sample_transaction(self, user, item, date_object, quantity):
     """Create a test item."""
-    if user is None:
-      user = self.user
-    transaction = Transaction.objects.create(
-        item=item,
-        user=user,
-        date=date,
-        quantity=quantity,
-    )
+    transaction = fixture_create_transaction(user, item, date_object, quantity)
     self.objects.append(transaction)
     return transaction
 
@@ -38,8 +43,9 @@ class TestTransaction(TestCase):
     return return_value
 
   @classmethod
+  @freeze_time("2020-01-14")
   def setUpTestData(cls):
-    cls.today = getDate.today()
+    cls.today = timezone.now()
     cls.fields = {"name": 255}
     cls.user = get_user_model().objects.create_user(
         username="testuser",
@@ -64,25 +70,25 @@ class TestTransaction(TestCase):
     cls.item.save()
     cls.positive_data = {
         'item': cls.item,
-        'date': cls.today,
+        'date_object': cls.today,
         'user': cls.user,
         'quantity': 3
     }
     cls.negative_data = {
         'item': cls.item,
-        'date': cls.today,
+        'date_object': cls.today,
         'user': cls.user,
         'quantity': -3
     }
     cls.invalid_data = {
         'item': cls.item,
-        'date': cls.today,
+        'date_object': cls.today,
         'user': cls.user,
         'quantity': -5
     }
     cls.neutral_data = {
         'item': cls.item,
-        'date': cls.today,
+        'date_object': cls.today,
         'user': cls.user,
         'quantity': 0
     }
@@ -104,7 +110,7 @@ class TestTransaction(TestCase):
     assert len(query) == 1
     transaction = query[0]
     self.assertEqual(transaction.item.id, self.item.id)
-    self.assertEqual(transaction.date, self.today)
+    self.assertEqual(transaction.datetime, self.today)
     self.assertEqual(transaction.user.id, self.user.id)
     self.assertEqual(transaction.quantity, self.positive_data['quantity'])
     assert transaction.item.quantity == 6  # The modified value
@@ -127,7 +133,7 @@ class TestTransaction(TestCase):
     assert len(query) == 1
     transaction = query[0]
     self.assertEqual(transaction.item.id, self.item.id)
-    self.assertEqual(transaction.date, self.today)
+    self.assertEqual(transaction.datetime, self.today)
     self.assertEqual(transaction.user.id, self.user.id)
     self.assertEqual(transaction.quantity, self.negative_data['quantity'])
     assert transaction.item.quantity == 0  # The modified value
@@ -176,16 +182,9 @@ class TestTransaction(TestCase):
 class TestTransactionReconciliation(TestCase):
 
   # pylint: disable=R0913
-  def sample_transaction(self, user, item, date, quantity):
+  def sample_transaction(self, user, item, date_object, quantity):
     """Create a test item."""
-    if user is None:
-      user = self.user
-    transaction = Transaction.objects.create(
-        item=item,
-        user=user,
-        date=date,
-        quantity=quantity,
-    )
+    transaction = fixture_create_transaction(user, item, date_object, quantity)
     self.objects.append(transaction)
     return transaction
 
@@ -244,16 +243,17 @@ class TestTransactionReconciliation(TestCase):
 
     transaction0 = {
         'item': newitem,
-        'date': datetime(2000, 2, 1).date(),
+        'date_object': datetime(2000, 2, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 1
     }
 
     transaction = self.sample_transaction(**transaction0)
 
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+    expected_expiry = (timezone.now().date() +
+                       timedelta(days=transaction.item.shelf_life))
+
+    self.assertEqual(transaction.item.next_expiry_date, expected_expiry)
 
     self.assertEqual(transaction.item.next_expiry_quantity, 0)
 
@@ -273,16 +273,17 @@ class TestTransactionReconciliation(TestCase):
 
     transaction0 = {
         'item': newitem,
-        'date': datetime(2020, 1, 12).date(),
+        'date_object': datetime(2020, 1, 12, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 1
     }
 
     transaction = self.sample_transaction(**transaction0)
 
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        transaction0['date'] + timedelta(days=transaction.item.shelf_life))
+    expected_expiry = (transaction0['date_object'] +
+                       timedelta(days=transaction.item.shelf_life)).date()
+
+    self.assertEqual(transaction.item.next_expiry_date, expected_expiry)
 
     self.assertEqual(transaction.item.next_expiry_quantity, 1)
 
@@ -295,19 +296,19 @@ class TestTransactionReconciliation(TestCase):
 
     transaction1 = {
         'item': self.item,
-        'date': datetime(2000, 1, 1).date(),
+        'date_object': datetime(2000, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 50
     }
     transaction2 = {
         'item': self.item,
-        'date': datetime(2010, 2, 1).date(),
+        'date_object': datetime(2010, 2, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': -10
     }
     transaction3 = {
         'item': self.item,
-        'date': datetime(2011, 1, 1).date(),
+        'date_object': datetime(2011, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 20
     }
@@ -345,28 +346,28 @@ class TestTransactionReconciliation(TestCase):
 
     transaction1 = {
         'item': self.item,
-        'date': datetime(2000, 1, 1).date(),
+        'date_object': datetime(2000, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 50
     }
     transaction2 = {
         'item': self.item,
-        'date': datetime.now().date(),
+        'date_object': timezone.now(),
         'user': self.user,
         'quantity': 10
     }
 
     # Transaction 1: has already expired, set to default
     transaction = self.sample_transaction(**transaction1)
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+    self.assertEqual(transaction.item.next_expiry_date,
+                     (timezone.now() +
+                      timedelta(days=transaction.item.shelf_life)).date())
 
     # Transaction 2: oldest purchase should remain the same
     transaction = self.sample_transaction(**transaction2)
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        (transaction1['date'] + timedelta(days=transaction.item.shelf_life)))
+    self.assertEqual(transaction.item.next_expiry_date,
+                     (transaction1['date_object'] +
+                      timedelta(days=transaction.item.shelf_life)).date())
 
     # Some Items Are Expired
     self.assertEqual(transaction.item.expired, transaction1['quantity'])
@@ -383,28 +384,28 @@ class TestTransactionReconciliation(TestCase):
 
     transaction1 = {
         'item': self.item,
-        'date': datetime.now().date(),
+        'date_object': timezone.now(),
         'user': self.user,
         'quantity': 50
     }
     transaction2 = {
         'item': self.item,
-        'date': datetime.now().date(),
+        'date_object': timezone.now(),
         'user': self.user,
         'quantity': -10
     }
 
     # Transaction 1: sets oldest purchase
     transaction = self.sample_transaction(**transaction1)
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        (transaction1['date'] + timedelta(days=transaction.item.shelf_life)))
+    self.assertEqual(transaction.item.next_expiry_date,
+                     (transaction1['date_object'] +
+                      timedelta(days=transaction.item.shelf_life)).date())
 
     # Transaction 2: oldest purchase should remain the same
     transaction = self.sample_transaction(**transaction2)
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        (transaction2['date'] + timedelta(days=transaction.item.shelf_life)))
+    self.assertEqual(transaction.item.next_expiry_date,
+                     (transaction2['date_object'] +
+                      timedelta(days=transaction.item.shelf_life)).date())
 
     # No Items Are Expired
     self.assertEqual(transaction.item.expired, 0)
@@ -417,13 +418,13 @@ class TestTransactionReconciliation(TestCase):
   def test_next_expiry_date_no_items_4(self):
     transaction1 = {
         'item': self.item,
-        'date': datetime(2000, 1, 1).date(),
+        'date_object': datetime(2000, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 50
     }
     transaction2 = {
         'item': self.item,
-        'date': datetime.now().date(),
+        'date_object': timezone.now(),
         'user': self.user,
         'quantity': -50
     }
@@ -432,13 +433,13 @@ class TestTransactionReconciliation(TestCase):
     transaction = self.sample_transaction(**transaction1)
     self.assertEqual(
         transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+        timezone.now().date() + timedelta(days=transaction.item.shelf_life))
 
     # Transaction 2: all items expired, default date
     transaction = self.sample_transaction(**transaction2)
     self.assertEqual(
         transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+        timezone.now().date() + timedelta(days=transaction.item.shelf_life))
 
     # No Items Are Expired
     self.assertEqual(transaction.item.expired, 0)
@@ -453,52 +454,52 @@ class TestTransactionReconciliation(TestCase):
 
     transaction1 = {
         'item': self.item,
-        'date': datetime(2000, 1, 1).date(),
+        'date_object': datetime(2000, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 50
     }
     transaction2 = {
         'item': self.item,
-        'date': datetime(2010, 1, 1).date(),
+        'date_object': datetime(2010, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': -10
     }
     transaction3 = {
         'item': self.item,
-        'date': datetime(2011, 1, 1).date(),
+        'date_object': datetime(2011, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': -10
     }
     transaction4 = {
         'item': self.item,
-        'date': datetime.now().date(),
+        'date_object': timezone.now(),
         'user': self.user,
         'quantity': 10
     }
 
     # Transaction 1: already expired, default expiry
     transaction = self.sample_transaction(**transaction1)
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+    expected_expiry = (datetime.now().date() +
+                       timedelta(days=transaction.item.shelf_life))
+    self.assertEqual(transaction.item.next_expiry_date, expected_expiry)
 
     # Transaction 2: already expired, default expiry
     transaction = self.sample_transaction(**transaction2)
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+    expected_expiry = (datetime.now().date() +
+                       timedelta(days=transaction.item.shelf_life))
+    self.assertEqual(transaction.item.next_expiry_date, expected_expiry)
 
     # Transaction 3: already expired, default expiry
     transaction = self.sample_transaction(**transaction3)
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+    expected_expiry = (datetime.now().date() +
+                       timedelta(days=transaction.item.shelf_life))
+    self.assertEqual(transaction.item.next_expiry_date, expected_expiry)
 
     # Transaction 4: oldest purchase should remain the same
     transaction = self.sample_transaction(**transaction4)
-    self.assertEqual(
-        transaction.item.next_expiry_date,
-        (transaction1['date'] + timedelta(days=transaction.item.shelf_life)))
+    expected_expiry = (transaction1['date_object'] +
+                       timedelta(days=transaction.item.shelf_life)).date()
+    self.assertEqual(transaction.item.next_expiry_date, expected_expiry)
 
     # Some Items Are Expired
     self.assertEqual(transaction.item.expired, 30)
@@ -513,25 +514,25 @@ class TestTransactionReconciliation(TestCase):
 
     transaction1 = {
         'item': self.item,
-        'date': datetime(2000, 1, 1).date(),
+        'date_object': datetime(2000, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 10
     }
     transaction2 = {
         'item': self.item,
-        'date': datetime(2010, 1, 1).date(),
+        'date_object': datetime(2010, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': -10
     }
     transaction3 = {
         'item': self.item,
-        'date': datetime(2011, 1, 1).date(),
+        'date_object': datetime(2011, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 50
     }
     transaction4 = {
         'item': self.item,
-        'date': datetime.now().date(),
+        'date_object': timezone.now(),
         'user': self.user,
         'quantity': -25
     }
@@ -540,25 +541,25 @@ class TestTransactionReconciliation(TestCase):
     transaction = self.sample_transaction(**transaction1)
     self.assertEqual(
         transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+        timezone.now().date() + timedelta(days=transaction.item.shelf_life))
 
     # Transaction 2: already expired, default date
     transaction = self.sample_transaction(**transaction2)
     self.assertEqual(
         transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+        timezone.now().date() + timedelta(days=transaction.item.shelf_life))
 
     # Transaction 3: already expired, default date
     transaction = self.sample_transaction(**transaction3)
     self.assertEqual(
         transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+        timezone.now().date() + timedelta(days=transaction.item.shelf_life))
 
     # Transaction 4: still all items expired, default date
     transaction = self.sample_transaction(**transaction4)
     self.assertEqual(
         transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+        timezone.now().date() + timedelta(days=transaction.item.shelf_life))
     # Some Items Are Expired
     self.assertEqual(transaction.item.expired, 25)
 
@@ -572,25 +573,25 @@ class TestTransactionReconciliation(TestCase):
 
     transaction1 = {
         'item': self.item,
-        'date': datetime(2020, 1, 1).date(),
+        'date_object': datetime(2020, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 10
     }
     transaction2 = {
         'item': self.item,
-        'date': datetime(2020, 1, 2).date(),
+        'date_object': datetime(2020, 1, 2, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': -10
     }
     transaction3 = {
         'item': self.item,
-        'date': datetime(2020, 1, 3).date(),
+        'date_object': datetime(2020, 1, 3, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 50
     }
     transaction4 = {
         'item': self.item,
-        'date': datetime.now().date(),
+        'date_object': timezone.now(),
         'user': self.user,
         'quantity': -25
     }
@@ -598,26 +599,26 @@ class TestTransactionReconciliation(TestCase):
     # Transaction 1: oldest purchase set
     transaction = self.sample_transaction(**transaction1)
     self.assertEqual(
-        transaction.item.next_expiry_date,
-        transaction1['date'] + timedelta(days=transaction.item.shelf_life))
+        transaction.item.next_expiry_date, transaction1['date_object'].date() +
+        timedelta(days=transaction.item.shelf_life))
 
     # Transaction 2: no inventory, default date
     transaction = self.sample_transaction(**transaction2)
     self.assertEqual(
         transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+        timezone.now().date() + timedelta(days=transaction.item.shelf_life))
 
     # Transaction 3: new inventory, date set
     transaction = self.sample_transaction(**transaction3)
     self.assertEqual(
-        transaction.item.next_expiry_date,
-        transaction3['date'] + timedelta(days=transaction.item.shelf_life))
+        transaction.item.next_expiry_date, transaction3['date_object'].date() +
+        timedelta(days=transaction.item.shelf_life))
 
     # Transaction 4: stays the same
     transaction = self.sample_transaction(**transaction4)
     self.assertEqual(
-        transaction.item.next_expiry_date,
-        transaction3['date'] + timedelta(days=transaction.item.shelf_life))
+        transaction.item.next_expiry_date, transaction3['date_object'].date() +
+        timedelta(days=transaction.item.shelf_life))
 
     # No Items Are Expired
     self.assertEqual(transaction.item.expired, 0)
@@ -632,25 +633,25 @@ class TestTransactionReconciliation(TestCase):
 
     transaction1 = {
         'item': self.item,
-        'date': datetime(2010, 1, 1).date(),
+        'date_object': datetime(2010, 1, 1, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 10
     }
     transaction2 = {
         'item': self.item,
-        'date': datetime(2010, 1, 2).date(),
+        'date_object': datetime(2010, 1, 2, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': -10
     }
     transaction3 = {
         'item': self.item,
-        'date': datetime(2020, 1, 3).date(),
+        'date_object': datetime(2020, 1, 3, tzinfo=pytz.utc),
         'user': self.user,
         'quantity': 50
     }
     transaction4 = {
         'item': self.item,
-        'date': datetime.now().date(),
+        'date_object': timezone.now(),
         'user': self.user,
         'quantity': -25
     }
@@ -659,25 +660,25 @@ class TestTransactionReconciliation(TestCase):
     transaction = self.sample_transaction(**transaction1)
     self.assertEqual(
         transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+        timezone.now().date() + timedelta(days=transaction.item.shelf_life))
 
     # Transaction 2: no inventory, default date
     transaction = self.sample_transaction(**transaction2)
     self.assertEqual(
         transaction.item.next_expiry_date,
-        datetime.now().date() + timedelta(days=transaction.item.shelf_life))
+        timezone.now().date() + timedelta(days=transaction.item.shelf_life))
 
     # Transaction 3: new inventory, date set
     transaction = self.sample_transaction(**transaction3)
     self.assertEqual(
-        transaction.item.next_expiry_date,
-        transaction3['date'] + timedelta(days=transaction.item.shelf_life))
+        transaction.item.next_expiry_date, transaction3['date_object'].date() +
+        timedelta(days=transaction.item.shelf_life))
 
     # Transaction 4: stays the same
     transaction = self.sample_transaction(**transaction4)
     self.assertEqual(
-        transaction.item.next_expiry_date,
-        transaction3['date'] + timedelta(days=transaction.item.shelf_life))
+        transaction.item.next_expiry_date, transaction3['date_object'].date() +
+        timedelta(days=transaction.item.shelf_life))
 
     # No Items Are Expired
     self.assertEqual(transaction.item.expired, 0)
