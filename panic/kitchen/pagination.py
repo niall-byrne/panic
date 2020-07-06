@@ -28,4 +28,4 @@ class ItemPagination(BasePagination):
 
 
 class TransactionQueryPagination(BasePagination):
-  ordering = "-date"
+  ordering = "-id"

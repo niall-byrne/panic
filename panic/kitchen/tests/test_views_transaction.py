@@ -141,7 +141,7 @@ class PrivateItemTest(TestCase):
 
     res = self.client.get(transaction_query_url())
 
-    items = Transaction.objects.all().order_by("-date")
+    items = Transaction.objects.all().order_by("-id")
     serializer = TransactionSerializer(items, many=True)
 
     assert len(items) == 3
@@ -156,7 +156,7 @@ class PrivateItemTest(TestCase):
 
     res = self.client.get(transaction_query_url({"item": self.item1.id}))
 
-    items = Transaction.objects.filter(item=self.item1).order_by("-date")
+    items = Transaction.objects.filter(item=self.item1).order_by("-id")
     serializer = TransactionSerializer(items, many=True)
 
     assert len(items) == 2
@@ -171,7 +171,7 @@ class PrivateItemTest(TestCase):
 
     res = self.client.get(transaction_query_url({"item": self.item2.id}))
 
-    items = Transaction.objects.filter(item=self.item2).order_by("-date")
+    items = Transaction.objects.filter(item=self.item2).order_by("-id")
     serializer = TransactionSerializer(items, many=True)
 
     assert len(items) == 1
