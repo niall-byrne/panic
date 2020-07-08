@@ -9,7 +9,7 @@ from kitchen.models.shelf import Shelf
 from kitchen.models.store import Store
 
 DATA_PRESETS = {
-    'storename': 'TestStore1',
+    'storename': 'TestStore',
     'shelfname': 'TestShelf1',
     'itemname': 'TestItem',
     'number_of_items': 200
@@ -35,18 +35,23 @@ class Command(BaseCommand):
       self.stderr.write(self.style.ERROR('The specified user does not exist.'))
       return
 
-    store = Store.objects.create(user=user, name=DATA_PRESETS['storename'])
     shelf = Shelf.objects.create(user=user, name=DATA_PRESETS['shelfname'])
     items = []
+    stores = []
     for i in range(0, DATA_PRESETS['number_of_items']):
-      new = Item(name=DATA_PRESETS['itemname'] + str(i),
-                 user=user,
-                 shelf_life="99",
-                 shelf=shelf,
-                 price="2.00",
-                 quantity=20)
-      items.append(new)
+      new_item = Item(name=DATA_PRESETS['itemname'] + str(i),
+                      user=user,
+                      shelf_life="99",
+                      shelf=shelf,
+                      price="2.00",
+                      quantity=20)
+      new_store = Store(user=user, name=DATA_PRESETS['storename'] + str(i))
+      items.append(new_item)
+      stores.append(new_store)
+
+    for store in Store.objects.bulk_create(stores):
+      store.save()
 
     for item in Item.objects.bulk_create(items):
-      item.preferred_stores.add(store)
+      item.preferred_stores.add(stores[0])
       item.save()
