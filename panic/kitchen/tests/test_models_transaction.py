@@ -2,12 +2,12 @@
 
 from datetime import datetime, timedelta
 
-from django.utils import timezone
+import pytz
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.utils import timezone
 from freezegun import freeze_time
-import pytz
 
 from ..models.item import Item
 from ..models.shelf import Shelf

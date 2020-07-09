@@ -64,9 +64,8 @@ with patch(kitchen.__name__ +
         store.delete()
 
     def test_valid_user_specified_store_is_valid(self):
-      store = Store.objects.filter(user=self.user)
-      self.assertEqual(len(store), 1)
-      self.assertEqual(store[0].name, DATA_PRESETS['storename'])
+      stores = Store.objects.filter(user=self.user)
+      self.assertEqual(len(stores), BULK_SIZE)
 
     def test_valid_user_specified_shelf_is_valid(self):
       shelf = Shelf.objects.filter(user=self.user)
@@ -74,8 +73,9 @@ with patch(kitchen.__name__ +
       self.assertEqual(shelf[0].name, DATA_PRESETS['shelfname'])
 
     def test_valid_user_specified_item_is_valid(self):
-      store = Store.objects.get(user=self.user)
-      shelf = Shelf.objects.get(user=self.user)
+      store = Store.objects.get(user=self.user,
+                                name=DATA_PRESETS['storename'] + "0")
+      shelf = Shelf.objects.get(user=self.user, name=DATA_PRESETS['shelfname'])
       items = Item.objects.filter(user=self.user)
       self.assertEqual(len(items), BULK_SIZE)
 

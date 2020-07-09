@@ -187,12 +187,13 @@ MESSAGE_LEVEL = message_constants.WARNING
 
 BLEACH_RESTORE_LIST = {"&amp;": "&"}
 
-# Application Settings
+# Pagination Settings
 
 PAGE_SIZE = 50
 PAGE_SIZE_MAX = 100
 PAGE_SIZE_PARAM = "page_size"
-CURSOR_QUERY_PARAM = "cursor"
+PAGE_QUERY_PARAM = "page"
+PAGE_SIZE_TRANSACTIONS = PAGE_SIZE
 
 # Environment Specific Settings
 
