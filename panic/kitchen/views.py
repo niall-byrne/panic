@@ -11,13 +11,7 @@ from .models.shelf import Shelf
 from .models.store import Store
 from .models.suggested import SuggestedItem
 from .models.transaction import Transaction
-from .pagination import (
-    ItemPagination,
-    ItemSuggestionPagination,
-    ShelfPagination,
-    StorePagination,
-    TransactionQueryPagination,
-)
+from .pagination import PagePagination, TransactionQueryPagination
 from .serializers.item import ItemSerializer
 from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
@@ -33,8 +27,13 @@ class SuggestedItemViewSet(
 ):
   """Suggested Items List View"""
   serializer_class = SuggestedItemSerializer
-  queryset = SuggestedItem.objects.all()
-  pagination_class = ItemSuggestionPagination
+  queryset = SuggestedItem.objects.all().order_by("name")
+  pagination_class = PagePagination
+
+  @openapi_ready
+  def get_queryset(self):
+    queryset = self.queryset
+    return queryset.order_by("name")
 
 
 class ShelfViewSet(
@@ -47,12 +46,12 @@ class ShelfViewSet(
   """Shelf API View"""
   serializer_class = ShelfSerializer
   queryset = Shelf.objects.all()
-  pagination_class = ShelfPagination
+  pagination_class = PagePagination
 
   @openapi_ready
   def get_queryset(self):
     queryset = self.queryset
-    return queryset.filter(user=self.request.user)
+    return queryset.filter(user=self.request.user).order_by("index")
 
   @openapi_ready
   def perform_create(self, serializer):
@@ -70,12 +69,12 @@ class StoreViewSet(
   """Store API View"""
   serializer_class = StoreSerializer
   queryset = Store.objects.all()
-  pagination_class = StorePagination
+  pagination_class = PagePagination
 
   @openapi_ready
   def get_queryset(self):
     queryset = self.queryset
-    return queryset.filter(user=self.request.user)
+    return queryset.filter(user=self.request.user).order_by("index")
 
   @openapi_ready
   def perform_create(self, serializer):
@@ -97,12 +96,12 @@ class ItemViewSet(
   queryset = Item.objects.all()
   filter_backends = (filters.DjangoFilterBackend,)
   filterset_class = ItemFilter
-  pagination_class = ItemPagination
+  pagination_class = PagePagination
 
   @openapi_ready
   def get_queryset(self):
     queryset = self.queryset
-    return queryset.filter(user=self.request.user)
+    return queryset.filter(user=self.request.user).order_by("index")
 
   @openapi_ready
   def perform_create(self, serializer):
@@ -139,7 +138,7 @@ class TransactionViewSet(
   @openapi_ready
   def get_queryset(self):
     queryset = self.queryset
-    return queryset.filter(user=self.request.user)
+    return queryset.filter(user=self.request.user).order_by('-datetime')
 
   @openapi_ready
   def perform_create(self, serializer):
