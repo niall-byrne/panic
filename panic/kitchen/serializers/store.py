@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from ..models.store import Store
+from . import DUPLICATE_OBJECT_MESSAGE
 
 
 class StoreSerializer(serializers.ModelSerializer):
@@ -16,5 +17,6 @@ class StoreSerializer(serializers.ModelSerializer):
     read_only_fields = ("id",)
     validators = [
         UniqueTogetherValidator(queryset=Store.objects.all(),
-                                fields=['user', 'name'])
+                                fields=['user', 'name'],
+                                message=DUPLICATE_OBJECT_MESSAGE)
     ]

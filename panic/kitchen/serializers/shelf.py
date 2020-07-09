@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from ..models.shelf import Shelf
+from . import DUPLICATE_OBJECT_MESSAGE
 
 
 class ShelfSerializer(serializers.ModelSerializer):
@@ -16,5 +17,6 @@ class ShelfSerializer(serializers.ModelSerializer):
     read_only_fields = ("id",)
     validators = [
         UniqueTogetherValidator(queryset=Shelf.objects.all(),
-                                fields=['user', 'name'])
+                                fields=['user', 'name'],
+                                message=DUPLICATE_OBJECT_MESSAGE)
     ]

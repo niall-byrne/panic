@@ -4,6 +4,7 @@ from django.test import TestCase
 from rest_framework.serializers import ValidationError
 
 from ..models.suggested import SuggestedItem
+from ..serializers import DUPLICATE_OBJECT_MESSAGE
 from ..serializers.suggested import SuggestedItemSerializer
 
 
@@ -61,6 +62,9 @@ class TestItemList(TestCase):
     serialized2 = self.serializer(data=test_value,)
     with self.assertRaises(ValidationError):
       serialized2.is_valid(raise_exception=True)
+
+    self.assertEqual(str(serialized2.errors['name'][0]),
+                     DUPLICATE_OBJECT_MESSAGE)
 
   def testFieldLengths(self):
     overloads = self.generate_overload(self.fields)

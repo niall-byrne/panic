@@ -5,6 +5,7 @@ from django.test import TestCase
 from rest_framework.serializers import ValidationError
 
 from ..models.store import Store
+from ..serializers import DUPLICATE_OBJECT_MESSAGE
 from ..serializers.store import StoreSerializer
 
 
@@ -94,6 +95,9 @@ class TestStore(TestCase):
     )
     with self.assertRaises(ValidationError):
       serialized2.is_valid(raise_exception=True)
+
+    self.assertEqual(str(serialized2.errors['non_field_errors'][0]),
+                     DUPLICATE_OBJECT_MESSAGE)
 
   def testFieldLengths(self):
     overloads = self.generate_overload(self.fields)
