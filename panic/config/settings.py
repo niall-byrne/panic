@@ -194,6 +194,7 @@ PAGE_SIZE_MAX = 100
 PAGE_SIZE_PARAM = "page_size"
 PAGE_QUERY_PARAM = "page"
 PAGE_SIZE_TRANSACTIONS = PAGE_SIZE
+PAGINATION_OVERRIDE_PARAM = "all_results"
 
 # Environment Specific Settings
 

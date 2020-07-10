@@ -1,5 +1,6 @@
 """Test the Store API."""
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -90,6 +91,21 @@ class PrivateStoreTest(TestCase):
     res = self.client.get(store_url_with_params({"page_size": 10}))
     self.assertEqual(len(res.data['results']), 10)
     self.assertIsNotNone(res.data['next'])
+    self.assertIsNone(res.data['previous'])
+
+  def test_list_stores_paginated_overidden_correctly(self):
+    """Test retrieving a the full list of stores."""
+    for index in range(0, 11):
+      data = 'storesname' + str(index)
+      self.sample_store(name=data)
+
+    res = self.client.get(
+        store_url_with_params({
+            "page_size": 10,
+            settings.PAGINATION_OVERRIDE_PARAM: "true"
+        }))
+    self.assertEqual(len(res.data['results']), 11)
+    self.assertIsNone(res.data['next'])
     self.assertIsNone(res.data['previous'])
 
   def test_delete_store(self):

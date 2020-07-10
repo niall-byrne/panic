@@ -1,5 +1,6 @@
 """Test the Shelf API."""
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -81,15 +82,30 @@ class PrivateShelfTest(TestCase):
     self.assertEqual(res.status_code, status.HTTP_200_OK)
     self.assertEqual(res.data['results'], serializer.data)
 
-  def test_list_items_paginated_correctly(self):
-    """Test that retrieving a list of items is paginated correctly."""
+  def test_list_shelves_paginated_correctly(self):
+    """Test retrieving a list of shelves is paginated correctly."""
     for index in range(0, 11):
-      data = 'storename' + str(index)
+      data = 'shelfname' + str(index)
       self.sample_shelf(name=data)
 
     res = self.client.get(shelf_url_with_params({"page_size": 10}))
     self.assertEqual(len(res.data['results']), 10)
     self.assertIsNotNone(res.data['next'])
+    self.assertIsNone(res.data['previous'])
+
+  def test_list_shelves_paginated_overidden_correctly(self):
+    """Test retrieving a the full list of shelves."""
+    for index in range(0, 11):
+      data = 'shelfname' + str(index)
+      self.sample_shelf(name=data)
+
+    res = self.client.get(
+        shelf_url_with_params({
+            "page_size": 10,
+            settings.PAGINATION_OVERRIDE_PARAM: "true"
+        }))
+    self.assertEqual(len(res.data['results']), 11)
+    self.assertIsNone(res.data['next'])
     self.assertIsNone(res.data['previous'])
 
   def test_delete_shelf(self):

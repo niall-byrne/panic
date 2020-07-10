@@ -11,7 +11,11 @@ from .models.shelf import Shelf
 from .models.store import Store
 from .models.suggested import SuggestedItem
 from .models.transaction import Transaction
-from .pagination import PagePagination, TransactionQueryPagination
+from .pagination import (
+    PagePagination,
+    PagePaginationWithOverride,
+    TransactionQueryPagination,
+)
 from .serializers.item import ItemSerializer
 from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
@@ -46,7 +50,7 @@ class ShelfViewSet(
   """Shelf API View"""
   serializer_class = ShelfSerializer
   queryset = Shelf.objects.all()
-  pagination_class = PagePagination
+  pagination_class = PagePaginationWithOverride
 
   @openapi_ready
   def get_queryset(self):
@@ -69,7 +73,7 @@ class StoreViewSet(
   """Store API View"""
   serializer_class = StoreSerializer
   queryset = Store.objects.all()
-  pagination_class = PagePagination
+  pagination_class = PagePaginationWithOverride
 
   @openapi_ready
   def get_queryset(self):
