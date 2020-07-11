@@ -104,9 +104,7 @@ class PrivateShelfTest(TestCase):
             "page_size": 10,
             settings.PAGINATION_OVERRIDE_PARAM: "true"
         }))
-    self.assertEqual(len(res.data['results']), 11)
-    self.assertIsNone(res.data['next'])
-    self.assertIsNone(res.data['previous'])
+    self.assertEqual(len(res.data), 11)
 
   def test_delete_shelf(self):
     """Test deleting a shelf."""

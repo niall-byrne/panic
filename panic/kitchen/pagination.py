@@ -13,17 +13,9 @@ class PagePagination(PageNumberPagination):
 
 class PagePaginationWithOverride(PagePagination):
 
-  def get_page_size(self, request):
-    if request.query_params.get(settings.PAGINATION_OVERRIDE_PARAM):
-      count = request.queryset.count()
-      del request.queryset
-      return count
-
-    return super().get_page_size(request)
-
   def paginate_queryset(self, queryset, request, view=None):
     if request.query_params.get(settings.PAGINATION_OVERRIDE_PARAM):
-      request.queryset = queryset
+      return None
 
     return super().paginate_queryset(queryset, request, view)
 
