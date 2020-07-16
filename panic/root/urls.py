@@ -34,6 +34,7 @@ urlpatterns = [
     path("api/v1/auth/social/connect/",
          connections,
          name='socialaccount_connections'),
+    path('watchman/', include("watchman.urls")),
 ]
 
 if settings.ENVIRONMENT in ['local', 'stage', 'admin']:

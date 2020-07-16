@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'spa_security',
     'social_accounts',
     'django_bleach',
+    'watchman',
 ]
 
 MIDDLEWARE = [
@@ -186,6 +187,11 @@ MESSAGE_LEVEL = message_constants.WARNING
 # Bleach
 
 BLEACH_RESTORE_LIST = {"&amp;": "&"}
+
+# Watchman Settings
+
+WATCHMAN_TOKENS = os.getenv("WATCHMAN_TOKENS", None)
+WATCHMAN_CHECKS = ["watchman.checks.databases"]
 
 # Pagination Settings
 
