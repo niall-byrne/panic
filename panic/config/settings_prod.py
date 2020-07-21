@@ -34,7 +34,7 @@ JWT_AUTH_COOKIE_SAMESITE = "Strict"
 CSRF_COOKIE_SAMESITE = "Strict"
 SESSION_COOKIE_SAMESITE = "Strict"
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = ['grocerypanic.com']
+CSRF_TRUSTED_ORIGINS = ['prod.grocerypanic.com', 'grocerypanic.com']
 
 JWT_AUTH_COOKIE = 'panic_auth_prod'
 CSRF_COOKIE_NAME = "panic_csrf_prod"
