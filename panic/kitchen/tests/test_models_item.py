@@ -36,9 +36,9 @@ class TestItem(TestCase):
 
   @staticmethod
   def generate_overload(fields):
-    return_value = {}
+    return_value = []
     for key, value in fields.items():
-      return_value[key] = "abc" * value
+      return_value.append({key: "abc" * value})
     return return_value
 
   @classmethod
@@ -141,10 +141,11 @@ class TestItem(TestCase):
     self.assertEqual(self.data['name'], str(item))
 
   def testFieldLengths(self):
-    local_data = dict(self.data)
-    local_data.update(self.generate_overload(self.fields))
-    with self.assertRaises(ValidationError):
-      _ = self.sample_item(**local_data)
+    for overloaded_field in self.generate_overload(self.fields):
+      local_data = dict(self.data)
+      local_data.update(overloaded_field)
+      with self.assertRaises(ValidationError):
+        _ = self.sample_item(**local_data)
 
   def testNegativeQuantity(self):
     item = self.sample_item(**self.data)

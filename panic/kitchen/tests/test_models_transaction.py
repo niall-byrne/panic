@@ -35,18 +35,10 @@ class TestTransaction(TestCase):
     self.objects.append(transaction)
     return transaction
 
-  @staticmethod
-  def generate_overload(fields):
-    return_value = {}
-    for key, value in fields.items():
-      return_value[key] = "abc" * value
-    return return_value
-
   @classmethod
   @freeze_time("2020-01-14")
   def setUpTestData(cls):
     cls.today = timezone.now()
-    cls.fields = {"name": 255}
     cls.user = get_user_model().objects.create_user(
         username="testuser",
         email="test@niallbyrne.ca",
@@ -187,13 +179,6 @@ class TestTransactionReconciliation(TestCase):
     transaction = fixture_create_transaction(user, item, date_object, quantity)
     self.objects.append(transaction)
     return transaction
-
-  @staticmethod
-  def generate_overload(fields):
-    return_value = {}
-    for key, value in fields.items():
-      return_value[key] = "abc" * value
-    return return_value
 
   @classmethod
   def setUpTestData(cls):
