@@ -40,9 +40,8 @@ jobs:
       run: |
         docker-compose exec -T panic bash -l -c 'scripts/commander.sh test coverage'
     - name: Report Job Status
-      if: always()
+      if: ${{ failure() }}
       run: |
-        if [[ $status == "Failure" ]]; then curl -X POST -H 'Content-type: application/json' --data '{"text":"Backend build has failed!"}' "${WEBHOOK_URL}"; fi
+        curl -X POST -H 'Content-type: application/json' --data '{"text":"Backend build has failed!"}' "${WEBHOOK_URL}"
       env:
-        status: ${{job.status}}
         WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
