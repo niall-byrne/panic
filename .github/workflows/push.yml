@@ -50,10 +50,12 @@ jobs:
       if: ${{ github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
       run: |
         # Deploy to Stage
+        echo -n "${ADMIN_ENV}" | base64 --decode > ./environments/admin.env
         echo -n "${STAGE_ENV}" | base64 --decode > ./environments/stage.env
         echo "${STAGE_SERVICE_ACCOUNT}" > ./service-account.json
         docker-compose exec -T panic bash -l -c 'scripts/commander.sh deploy-stage'
       env:
+        ADMIN_ENV: ${{ secrets.ADMIN_ENV }}
         STAGE_ENV: ${{ secrets.STAGE_ENV }}
         STAGE_SERVICE_ACCOUNT: ${{ secrets.STAGE_SERVICE_ACCOUNT }}
     - name: Stage -- Report Success

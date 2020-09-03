@@ -4,16 +4,31 @@ set -e
 
 deploy_stage() {
 
+  PROXY_FLAG=/tmp/PROXY
+
   pushd "${PROJECT_HOME}" > /dev/null
-
-    set -a
-    # shellcheck disable=SC1091
-    source environments/stage.env
-    set +a
-
     pushd "${PROJECT_NAME}" >/dev/null
 
+        set -a
+        # shellcheck disable=SC1091
+        source ../environments/stage.env
+        # shellcheck disable=SC1091
+        source ../environments/admin.env
+        set +a
+
+        [[ ! -f "${PROXY_FLAG}" ]] && GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json cloud_sql_proxy --instances="${CLOUDSQLINSTANCE}=tcp:5432" &
+        touch "${PROXY_FLAG}"
+
+        ./manage.py wait_for_db
+        ./manage.py migrate
+
+        set -a
+        # shellcheck disable=SC1091
+        source ../environments/stage.env
+        set +a
+
         ./manage.py collectstatic --no-input
+
         cp ../assets/requirements.txt requirements.txt
         cat ../assets/requirements-stage.txt >> requirements.txt
         cp ../environments/stage.yaml app.yaml
