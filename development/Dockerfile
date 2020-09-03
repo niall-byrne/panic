@@ -45,7 +45,7 @@ USER user
 # Install latest gcloud sdk
 RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > gcloud.tar.gz \
   && mkdir -p /home/user/gcloud \
-  && tar -C /home/user/gcloud -xvf gcloud.tar.gz \
+  && tar -C /home/user/gcloud -xf gcloud.tar.gz \
   && rm gcloud.tar.gz
 
 # Initialize The gcloud sdk

@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  django:
+  push:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -45,3 +45,28 @@ jobs:
         curl -X POST -H 'Content-type: application/json' --data '{"text":"Backend build has failed!"}' "${WEBHOOK_URL}"
       env:
         WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+    - name: Stage -- Deploy
+      if: ${{ github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
+      run: |
+        # Deploy to Stage
+        echo -n "${STAGE_ENV}" | base64 --decode > ./environments/stage.env
+        echo "${STAGE_SERVICE_ACCOUNT}" > ./service-account.json
+        docker-compose exec -T panic bash -l -c 'scripts/commander.sh deploy-stage'
+      env:
+        STAGE_ENV: ${{ secrets.STAGE_ENV }}
+        STAGE_SERVICE_ACCOUNT: ${{ secrets.STAGE_SERVICE_ACCOUNT }}
+    - name: Stage -- Report Success
+      if: ${{ github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
+      run: |
+        curl -X POST -H 'Content-type: application/json' --data '{"text":"panic backend: automated deploy to stage!"}' "${WEBHOOK_URL}"
+      env:
+        WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+    - name: Stage -- Report Failure
+      if: ${{ failure() }}
+      run: |
+        [[ ${REF} == 'refs/heads/develop' ]] && [[ ${EVENT} == 'push' ]] && curl -X POST -H 'Content-type: application/json' --data '{"text":"panic backend: stage deploy has failed!"}' "${WEBHOOK_URL}"
+      env:
+        WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        REF: ${{ github.ref }}
+        EVENT: ${{ github.event_name }}
