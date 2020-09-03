@@ -147,3 +147,7 @@ panic/frontend/static/frontend/main.js
 terraform-account.json
 scripts/common/.archive
 
+
+# gcloud
+service-account.json
+
