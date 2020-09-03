@@ -22,8 +22,9 @@ RUN apt-get update      && \
     tig                    \
     vim
 
+# Install cloud sql proxy
 RUN curl https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 > /usr/bin/cloud_sql_proxy \
- && chmod +x /usr/bin/cloud_sql_proxy
+  && chmod +x /usr/bin/cloud_sql_proxy
 
 # Setup directories
 RUN mkdir -p /home/user /app
@@ -40,6 +41,15 @@ RUN useradd user -d /home/user        \
  && chown -R user:user /app           \
  && echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER user
+
+# Install latest gcloud sdk
+RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > gcloud.tar.gz \
+  && mkdir -p /home/user/gcloud \
+  && tar -C /home/user/gcloud -xvf gcloud.tar.gz \
+  && rm gcloud.tar.gz
+
+# Initialize The gcloud sdk
+RUN /home/user/gcloud/google-cloud-sdk/install.sh
 
 # Setup The Dev CLI
 RUN scripts/commander.sh setup
