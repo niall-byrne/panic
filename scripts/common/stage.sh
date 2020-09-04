@@ -16,7 +16,9 @@ deploy_stage() {
         source ../environments/admin.env
         set +a
 
-        [[ ! -f "${PROXY_FLAG}" ]] && GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json cloud_sql_proxy --instances="${CLOUDSQLINSTANCE}=tcp:5432" &
+        [[ -f "${PROXY_FLAG}" ]] && echo "Cloud Proxy is already running, halting deploy..." && exit 0
+
+        GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json cloud_sql_proxy --instances="${CLOUDSQLINSTANCE}=tcp:5432" &
         touch "${PROXY_FLAG}"
 
         ./manage.py wait_for_db

@@ -4,16 +4,33 @@ set -e
 
 deploy_prod() {
 
+  PROXY_FLAG=/tmp/PROXY
+
   pushd "${PROJECT_HOME}" > /dev/null
-
-    set -a
-    # shellcheck disable=SC1091
-    source environments/prod.env
-    set +a
-
     pushd "${PROJECT_NAME}" >/dev/null
 
-        ./manage.py collectstatic
+        set -a
+        # shellcheck disable=SC1091
+        source ../environments/prod.env
+        # shellcheck disable=SC1091
+        source ../environments/admin.env
+        set +a
+
+        [[ -f "${PROXY_FLAG}" ]] && echo "Cloud Proxy is already running, halting deploy..." && exit 0
+
+        GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json cloud_sql_proxy --instances="${CLOUDSQLINSTANCE}=tcp:5432" &
+        touch "${PROXY_FLAG}"
+
+        ./manage.py wait_for_db
+        ./manage.py migrate
+
+        set -a
+        # shellcheck disable=SC1091
+        source ../environments/prod.env
+        set +a
+
+        ./manage.py collectstatic --no-input
+
         cp ../assets/requirements.txt requirements.txt
         cat ../assets/requirements-prod.txt >> requirements.txt
         cp ../environments/prod.yaml app.yaml
@@ -24,7 +41,9 @@ deploy_prod() {
           value="${line/$key=/$value}"
           echo "  ${key}: \"${value}\"" >> app.yaml
         done < "../environments/prod.env"
-        gcloud app deploy --version v1
+        gcloud auth activate-service-account --key-file=../service-account.json
+        gcloud config set project "${GCP_PROJECT}"
+        gcloud app deploy --version v1 --quiet
         rm app.yaml
         rm requirements.txt
 
