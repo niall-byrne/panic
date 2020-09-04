@@ -4,7 +4,11 @@
 
 A kitchen inventory management app.
 
-[![panic-automation](https://github.com/niall-byrne/panic/workflows/panic%20Automation/badge.svg)](https://github.com/niall-byrne/panic/actions)
+#### Production Environment (master branch)
+[![panic-automation](https://github.com/niall-byrne/panic/workflows/panic%20Automation/badge.svg?branch=master)](https://github.com/niall-byrne/panic/actions)
+
+#### Stage Environment (develop branch)
+[![panic-automation](https://github.com/niall-byrne/panic/workflows/panic%20Automation/badge.svg?branch=develop)](https://github.com/niall-byrne/panic/actions)
 
 ## OpenAPI Specification
 
