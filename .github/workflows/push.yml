@@ -54,7 +54,7 @@ jobs:
         # Deploy to Stage
         echo -n "${ADMIN_ENV}" | base64 --decode > ./environments/admin.env
         echo -n "${STAGE_ENV}" | base64 --decode > ./environments/stage.env
-        echo "${STAGE_SERVICE_ACCOUNT}" > ./service-account.json
+        echo -n "${STAGE_SERVICE_ACCOUNT}" | base64 --decode > ./service-account.json
         docker-compose exec -T panic bash -l -c 'scripts/commander.sh deploy-stage'
       env:
         ADMIN_ENV: ${{ secrets.ADMIN_ENV }}
@@ -78,6 +78,7 @@ jobs:
     - name: Production -- Detect A Release Tag
       if: contains(github.ref, '/tags/v') == true
       run: |
+        git checkout .  # Reset file modes
         GIT_DIFF=$(git diff origin/master)
         echo "::set-env name=GIT_DIFF::${GIT_DIFF}"
     - name: Production -- Ignore Non-Release Tags and Branches
@@ -86,17 +87,18 @@ jobs:
         GIT_DIFF="not a release"
         echo "::set-env name=GIT_DIFF::${GIT_DIFF}"
 
-    - name: Production -- Prepare Release
+    - name: Production -- Prepare Release Content
       if: env.GIT_DIFF == ''
       run: |
-        LAST=$(git tag | grep v | sort | tail -n2 | head -n1)
-        CHANGELOG=$(git log --pretty=%s ${LAST}...HEAD)
-        CHANGELOG="${CHANGELOG//'%'/'%25'}"
-        CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
-        CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
-        echo "::set-env name=CHANGELOG::${CHANGELOG}"
         NEWTAG=${GITHUB_REF#refs/tags/}
         echo "::set-env name=NEWTAG::${NEWTAG}"
+        echo "{}" > package.json
+    - name: Production -- Generate Changelog
+      if: env.GIT_DIFF == ''
+      uses: scottbrenner/generate-changelog-action@master
+      id: Changelog
+      env:
+        REPO: ${{ github.repository }}
     - name: Production -- Create Release
       if: env.GIT_DIFF == ''
       uses: actions/create-release@v1
@@ -106,7 +108,7 @@ jobs:
         tag_name: ${{ env.NEWTAG }}
         release_name: Release ${{ env.NEWTAG }}
         body: |
-          ${{ env.CHANGELOG }}
+          ${{ steps.Changelog.outputs.changelog }}
         draft: true
         prerelease: false
     - name: Production -- Report Success

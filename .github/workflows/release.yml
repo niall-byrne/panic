@@ -1,4 +1,4 @@
-name: panic_fe-ProductionDeploys
+name: panic-ProductionDeploys
 
 on:
   release:
@@ -28,12 +28,12 @@ jobs:
           # Deploy to Production
           echo -n "${ADMIN_ENV}" | base64 --decode > ./environments/admin.env
           echo -n "${PROD_ENV}" | base64 --decode > ./environments/prod.env
-          echo "${PROD_SERVICE_ACCOUNT}" > ./service-account.json
+          echo -n "${PROD_SERVICE_ACCOUNT}" | base64 --decode > ./service-account.json
           docker-compose exec -T panic bash -l -c 'scripts/commander.sh deploy-prod'
         env:
           ADMIN_ENV: ${{ secrets.ADMIN_ENV }}
-          STAGE_ENV: ${{ secrets.PROD_ENV }}
-          STAGE_SERVICE_ACCOUNT: ${{ secrets.PROD_SERVICE_ACCOUNT }}
+          PROD_ENV: ${{ secrets.PROD_ENV }}
+          PROD_SERVICE_ACCOUNT: ${{ secrets.PROD_SERVICE_ACCOUNT }}
       - name: Production -- Report Success
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"panic backend: automated production deployment was successful!"}' "${WEBHOOK_URL}"
