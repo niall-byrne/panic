@@ -16,7 +16,7 @@ services:
     command: >
       ./panic/container_boot.sh admin
     env_file:
-      - ./environments/prod.env
+      - ./environments/${ADMIN_ENVIRONMENT}.env
       - ./environments/admin.env
 
 volumes:

@@ -4,30 +4,12 @@ set -e
 
 deploy_prod() {
 
-  PROXY_FLAG=/tmp/PROXY
-
   pushd "${PROJECT_HOME}" > /dev/null
     pushd "${PROJECT_NAME}" >/dev/null
 
         set -a
         # shellcheck disable=SC1091
         source ../environments/prod.env
-        # shellcheck disable=SC1091
-        source ../environments/admin.env
-        set +a
-
-        [[ -f "${PROXY_FLAG}" ]] && echo "Cloud Proxy is already running, halting deploy..." && exit 0
-
-        GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json cloud_sql_proxy --instances="${CLOUDSQLINSTANCE}=tcp:5432" &
-        touch "${PROXY_FLAG}"
-
-        ./manage.py wait_for_db
-        ./manage.py migrate
-
-        set -a
-        # shellcheck disable=SC1091
-        source ../environments/prod.env
-        set +a
 
         ./manage.py collectstatic --no-input
 
