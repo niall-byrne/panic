@@ -109,10 +109,9 @@ jobs:
         release_name: Release ${{ env.NEWTAG }}
         body: |
           ${{ steps.Changelog.outputs.changelog }}
-          <br>
           ## Deployment Checklist
-          - [] Ensure unnecessary alerts are ignored/disabled
-          - [] Use Admin environment to complete database migrations
+          - [ ] Ensure unnecessary alerts are ignored/disabled
+          - [ ] Use Admin environment to complete database migrations
         draft: true
         prerelease: false
     - name: Production -- Report Success
