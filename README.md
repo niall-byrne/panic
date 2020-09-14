@@ -4,11 +4,18 @@
 
 A kitchen inventory management app.
 
-#### Production Environment (master branch)
+
+#### Production Environment (release tag from the production branch)
+[![panic-automation](https://github.com/niall-byrne/panic/workflows/panic%20Automation/badge.svg?branch=production)](https://github.com/niall-byrne/panic/actions)
+
+[Production Deploy](https://grocerypanic.com)
+
+
+#### Stage Environment (master branch)
 [![panic-automation](https://github.com/niall-byrne/panic/workflows/panic%20Automation/badge.svg?branch=master)](https://github.com/niall-byrne/panic/actions)
 
-#### Stage Environment (develop branch)
-[![panic-automation](https://github.com/niall-byrne/panic/workflows/panic%20Automation/badge.svg?branch=develop)](https://github.com/niall-byrne/panic/actions)
+[Stage Deploy](https://stage.grocerypanic.com)
+
 
 ## OpenAPI Specification
 

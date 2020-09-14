@@ -49,7 +49,7 @@ jobs:
         WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
     - name: Stage -- Deploy
-      if: ${{ github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
+      if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
       run: |
         # Deploy to Stage
         echo -n "${ADMIN_ENV}" | base64 --decode > ./environments/admin.env
@@ -61,7 +61,7 @@ jobs:
         STAGE_ENV: ${{ secrets.STAGE_ENV }}
         STAGE_SERVICE_ACCOUNT: ${{ secrets.STAGE_SERVICE_ACCOUNT }}
     - name: Stage -- Report Success
-      if: ${{ github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
+      if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
       run: |
         curl -X POST -H 'Content-type: application/json' --data '{"text":"panic backend: automated deploy to stage!"}' "${WEBHOOK_URL}"
       env:
@@ -69,7 +69,7 @@ jobs:
     - name: Stage -- Report Failure
       if: ${{ failure() }}
       run: |
-        [[ ${REF} == 'refs/heads/develop' ]] && [[ ${EVENT} == 'push' ]] && curl -X POST -H 'Content-type: application/json' --data '{"text":"panic backend: stage deploy has failed!"}' "${WEBHOOK_URL}"
+        [[ ${REF} == 'refs/heads/master' ]] && [[ ${EVENT} == 'push' ]] && curl -X POST -H 'Content-type: application/json' --data '{"text":"panic backend: stage deploy has failed!"}' "${WEBHOOK_URL}"
       env:
         WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
         REF: ${{ github.ref }}
