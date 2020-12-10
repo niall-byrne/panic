@@ -1,17 +1,13 @@
 """Test wait_for_db admin command."""
 
 from io import StringIO
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
 
 import kitchen
-from ..management.commands.load_testdata import DATA_PRESETS
-from ..models.item import Item
-from ..models.shelf import Shelf
-from ..models.store import Store
 
 
 class CommandTestInvalid(TestCase):
@@ -30,56 +26,41 @@ class CommandTestInvalid(TestCase):
     self.assertEqual(output_stdout.getvalue(), "")
 
 
-with patch(kitchen.__name__ +
-           '.management.commands.load_testdata.DATA_PRESETS') as preset:
-  BULK_SIZE = 10
-  preset.return_value = DATA_PRESETS.update({'number_of_items': BULK_SIZE})
+class CommandTestValid(TestCase):
 
-  class CommandTestValid(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    cls.output_stdout = StringIO()
+    cls.output_stderr = StringIO()
+    cls.user = get_user_model().objects.create_user(
+        username="created_test_user",
+        email="created_test_user@niallbyrne.ca",
+        password="test123",
+    )
 
-    @classmethod
-    def setUpTestData(cls):
-      cls.output_stdout = StringIO()
-      cls.output_stderr = StringIO()
-      cls.user = get_user_model().objects.create_user(
-          username="created_test_user",
-          email="created_test_user@niallbyrne.ca",
-          password="test123",
-      )
+  def setUp(self):
+
+    with patch(kitchen.__name__ +
+               '.management.commands.load_testdata.DataGenerator') as generator:
+
+      self.mock_generator = Mock()
+      self.mock_generator.generate_data = Mock()
+      generator.return_value = self.mock_generator
+      self.generator = generator
+
       call_command('load_testdata',
-                   cls.user.username,
-                   stdout=cls.output_stdout,
-                   stderr=cls.output_stderr,
+                   self.user.username,
+                   stdout=self.output_stdout,
+                   stderr=self.output_stderr,
                    no_color=True)
 
-    def setUp(self):
-      self.objects = list()
+  def tearDown(self):
+    pass
 
-    def tearDown(self):
-      for item in Item.objects.filter(user=self.user):
-        item.delete()
-      for shelf in Shelf.objects.filter(user=self.user):
-        shelf.delete()
-      for store in Store.objects.filter(user=self.user):
-        store.delete()
+  def test_instantiates_the_generator_class(self):
+    self.generator.assert_called_once_with(self.user)
+    self.mock_generator.generate_data.assert_called_once()
 
-    def test_valid_user_specified_store_is_valid(self):
-      stores = Store.objects.filter(user=self.user)
-      self.assertEqual(len(stores), BULK_SIZE)
-
-    def test_valid_user_specified_shelf_is_valid(self):
-      shelf = Shelf.objects.filter(user=self.user)
-      self.assertEqual(len(shelf), 1)
-      self.assertEqual(shelf[0].name, DATA_PRESETS['shelfname'])
-
-    def test_valid_user_specified_item_is_valid(self):
-      store = Store.objects.get(user=self.user,
-                                name=DATA_PRESETS['storename'] + "0")
-      shelf = Shelf.objects.get(user=self.user, name=DATA_PRESETS['shelfname'])
-      items = Item.objects.filter(user=self.user)
-      self.assertEqual(len(items), BULK_SIZE)
-
-      for item in items:
-        self.assertEqual(len(item.preferred_stores.all()), 1)
-        self.assertEqual(item.preferred_stores.all()[0], store)
-        self.assertEqual(item.shelf, shelf)
+  def test_generates_no_stdout_or_stderr(self):
+    self.assertEqual(self.output_stdout.getvalue(), "")
+    self.assertEqual(self.output_stderr.getvalue(), "")
