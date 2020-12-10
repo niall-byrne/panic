@@ -7,11 +7,7 @@ from django.utils.timezone import now
 
 
 class ExpirationCalculator:
-  """Methods to process and move transaction data around.
-
-  :param transaction: A single transaction
-  :type transaction: :class:`panic.kitchen.models.transaction.Transaction`
-  """
+  """Handles expiration calculations and updates to the associated models."""
 
   def __init__(self, transaction):
     self.quantity = transaction.item.quantity
@@ -23,16 +19,14 @@ class ExpirationCalculator:
   def update_oldest_expiry(self):
     """If there is no quantity of items marked upcoming to expiry, change the
     oldest date to the current timestamp."""
+
     if self.next_to_expire < 1:
       self.oldest = now()
 
   def transaction_date_is_expired(self, transaction):
     """Compares an items transaction date to it's expiration date, to determine
-    if the date of the transaction makes the item expired or not.
+    if the date of the transaction makes the item expired or not."""
 
-    :param transaction: A single transaction
-    :type transaction: :class:`panic.kitchen.models.transaction.Transaction`
-    """
     item_expiry_date = (transaction.datetime.date() +
                         timedelta(days=self.instance.item.shelf_life))
     if now().date() >= item_expiry_date:
@@ -42,11 +36,7 @@ class ExpirationCalculator:
   def reconcile_transaction_history(self, transaction_history):
     """Iterates through an item's transaction history, updating it's expiry
     information to reconcile the current quantity with the date/time of each
-    transaction.
-
-    :param transaction_history: The item's transaction history
-    :type transaction_history: :class:`django.db.models.query.QuerySet`s
-    """
+    transaction."""
 
     for record in transaction_history:
       remaining_inventory_to_check = self.reconcile_single_transaction(record)
@@ -60,15 +50,8 @@ class ExpirationCalculator:
     """Handles a positive inventory change, by either debiting the remaining
     count of items that need to be checked, or increasing the count of expired
     items (if those purchased items are already expired).
-
-    :param transaction: A single Transaction
-    :type transaction: :class:`panic.kitchen.transaction.Transaction`
-    :param remaining_inventory_to_check: The inventory left to check expiry on
-    :type remaining_inventory_to_check: int
-
-    :returns: An updated total of remaining_inventory_to_check
-    :rtype: int
     """
+
     self.oldest = transaction.datetime.date()
     remaining_inventory_to_check -= transaction.quantity
 
@@ -81,24 +64,16 @@ class ExpirationCalculator:
     return remaining_inventory_to_check
 
   def reconcile_consumption(self, transaction):
-    """Handles a negative inventory change, we assume the oldest items
-    are used first, so we debit the calculated expiration total by the number
-    of items consumed.
+    """Handles a negative inventory change by debiting the calculated expiration
+    total by the number of items consumed."""
 
-    :param transaction: A single Transaction
-    :type transaction: :class:`panic.kitchen.transaction.Transaction`
-    """
     self.expired += transaction.quantity
 
   def reconcile_single_transaction(self, transaction):
     """Processes an individual transaction from a reverse chronology, updating
     the data for expired inventory, and next inventory to expire.
-
-    It returns back the count of inventory that still needs to be processed.
-
-    :param transaction: A single Transaction
-    :type transaction: :class:`panic.kitchen.transaction.Transaction`
     """
+
     remaining_inventory_to_check = self.quantity
 
     if transaction.quantity > 0:
@@ -110,8 +85,8 @@ class ExpirationCalculator:
     return remaining_inventory_to_check
 
   def write_expiry_to_model(self):
-    """Updates the associated items's expiry information
-    from the calculated results."""
+    """Updates the associated item's expiry information from the calculated
+    results."""
 
     self.instance.item.next_expiry_quantity = self.next_to_expire
     self.instance.item.next_expiry_date = (
@@ -122,22 +97,12 @@ class ExpirationCalculator:
 class ExpiryManager(models.Manager):
 
   def get_item_history(self, item):
-    """Generate a query set representing an item's transaction history.
-
-    :param item: An Item Instance
-    :type item: :class:`panic.kitchen.item.Item`
-    :returns A queryset containing the results
-    :rtype :class:`django.db.models.query.QuerySet`
-    """
+    """Generate a query set representing an item's transaction history."""
 
     return super().get_queryset().filter(item=item).order_by("-datetime")
 
   def update(self, transaction):
-    """Updates the expiry data for an item associated to a transaction.
-
-    :param transaction: A Transaction instance
-    :type transaction: :class:`panic.kitchen.transaction.Transaction`
-    """
+    """Updates the expiry data for an item associated to a transaction."""
 
     calculator = ExpirationCalculator(transaction)
 
