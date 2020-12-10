@@ -6,15 +6,15 @@ from django.db import models
 from django.utils.timezone import now
 
 
-class ExpirationCalculator:
+class ItemExpirationCalculator:
   """Handles expiration calculations and updates to the associated models."""
 
-  def __init__(self, transaction):
-    self.quantity = transaction.item.quantity
+  def __init__(self, item):
+    self.quantity = item.quantity
     self.oldest = now()
     self.expired = 0
     self.next_to_expire = 0
-    self.instance = transaction
+    self.item = item
 
   def __update_oldest_expiry(self):
     """If there is no quantity of items marked upcoming for expiry, change the
@@ -28,7 +28,7 @@ class ExpirationCalculator:
     if the date of the transaction makes the item expired or not."""
 
     item_expiry_date = (transaction.datetime.date() +
-                        timedelta(days=self.instance.item.shelf_life))
+                        timedelta(days=self.item.shelf_life))
     if now().date() >= item_expiry_date:
       return True
     return False
@@ -83,14 +83,14 @@ class ExpirationCalculator:
 
     return remaining_inventory_to_check
 
-  def write_expiry_to_model(self):
+  def write_expiry_to_item_model(self):
     """Updates the associated item's expiry information from the calculated
     results."""
 
-    self.instance.item.next_expiry_quantity = self.next_to_expire
-    self.instance.item.next_expiry_date = (
-        self.oldest + timedelta(days=self.instance.item.shelf_life))
-    self.instance.item.expired = max(self.expired, 0)
+    self.item.next_expiry_quantity = self.next_to_expire
+    self.item.next_expiry_date = (self.oldest +
+                                  timedelta(days=self.item.shelf_life))
+    self.item.expired = max(self.expired, 0)
 
 
 class ExpiryManager(models.Manager):
@@ -103,10 +103,10 @@ class ExpiryManager(models.Manager):
   def update(self, transaction):
     """Updates the expiry data for an item associated to a transaction."""
 
-    calculator = ExpirationCalculator(transaction)
+    calculator = ItemExpirationCalculator(transaction.item)
 
     if calculator.quantity > 0:
-      item_history = self.get_item_history(calculator.instance.item)
+      item_history = self.get_item_history(calculator.item)
       calculator.reconcile_transaction_history(item_history)
 
-    calculator.write_expiry_to_model()
+    calculator.write_expiry_to_item_model()
