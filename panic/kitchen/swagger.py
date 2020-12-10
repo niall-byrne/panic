@@ -13,9 +13,10 @@ def openapi_ready(func):
   @functools.wraps(func)
   def wrapped(self, *args, **kwargs):
     if getattr(self, "swagger_fake_view", False):
-      # Get this decorated method from the parent class and call it there
-      return getattr(super(self.__class__, self), func.__name__)(*args,
-                                                                 **kwargs)
+      parent_class = self.__class__
+      parent_class_instance = super(parent_class, self)
+      function_name = func.__name__
+      return getattr(parent_class_instance, function_name)(*args, **kwargs)
     return func(self, *args, **kwargs)
 
   return wrapped
