@@ -16,14 +16,14 @@ class ExpirationCalculator:
     self.next_to_expire = 0
     self.instance = transaction
 
-  def update_oldest_expiry(self):
-    """If there is no quantity of items marked upcoming to expiry, change the
+  def __update_oldest_expiry(self):
+    """If there is no quantity of items marked upcoming for expiry, change the
     oldest date to the current timestamp."""
 
     if self.next_to_expire < 1:
       self.oldest = now()
 
-  def transaction_date_is_expired(self, transaction):
+  def __transaction_date_is_expired(self, transaction):
     """Compares an items transaction date to it's expiration date, to determine
     if the date of the transaction makes the item expired or not."""
 
@@ -32,6 +32,29 @@ class ExpirationCalculator:
     if now().date() >= item_expiry_date:
       return True
     return False
+
+  def __reconcile_consumption(self, transaction):
+    """Handles a negative inventory change by debiting the calculated expiration
+    total by the number of items consumed."""
+
+    self.expired += transaction.quantity
+
+  def __reconcile_purchase(self, remaining_inventory_to_check, transaction):
+    """Handles a positive inventory change, by either debiting the remaining
+    count of items that need to be checked, or increasing the count of expired
+    items (if those purchased items are already expired).
+    """
+
+    self.oldest = transaction.datetime.date()
+    remaining_inventory_to_check -= transaction.quantity
+
+    if self.__transaction_date_is_expired(transaction):
+      self.expired += transaction.quantity
+    else:
+      self.next_to_expire = min(
+          remaining_inventory_to_check + transaction.quantity,
+          transaction.quantity)
+    return remaining_inventory_to_check
 
   def reconcile_transaction_history(self, transaction_history):
     """Iterates through an item's transaction history, updating it's expiry
@@ -42,32 +65,8 @@ class ExpirationCalculator:
       remaining_inventory_to_check = self.reconcile_single_transaction(record)
       if remaining_inventory_to_check < 1:
         break
-      if remaining_inventory_to_check > 0:
-        self.quantity = remaining_inventory_to_check
-    self.update_oldest_expiry()
-
-  def reconcile_purchase(self, remaining_inventory_to_check, transaction):
-    """Handles a positive inventory change, by either debiting the remaining
-    count of items that need to be checked, or increasing the count of expired
-    items (if those purchased items are already expired).
-    """
-
-    self.oldest = transaction.datetime.date()
-    remaining_inventory_to_check -= transaction.quantity
-
-    if self.transaction_date_is_expired(transaction):
-      self.expired += transaction.quantity
-    else:
-      self.next_to_expire = min(
-          remaining_inventory_to_check + transaction.quantity,
-          transaction.quantity)
-    return remaining_inventory_to_check
-
-  def reconcile_consumption(self, transaction):
-    """Handles a negative inventory change by debiting the calculated expiration
-    total by the number of items consumed."""
-
-    self.expired += transaction.quantity
+      self.quantity = remaining_inventory_to_check
+    self.__update_oldest_expiry()
 
   def reconcile_single_transaction(self, transaction):
     """Processes an individual transaction from a reverse chronology, updating
@@ -77,10 +76,10 @@ class ExpirationCalculator:
     remaining_inventory_to_check = self.quantity
 
     if transaction.quantity > 0:
-      remaining_inventory_to_check = self.reconcile_purchase(
+      remaining_inventory_to_check = self.__reconcile_purchase(
           remaining_inventory_to_check, transaction)
     else:
-      self.reconcile_consumption(transaction)
+      self.__reconcile_consumption(transaction)
 
     return remaining_inventory_to_check
 
