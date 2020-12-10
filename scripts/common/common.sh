@@ -145,6 +145,10 @@ unvirtualize() {
 
 update_cli() {
 
+  echo "Disabled, due to upstream changes in the PIB api."
+
+  return
+
   set -e
 
   updates=("/scripts/common/documentation.sh" "/scripts/common/wheel.sh" "/scripts/common/upload.sh" "/scripts/common/common.sh" "/development/bash/.bash_git" "/development/bash/.bash_profile" "/development/bash/.bashrc")
