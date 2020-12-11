@@ -23,18 +23,21 @@ class DataGenerator:
     self.stores = None
 
   def __create_shelf_data(self):
-    self.shelf = Shelf.objects.create(user=self.user,
-                                      name=DATA_CONFIG['shelfname'])
+    self.shelf = Shelf.objects.create(
+        user=self.user, name=DATA_CONFIG['shelfname']
+    )
 
   def __create_item_data(self):
     self.items = []
     for i in range(0, DATA_CONFIG['number_of_items']):
-      new_item = Item(name=DATA_CONFIG['itemname'] + str(i),
-                      user=self.user,
-                      shelf_life="99",
-                      shelf=self.shelf,
-                      price="2.00",
-                      quantity=20)
+      new_item = Item(
+          name=DATA_CONFIG['itemname'] + str(i),
+          user=self.user,
+          shelf_life="99",
+          shelf=self.shelf,
+          price="2.00",
+          quantity=20
+      )
       self.items.append(new_item)
 
   def __create_store_data(self):

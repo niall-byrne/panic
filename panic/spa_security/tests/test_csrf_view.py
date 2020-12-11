@@ -45,8 +45,10 @@ class PrivateCSRFTest(TestCase):
     self.client = APIClient(enforce_csrf_checks=True)
     self.client.force_authenticate(self.user)
 
-  @patch("django.middleware.csrf._salt_cipher_secret",
-         new_callable=Mock(return_value=lambda x: "MockToken"))
+  @patch(
+      "django.middleware.csrf._salt_cipher_secret",
+      new_callable=Mock(return_value=lambda x: "MockToken")
+  )
   def test_retrieve_message(self, _):
     resp = self.client.get(CSRF_URL)
 

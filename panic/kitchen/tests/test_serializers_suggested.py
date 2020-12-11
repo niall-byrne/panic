@@ -63,8 +63,9 @@ class TestItemList(TestCase):
     with self.assertRaises(ValidationError):
       serialized2.is_valid(raise_exception=True)
 
-    self.assertEqual(str(serialized2.errors['name'][0]),
-                     DUPLICATE_OBJECT_MESSAGE)
+    self.assertEqual(
+        str(serialized2.errors['name'][0]), DUPLICATE_OBJECT_MESSAGE
+    )
 
   def testFieldLengths(self):
     overloads = self.generate_overload(self.fields)

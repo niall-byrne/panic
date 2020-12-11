@@ -19,8 +19,10 @@ class CookieAuthenticatorTest(TestCase):
     self.auth = JWTCookieAuthentication()
     self.cookie_name = getattr(settings, 'JWT_AUTH_COOKIE', None)
 
-  @patch('rest_framework_simplejwt.authentication.JWTAuthentication.'
-         'get_validated_token')
+  @patch(
+      'rest_framework_simplejwt.authentication.JWTAuthentication.'
+      'get_validated_token'
+  )
   def test_authentication_fails_by_default(self, validate):
     """Test that login is required for retrieving shelves."""
 
@@ -29,8 +31,10 @@ class CookieAuthenticatorTest(TestCase):
     self.assertIsNone(self.auth.authenticate(self.request))
     assert not validate.called
 
-  @patch('rest_framework_simplejwt.authentication.JWTAuthentication.'
-         'get_user')
+  @patch(
+      'rest_framework_simplejwt.authentication.JWTAuthentication.'
+      'get_user'
+  )
   def test_authentication_validates_cookie_invalid(self, validate):
 
     validate.return_value = "Validated"
@@ -40,10 +44,14 @@ class CookieAuthenticatorTest(TestCase):
       self.auth.authenticate(self.request)
       assert validate.called
 
-  @patch('rest_framework_simplejwt.authentication.JWTAuthentication.'
-         'get_validated_token')
-  @patch('rest_framework_simplejwt.authentication.JWTAuthentication.'
-         'get_user')
+  @patch(
+      'rest_framework_simplejwt.authentication.JWTAuthentication.'
+      'get_validated_token'
+  )
+  @patch(
+      'rest_framework_simplejwt.authentication.JWTAuthentication.'
+      'get_user'
+  )
   def test_authentication_validates_cookie_valid(self, user, validate):
 
     user.return_value = "User"
@@ -55,16 +63,20 @@ class CookieAuthenticatorTest(TestCase):
     assert validate.called
     assert user.called
 
-  @patch('rest_framework_simplejwt.authentication.JWTAuthentication.'
-         'get_validated_token')
+  @patch(
+      'rest_framework_simplejwt.authentication.JWTAuthentication.'
+      'get_validated_token'
+  )
   def test_authentication_another_cookie(self, validate):
 
     self.request.COOKIES["ANOTHER_COOKIE"] = "Random String"
     self.assertIsNone(self.auth.authenticate(self.request))
     assert not validate.called
 
-  @patch('rest_framework_simplejwt.authentication.JWTAuthentication.'
-         'get_validated_token')
+  @patch(
+      'rest_framework_simplejwt.authentication.JWTAuthentication.'
+      'get_validated_token'
+  )
   def test_authentication_no_auth_cookie(self, validate):
 
     with self.settings(JWT_AUTH_COOKIE=None):

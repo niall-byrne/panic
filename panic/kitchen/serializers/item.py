@@ -21,7 +21,9 @@ class ItemSerializer(serializers.ModelSerializer):
         "expired",
     )
     validators = [
-        UniqueTogetherValidator(queryset=Item.objects.all(),
-                                fields=['user', 'name'],
-                                message=DUPLICATE_OBJECT_MESSAGE)
+        UniqueTogetherValidator(
+            queryset=Item.objects.all(),
+            fields=['user', 'name'],
+            message=DUPLICATE_OBJECT_MESSAGE
+        )
     ]

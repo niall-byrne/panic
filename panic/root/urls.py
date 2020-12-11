@@ -26,14 +26,17 @@ urlpatterns = [
     path("", include("appengine.urls")),
     path("api/v1/", include("kitchen.urls")),
     path("api/v1/auth/", include('dj_rest_auth.urls')),
-    path("api/v1/auth/registration/",
-         include('dj_rest_auth.registration.urls')),
+    path(
+        "api/v1/auth/registration/", include('dj_rest_auth.registration.urls')
+    ),
     path("api/v1/auth/", include("spa_security.urls")),
     path("api/v1/auth/social/", include("social_accounts.urls")),
     path("api/v1/auth/social/signup/", signup, name='socialaccount_signup'),
-    path("api/v1/auth/social/connect/",
-         connections,
-         name='socialaccount_connections'),
+    path(
+        "api/v1/auth/social/connect/",
+        connections,
+        name='socialaccount_connections'
+    ),
     path('watchman/', include("watchman.urls")),
 ]
 
@@ -54,10 +57,14 @@ if settings.ENVIRONMENT in ['local', 'stage', 'admin']:
   )
 
   urlpatterns += [
-      url(r'^swagger(?P<format>\.json|\.yaml)$',
+      url(
+          r'^swagger(?P<format>\.json|\.yaml)$',
           SchemaView.without_ui(cache_timeout=0),
-          name='schema-json'),
-      url(r'^swagger/$',
+          name='schema-json'
+      ),
+      url(
+          r'^swagger/$',
           SchemaView.with_ui('swagger', cache_timeout=0),
-          name='schema-swagger-ui'),
+          name='schema-swagger-ui'
+      ),
   ]

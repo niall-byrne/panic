@@ -24,7 +24,8 @@ class MockRequest:
 
 def deserialize_datetime(string):
   return pytz.utc.localize(
-      datetime.datetime.strptime(string, "%Y-%m-%dT%H:%M:%SZ"))
+      datetime.datetime.strptime(string, "%Y-%m-%dT%H:%M:%SZ")
+  )
 
 
 class TestItem(TestCase):
@@ -71,12 +72,14 @@ class TestItem(TestCase):
         user=cls.user,
         name="Pantry",
     )
-    cls.item = Item.objects.create(name="Canned Beans",
-                                   shelf_life=99,
-                                   user=cls.user,
-                                   shelf=cls.shelf,
-                                   price=2.00,
-                                   quantity=3)
+    cls.item = Item.objects.create(
+        name="Canned Beans",
+        shelf_life=99,
+        user=cls.user,
+        shelf=cls.shelf,
+        price=2.00,
+        quantity=3
+    )
     cls.item.preferred_stores.add(cls.store)
     cls.item.save()
     cls.data = {

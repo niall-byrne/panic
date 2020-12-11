@@ -16,7 +16,9 @@ class StoreSerializer(serializers.ModelSerializer):
     exclude = ('index',)
     read_only_fields = ("id",)
     validators = [
-        UniqueTogetherValidator(queryset=Store.objects.all(),
-                                fields=['user', 'name'],
-                                message=DUPLICATE_OBJECT_MESSAGE)
+        UniqueTogetherValidator(
+            queryset=Store.objects.all(),
+            fields=['user', 'name'],
+            message=DUPLICATE_OBJECT_MESSAGE
+        )
     ]

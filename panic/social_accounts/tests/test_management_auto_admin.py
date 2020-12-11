@@ -19,10 +19,12 @@ class AutoAdminTestCase(TestCase):
     query = User.objects.all().filter(username="admin")
     assert len(query) == 0
 
-    call_command('autoadmin',
-                 stdout=self.output_stdout,
-                 stderr=self.output_stderr,
-                 no_color=True)
+    call_command(
+        'autoadmin',
+        stdout=self.output_stdout,
+        stderr=self.output_stderr,
+        no_color=True
+    )
 
     assert "Successfully created admin user." in self.output_stdout.getvalue()
     assert self.output_stderr.getvalue() == ""
@@ -32,15 +34,16 @@ class AutoAdminTestCase(TestCase):
     assert query.email == "test@example.com"
 
   def test_autoadmin_create_twice(self):
-    call_command('autoadmin',
-                 stdout=StringIO(),
-                 stderr=StringIO(),
-                 no_color=True)
+    call_command(
+        'autoadmin', stdout=StringIO(), stderr=StringIO(), no_color=True
+    )
 
-    call_command('autoadmin',
-                 stdout=self.output_stdout,
-                 stderr=self.output_stderr,
-                 no_color=True)
+    call_command(
+        'autoadmin',
+        stdout=self.output_stdout,
+        stderr=self.output_stderr,
+        no_color=True
+    )
     assert "The admin user already exists." in self.output_stdout.getvalue()
     assert self.output_stderr.getvalue() == ""
 

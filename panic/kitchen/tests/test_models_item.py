@@ -18,17 +18,20 @@ from ..models.store import Store
 class TestItem(TestCase):
 
   # pylint: disable=R0913
-  def sample_item(self, user, name, shelf_life, shelf, preferred_stores, price,
-                  quantity):
+  def sample_item(
+      self, user, name, shelf_life, shelf, preferred_stores, price, quantity
+  ):
     """Create a test item."""
     if user is None:
       user = self.user
-    item = Item.objects.create(name=name,
-                               user=user,
-                               shelf_life=shelf_life,
-                               shelf=shelf,
-                               price=price,
-                               quantity=quantity)
+    item = Item.objects.create(
+        name=name,
+        user=user,
+        shelf_life=shelf_life,
+        shelf=shelf,
+        price=price,
+        quantity=quantity
+    )
     item.preferred_stores.add(preferred_stores)
     item.save()
     self.objects.append(item)

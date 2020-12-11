@@ -37,11 +37,13 @@ class AutoSocialTestCase1(TestCase):
 
     output_stdout = StringIO()
     output_stderr = StringIO()
-    call_command('autosocial',
-                 self.provider,
-                 stdout=output_stdout,
-                 stderr=output_stderr,
-                 no_color=True)
+    call_command(
+        'autosocial',
+        self.provider,
+        stdout=output_stdout,
+        stderr=output_stderr,
+        no_color=True
+    )
     assert 'The required env vars are not set.' in output_stderr.getvalue()
     assert output_stdout.getvalue() == ""
 
@@ -57,11 +59,13 @@ class AutoSocialTestCase1(TestCase):
 
     output_stdout = StringIO()
     output_stderr = StringIO()
-    call_command('autosocial',
-                 self.provider,
-                 stdout=output_stdout,
-                 stderr=output_stderr,
-                 no_color=True)
+    call_command(
+        'autosocial',
+        self.provider,
+        stdout=output_stdout,
+        stderr=output_stderr,
+        no_color=True
+    )
     assert 'Successfully created social app account.' in output_stdout.getvalue(
     )
     assert output_stderr.getvalue() == ""
@@ -76,19 +80,23 @@ class AutoSocialTestCase1(TestCase):
 
     output_stdout = StringIO()
     output_stderr = StringIO()
-    call_command('autosocial',
-                 self.provider,
-                 stdout=output_stdout,
-                 stderr=output_stderr,
-                 no_color=True)
+    call_command(
+        'autosocial',
+        self.provider,
+        stdout=output_stdout,
+        stderr=output_stderr,
+        no_color=True
+    )
 
     output_stdout = StringIO()
     output_stderr = StringIO()
-    call_command('autosocial',
-                 self.provider,
-                 stdout=output_stdout,
-                 stderr=output_stderr,
-                 no_color=True)
+    call_command(
+        'autosocial',
+        self.provider,
+        stdout=output_stdout,
+        stderr=output_stderr,
+        no_color=True
+    )
     assert 'The social app already exists.' in output_stderr.getvalue()
     assert output_stdout.getvalue() == ""
 

@@ -70,20 +70,24 @@ class PrivateItemTest(TestCase):
         user=cls.user,
         name="Pantry",
     )
-    cls.item1 = Item.objects.create(name="Canned Beans",
-                                    shelf_life=99,
-                                    user=cls.user,
-                                    shelf=cls.shelf,
-                                    price=2.00,
-                                    quantity=3)
+    cls.item1 = Item.objects.create(
+        name="Canned Beans",
+        shelf_life=99,
+        user=cls.user,
+        shelf=cls.shelf,
+        price=2.00,
+        quantity=3
+    )
     cls.item1.preferred_stores.add(cls.store)
     cls.item1.save()
-    cls.item2 = Item.objects.create(name="Bananas",
-                                    shelf_life=99,
-                                    user=cls.user,
-                                    shelf=cls.shelf,
-                                    price=2.00,
-                                    quantity=3)
+    cls.item2 = Item.objects.create(
+        name="Bananas",
+        shelf_life=99,
+        user=cls.user,
+        shelf=cls.shelf,
+        price=2.00,
+        quantity=3
+    )
     cls.item2.preferred_stores.add(cls.store)
     cls.item2.save()
     cls.serializer_data = {'item': cls.item1.id, 'quantity': 3}
@@ -189,7 +193,8 @@ class PrivateItemTest(TestCase):
         transaction_query_url({
             "item": self.item1.id,
             "page_size": 10
-        }))
+        })
+    )
     self.assertEqual(len(res.data['results']), 10)
     self.assertIsNotNone(res.data['next'])
     self.assertIsNone(res.data['previous'])

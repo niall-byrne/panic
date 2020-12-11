@@ -103,7 +103,8 @@ class PrivateShelfTest(TestCase):
         shelf_url_with_params({
             "page_size": 10,
             settings.PAGINATION_OVERRIDE_PARAM: "true"
-        }))
+        })
+    )
     self.assertEqual(len(res.data), 11)
 
   def test_delete_shelf(self):

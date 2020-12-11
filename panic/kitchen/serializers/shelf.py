@@ -16,7 +16,9 @@ class ShelfSerializer(serializers.ModelSerializer):
     exclude = ('index',)
     read_only_fields = ("id",)
     validators = [
-        UniqueTogetherValidator(queryset=Shelf.objects.all(),
-                                fields=['user', 'name'],
-                                message=DUPLICATE_OBJECT_MESSAGE)
+        UniqueTogetherValidator(
+            queryset=Shelf.objects.all(),
+            fields=['user', 'name'],
+            message=DUPLICATE_OBJECT_MESSAGE
+        )
     ]

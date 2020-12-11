@@ -15,14 +15,17 @@ class CommandTestInvalid(TestCase):
   def test_invalid_user_specified_stdout(self):
     output_stdout = StringIO()
     output_stderr = StringIO()
-    call_command('load_testdata',
-                 "non-existent-user",
-                 stdout=output_stdout,
-                 stderr=output_stderr,
-                 no_color=True)
+    call_command(
+        'load_testdata',
+        "non-existent-user",
+        stdout=output_stdout,
+        stderr=output_stderr,
+        no_color=True
+    )
 
-    self.assertIn('The specified user does not exist.',
-                  output_stderr.getvalue())
+    self.assertIn(
+        'The specified user does not exist.', output_stderr.getvalue()
+    )
     self.assertEqual(output_stdout.getvalue(), "")
 
 
@@ -40,19 +43,22 @@ class CommandTestValid(TestCase):
 
   def setUp(self):
 
-    with patch(kitchen.__name__ +
-               '.management.commands.load_testdata.DataGenerator') as generator:
+    with patch(
+        kitchen.__name__ + '.management.commands.load_testdata.DataGenerator'
+    ) as generator:
 
       self.mock_generator = Mock()
       self.mock_generator.generate_data = Mock()
       generator.return_value = self.mock_generator
       self.generator = generator
 
-      call_command('load_testdata',
-                   self.user.username,
-                   stdout=self.output_stdout,
-                   stderr=self.output_stderr,
-                   no_color=True)
+      call_command(
+          'load_testdata',
+          self.user.username,
+          stdout=self.output_stdout,
+          stderr=self.output_stderr,
+          no_color=True
+      )
 
   def tearDown(self):
     pass

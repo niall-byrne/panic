@@ -48,17 +48,20 @@ class PrivateItemTest(TestCase):
   """Test the authorized Item API"""
 
   # pylint: disable=R0913
-  def sample_item(self, user, name, shelf_life, shelf, preferred_stores, price,
-                  quantity):
+  def sample_item(
+      self, user, name, shelf_life, shelf, preferred_stores, price, quantity
+  ):
     """Create a test item."""
     if user is None:
       user = self.user
-    item = Item.objects.create(name=name,
-                               user=user,
-                               shelf_life=shelf_life,
-                               shelf=shelf,
-                               price=price,
-                               quantity=quantity)
+    item = Item.objects.create(
+        name=name,
+        user=user,
+        shelf_life=shelf_life,
+        shelf=shelf,
+        price=price,
+        quantity=quantity
+    )
     item.preferred_stores.add(preferred_stores)
     item.save()
     self.objects.append(item)
@@ -175,7 +178,8 @@ class PrivateItemTest(TestCase):
 
     items = Item.objects.all().order_by("index")
     serializer = ItemSerializer(
-        items.filter(preferred_stores__in=[self.store1.id]), many=True)
+        items.filter(preferred_stores__in=[self.store1.id]), many=True
+    )
 
     self.assertEqual(res.status_code, status.HTTP_200_OK)
     self.assertEqual(res.data['results'], serializer.data)
@@ -234,8 +238,9 @@ class PrivateItemTest(TestCase):
   def test_update_item(self):
     """Test updating a item."""
     original = self.sample_item(**self.data1)
-    res = self.client.put(ITEM_URL + str(original.id) + '/',
-                          data=self.serializer_data)
+    res = self.client.put(
+        ITEM_URL + str(original.id) + '/', data=self.serializer_data
+    )
 
     # Ensure the original object has wrong data
     self.assertNotEqual(original.name, self.serializer_data['name'])

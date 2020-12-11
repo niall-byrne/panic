@@ -30,20 +30,18 @@ class TestSignals(TestCase):
 
     social_login = MockProvider()
     social_login.account.provider = 'google'
-    user_signed_up.send('user_signed_up',
-                        user=self.user,
-                        request='',
-                        sociallogin=social_login)
+    user_signed_up.send(
+        'user_signed_up', user=self.user, request='', sociallogin=social_login
+    )
     m_handler.assert_called()
 
   def test_social_signup_google_empty_return(self):
 
     social_login = MockProvider()
     social_login.account.provider = 'google'
-    user_signed_up.send('user_signed_up',
-                        user=self.user,
-                        request='',
-                        sociallogin=social_login)
+    user_signed_up.send(
+        'user_signed_up', user=self.user, request='', sociallogin=social_login
+    )
 
   def tearDown(self):
     if self.user.id:

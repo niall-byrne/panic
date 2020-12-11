@@ -38,8 +38,9 @@ class SameSiteMiddleware(MiddlewareMixin):
     jwt_auth_cookie = settings.JWT_AUTH_COOKIE
     csrf_cookie_samesite = getattr(settings, "CSRF_COOKIE_SAMESITE", False)
     rest_cookies_secure = getattr(settings, "REST_COOKIES_SECURE", False)
-    jwt_auth_cookie_samesite = getattr(settings, "JWT_AUTH_COOKIE_SAMESITE",
-                                       None)
+    jwt_auth_cookie_samesite = getattr(
+        settings, "JWT_AUTH_COOKIE_SAMESITE", None
+    )
 
     if csrf_cookie_name in response.cookies:
       if csrf_cookie_samesite is None:

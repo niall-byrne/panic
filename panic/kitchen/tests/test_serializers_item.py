@@ -20,17 +20,20 @@ class MockRequest:
 class TestItem(TestCase):
 
   # pylint: disable=R0913
-  def sample_item(self, user, name, shelf_life, shelf, preferred_stores, price,
-                  quantity):
+  def sample_item(
+      self, user, name, shelf_life, shelf, preferred_stores, price, quantity
+  ):
     """Create a test item."""
     if user is None:
       user = self.user
-    item = Item.objects.create(name=name,
-                               user=user,
-                               shelf_life=shelf_life,
-                               shelf=shelf,
-                               price=price,
-                               quantity=quantity)
+    item = Item.objects.create(
+        name=name,
+        user=user,
+        shelf_life=shelf_life,
+        shelf=shelf,
+        price=price,
+        quantity=quantity
+    )
     item.preferred_stores.add(preferred_stores)
     item.save()
     self.objects.append(item)
@@ -139,8 +142,9 @@ class TestItem(TestCase):
     with self.assertRaises(ValidationError):
       serialized2.is_valid(raise_exception=True)
 
-    self.assertEqual(str(serialized2.errors['non_field_errors'][0]),
-                     DUPLICATE_OBJECT_MESSAGE)
+    self.assertEqual(
+        str(serialized2.errors['non_field_errors'][0]), DUPLICATE_OBJECT_MESSAGE
+    )
 
   def testFieldLengths(self):
     overloads = self.generate_overload(self.fields)

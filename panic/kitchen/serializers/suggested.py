@@ -9,12 +9,15 @@ from . import DUPLICATE_OBJECT_MESSAGE
 
 class SuggestedItemSerializer(serializers.ModelSerializer):
   """Serializer for SuggestedItem"""
-  name = serializers.CharField(max_length=255,
-                               validators=[
-                                   UniqueValidator(
-                                       queryset=SuggestedItem.objects.all(),
-                                       message=DUPLICATE_OBJECT_MESSAGE)
-                               ])
+  name = serializers.CharField(
+      max_length=255,
+      validators=[
+          UniqueValidator(
+              queryset=SuggestedItem.objects.all(),
+              message=DUPLICATE_OBJECT_MESSAGE
+          )
+      ]
+  )
 
   class Meta:
     model = SuggestedItem

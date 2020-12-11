@@ -27,8 +27,9 @@ class ItemExpirationCalculator:
     """Compares an items transaction date to it's expiration date, to determine
     if the date of the transaction makes the item expired or not."""
 
-    item_expiry_date = (transaction.datetime.date() +
-                        timedelta(days=self.item.shelf_life))
+    item_expiry_date = (
+        transaction.datetime.date() + timedelta(days=self.item.shelf_life)
+    )
     if now().date() >= item_expiry_date:
       return True
     return False
@@ -53,7 +54,8 @@ class ItemExpirationCalculator:
     else:
       self.next_to_expire = min(
           remaining_inventory_to_check + transaction.quantity,
-          transaction.quantity)
+          transaction.quantity
+      )
     return remaining_inventory_to_check
 
   def reconcile_transaction_history(self, transaction_history):
@@ -77,7 +79,8 @@ class ItemExpirationCalculator:
 
     if transaction.quantity > 0:
       remaining_inventory_to_check = self.__reconcile_purchase(
-          remaining_inventory_to_check, transaction)
+          remaining_inventory_to_check, transaction
+      )
     else:
       self.__reconcile_consumption(transaction)
 
@@ -88,8 +91,9 @@ class ItemExpirationCalculator:
     results."""
 
     self.item.next_expiry_quantity = self.next_to_expire
-    self.item.next_expiry_date = (self.oldest +
-                                  timedelta(days=self.item.shelf_life))
+    self.item.next_expiry_date = (
+        self.oldest + timedelta(days=self.item.shelf_life)
+    )
     self.item.expired = max(self.expired, 0)
 
 

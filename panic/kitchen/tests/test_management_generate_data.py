@@ -11,14 +11,14 @@ from ..models.item import Item
 from ..models.shelf import Shelf
 from ..models.store import Store
 
-with patch(kitchen.__name__ +
-           '.management.commands.generate_data.DATA_CONFIG') as preset:
+with patch(
+    kitchen.__name__ + '.management.commands.generate_data.DATA_CONFIG'
+) as preset:
   BULK_SIZE = 10
-  preset.return_value = DATA_CONFIG.update(
-      {
-          'number_of_items': BULK_SIZE,
-          'number_of_stores': BULK_SIZE
-      },)
+  preset.return_value = DATA_CONFIG.update({
+      'number_of_items': BULK_SIZE,
+      'number_of_stores': BULK_SIZE
+  },)
 
   class TestGenerateData(TestCase):
 
@@ -52,8 +52,9 @@ with patch(kitchen.__name__ +
       self.assertEqual(shelf[0].name, DATA_CONFIG['shelfname'])
 
     def test_valid_user_specified_item_is_valid(self):
-      store = Store.objects.get(user=self.user,
-                                name=DATA_CONFIG['storename'] + "0")
+      store = Store.objects.get(
+          user=self.user, name=DATA_CONFIG['storename'] + "0"
+      )
       shelf = Shelf.objects.get(user=self.user, name=DATA_CONFIG['shelfname'])
       items = Item.objects.filter(user=self.user)
       self.assertEqual(len(items), BULK_SIZE)

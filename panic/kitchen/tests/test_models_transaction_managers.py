@@ -43,12 +43,14 @@ class TestExpiryCalculator(TestCase):
         user=cls.user,
         name="Pantry",
     )
-    cls.item = Item.objects.create(name="Canned Beans",
-                                   shelf_life=99,
-                                   user=cls.user,
-                                   shelf=cls.shelf,
-                                   price=2.00,
-                                   quantity=3)
+    cls.item = Item.objects.create(
+        name="Canned Beans",
+        shelf_life=99,
+        user=cls.user,
+        shelf=cls.shelf,
+        price=2.00,
+        quantity=3
+    )
     cls.item.preferred_stores.add(cls.store)
     cls.item.save()
     cls.transaction1 = {
@@ -122,12 +124,14 @@ class TestExpiryCalculator(TestCase):
 
     with patch(
         kitchen.__name__ +
-        '.models.transaction_managers.ItemExpirationCalculator') as calculator:
+        '.models.transaction_managers.ItemExpirationCalculator'
+    ) as calculator:
       calculator.return_value = mock_calculator
 
-      with patch(kitchen.__name__ +
-                 '.models.transaction_managers.ExpiryManager.get_item_history'
-                ) as mock_get_item_history:
+      with patch(
+          kitchen.__name__ +
+          '.models.transaction_managers.ExpiryManager.get_item_history'
+      ) as mock_get_item_history:
         mock_get_item_history.return_value = mock_query_set
 
         Transaction.expiration.update(transaction)
@@ -147,7 +151,8 @@ class TestExpiryCalculator(TestCase):
 
     with patch(
         kitchen.__name__ +
-        '.models.transaction_managers.ItemExpirationCalculator') as calculator:
+        '.models.transaction_managers.ItemExpirationCalculator'
+    ) as calculator:
       calculator.return_value = mock_calculator
 
       Transaction.expiration.update(transaction)
