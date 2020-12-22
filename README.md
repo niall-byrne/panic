@@ -4,6 +4,7 @@
 
 A kitchen inventory management app.
 
+[Project Documentation](https://panic.readthedocs.io/en/latest/)
 
 #### Production Environment (release tag from the production branch)
 [![panic-automation](https://github.com/niall-byrne/panic/workflows/panic%20Automation/badge.svg?branch=production)](https://github.com/niall-byrne/panic/actions)

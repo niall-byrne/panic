@@ -14,5 +14,6 @@ recommonmark>=0.6.0,<1.0.0
 parameterized>=0.7.4,<0.8.0
 safety>=1.8.5,<1.9.0
 sphinx>=3.0.4,<3.1.0
+sphinxcontrib-django>=0.5.1,<0.6.0
 wheel>=0.34.1,<0.35.0
 yapf>=0.28.0,<0.29.0

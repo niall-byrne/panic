@@ -9,6 +9,7 @@
 import os
 import sys
 
+import django
 from m2r import MdInclude
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
@@ -18,6 +19,9 @@ if os.path.exists('/app'):
 if os.path.exists('../../panic'):
     sys.path.insert(0, os.path.abspath('../..'))
     sys.path.insert(0, os.path.abspath('../../panic'))
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
+django.setup()
 
 # -- Project information -----------------------------------------------------
 project = 'Don\'t Panic!'
@@ -35,6 +39,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
+    'sphinxcontrib_django',
     'recommonmark',
 ]
 

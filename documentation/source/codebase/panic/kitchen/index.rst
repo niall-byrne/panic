@@ -1,0 +1,7 @@
+kitchen
+=======
+.. toctree::
+   :glob:
+
+   *
+   models/*

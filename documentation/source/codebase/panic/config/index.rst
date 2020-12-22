@@ -1,0 +1,6 @@
+config
+======
+.. toctree::
+   :glob:
+
+   *
