@@ -12,7 +12,7 @@ from ..models.shelf import Shelf
 from ..models.store import Store
 from ..serializers.item import ItemSerializer
 
-ITEM_URL = reverse("kitchen:item-list")
+ITEM_URL = reverse("kitchen:items-list")
 
 
 def item_url_with_params(query_kwargs):

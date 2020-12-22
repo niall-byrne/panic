@@ -15,7 +15,7 @@ from ..models.store import Store
 from ..models.transaction import Transaction
 from ..serializers.transaction import TransactionSerializer
 
-TRANSACTION_URL = reverse("kitchen:transaction-list")
+TRANSACTION_URL = reverse("kitchen:transactions-list")
 
 
 def transaction_query_url(query_kwargs={}):  # pylint: disable=W0102

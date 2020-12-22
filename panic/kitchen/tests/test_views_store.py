@@ -11,7 +11,7 @@ from rest_framework.test import APIClient
 from ..models.store import Store
 from ..serializers.store import StoreSerializer
 
-STORE_URL = reverse("kitchen:store-list")
+STORE_URL = reverse("kitchen:stores-list")
 
 
 def store_url_with_params(query_kwargs):

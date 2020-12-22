@@ -11,7 +11,7 @@ from rest_framework.test import APIClient
 from ..models.shelf import Shelf
 from ..serializers.shelf import ShelfSerializer
 
-SHELF_URL = reverse("kitchen:shelf-list")
+SHELF_URL = reverse("kitchen:shelves-list")
 
 
 def shelf_url_with_params(query_kwargs):
