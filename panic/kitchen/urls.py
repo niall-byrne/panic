@@ -9,7 +9,7 @@ app_name = "kitchen"
 
 router = routers.SimpleRouter()
 router.register(
-    "suggested",
+    "suggestions",
     views.SuggestedItemViewSet,
     basename="suggestions",
 )
