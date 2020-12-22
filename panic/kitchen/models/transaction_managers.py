@@ -7,7 +7,11 @@ from django.utils.timezone import now
 
 
 class ItemExpirationCalculator:
-  """Handles expiration calculations and updates to the associated models."""
+  """Handles expiration calculations and updates to the associated models.
+
+  :param item: An instance of the model Item
+  :type item: :class:`panic.kitchen.models.items.Item`
+  """
 
   def __init__(self, item):
     self.quantity = item.quantity
@@ -25,7 +29,13 @@ class ItemExpirationCalculator:
 
   def __transaction_date_is_expired(self, transaction):
     """Compares an items transaction date to it's expiration date, to determine
-    if the date of the transaction makes the item expired or not."""
+    if the date of the transaction makes the item expired or not.
+
+    :param transaction: An instance of the model Transactions
+    :type transaction: :class:`panic.kitchen.models.transactions.Transaction`
+    :return: A value indicating if the transaction items are expired
+    :rtype: bool
+    """
 
     item_expiry_date = (
         transaction.datetime.date() + timedelta(days=self.item.shelf_life)
@@ -36,7 +46,11 @@ class ItemExpirationCalculator:
 
   def __reconcile_consumption(self, transaction):
     """Handles a negative inventory change by debiting the calculated expiration
-    total by the number of items consumed."""
+    total by the number of items consumed.
+
+    :param transaction: An instance of the model Transactions
+    :type transaction: :class:`panic.kitchen.models.transactions.Transaction`
+    """
 
     self.expired += transaction.quantity
 
@@ -44,6 +58,13 @@ class ItemExpirationCalculator:
     """Handles a positive inventory change, by either debiting the remaining
     count of items that need to be checked, or increasing the count of expired
     items (if those purchased items are already expired).
+
+    :param remaining_inventory_to_check: The amount of inventory to reconcile
+    :type remaining_inventory_to_check: int
+    :param transaction: An instance of the model Transactions
+    :type transaction: :class:`panic.kitchen.models.transactions.Transaction`
+    :returns: The amount of inventory yet to be checked
+    :rtype: int
     """
 
     self.oldest = transaction.datetime.date()
@@ -61,7 +82,11 @@ class ItemExpirationCalculator:
   def reconcile_transaction_history(self, transaction_history):
     """Iterates through an item's transaction history, updating it's expiry
     information to reconcile the current quantity with the date/time of each
-    transaction."""
+    transaction.
+
+    :param transaction_history: A queryset of the model Transaction
+    :type transaction_history: :class:`django.db.models.query.QuerySet`
+    """
 
     for record in transaction_history:
       remaining_inventory_to_check = self.reconcile_single_transaction(record)
@@ -73,6 +98,9 @@ class ItemExpirationCalculator:
   def reconcile_single_transaction(self, transaction):
     """Processes an individual transaction from a reverse chronology, updating
     the data for expired inventory, and next inventory to expire.
+
+    :returns: The amount of inventory yet to be reconciled
+    :rtype: int
     """
 
     remaining_inventory_to_check = self.quantity
@@ -98,14 +126,25 @@ class ItemExpirationCalculator:
 
 
 class ExpiryManager(models.Manager):
+  """Adds Item expiry management features to the Transaction model."""
 
   def get_item_history(self, item):
-    """Generate a query set representing an item's transaction history."""
+    """Generate a query set representing an item's transaction history.
+
+    :param item: An instance of the model Item
+    :type item: :class:`panic.kitchen.models.items.Item`
+    :returns: A queryset of the model Transaction containing this item
+    :rtype: :class:`django.db.models.query.QuerySet`
+    """
 
     return super().get_queryset().filter(item=item).order_by("-datetime")
 
   def update(self, transaction):
-    """Updates the expiry data for an item associated to a transaction."""
+    """Updates the expiry data for an item associated to a transaction.
+
+    :param transaction: An instance of the model Transactions
+    :type transaction: :class:`panic.kitchen.models.transactions.Transaction`
+    """
 
     calculator = ItemExpirationCalculator(transaction.item)
 

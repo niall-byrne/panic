@@ -8,6 +8,11 @@ def openapi_ready(func):
   without a user on the request (or AnonymousUser being on it). drf_yasg sets
   the swagger_fake_view attr on the view when running these methods, so we can
   check for that and call the super method if it's present.
+
+  :param func: An api view
+  :type func: function
+  :returns: The wrapped function with open api support
+  :rtype: function
   """
 
   @functools.wraps(func)

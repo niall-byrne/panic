@@ -8,14 +8,14 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class JWTCookieAuthentication(JWTAuthentication):
-  """The library implementation of this method would fail on a mangled header,
-  skipping the cookie check altogether.  I've pulled out the header checks,
-  this now strictly checks for the presence of a named cookie.
-
-  This makes auth reliable, even in the presence of header mangling extensions.
+  """Extends the authenticate functionality of :class:`rest_framework_simplejwt
+  .authentication.JWTAuthentication`
   """
 
   def authenticate(self, request):
+    """Determines if a request can proceed based on the presence of a valid JWT
+    cookie.
+    """
     cookie_name = getattr(settings, 'JWT_AUTH_COOKIE', None)
     raw_token = None
 
@@ -34,6 +34,8 @@ class SameSiteMiddleware(MiddlewareMixin):
   """Comply with the latest standard for samesite cookies."""
 
   def process_response(self, request, response):
+    """Rewrites the response cookie values to ensure they are handled correctly
+    by browsers implementing this standard."""
     csrf_cookie_name = settings.CSRF_COOKIE_NAME
     jwt_auth_cookie = settings.JWT_AUTH_COOKIE
     csrf_cookie_samesite = getattr(settings, "CSRF_COOKIE_SAMESITE", False)
