@@ -25,7 +25,7 @@ RUN apt-get update      && \
 
 # Install Git Leaks
 RUN curl --fail -sL "https://github.com/zricethezav/gitleaks/releases/download/${GITLEAKSVERSION}/gitleaks-linux-amd64"    \
-    -o /usr/bin/gitleaks                                                                                         && \
+    -o /usr/bin/gitleaks                                                                                                && \
     chmod +x /usr/bin/gitleaks
 
 # Install cloud sql proxy
