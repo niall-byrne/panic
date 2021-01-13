@@ -44,7 +44,7 @@ jobs:
     - name: Report Job Status
       if: ${{ failure() }}
       run: |
-        curl -X POST -H 'Content-type: application/json' --data '{"text":"Backend build has failed!"}' "${WEBHOOK_URL}"
+        curl -X POST -H 'Content-type: application/json' --data '{"text":"panic backend build has failed!"}' "${WEBHOOK_URL}"
       env:
         WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
