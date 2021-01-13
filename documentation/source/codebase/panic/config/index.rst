@@ -1,6 +1,4 @@
 config
 ======
-.. toctree::
-   :glob:
 
-   *
+Configuration files for each environment are found here.

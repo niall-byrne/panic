@@ -3,7 +3,6 @@ panic
 .. toctree::
    :glob:
 
-   *
    appengine/index.rst
    config/index.rst
    kitchen/index.rst
