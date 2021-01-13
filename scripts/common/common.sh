@@ -47,6 +47,7 @@ security() {
   set -e
 
   pushd "${PROJECT_HOME}"  > /dev/null
+    gitleaks --path=. -v
     bandit -r "${PROJECT_NAME}" -c .bandit.rc --ini .bandit
     safety check
   popd  > /dev/null
