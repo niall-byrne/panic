@@ -21,7 +21,7 @@ jobs:
         touch ${HOME}/.gitconfig_global
     - name: Ensure File System is Writable by the Container
       run: |
-        sudo chmod -R 777 .
+        sudo chmod -R o+w .
     - name: Build Container
       run: |
         docker-compose build
@@ -78,7 +78,6 @@ jobs:
     - name: Production -- Detect A Release Tag
       if: contains(github.ref, '/tags/v') == true
       run: |
-        git checkout .  # Reset file modes
         GIT_DIFF=$(git diff origin/master)
         echo "GIT_DIFF=${GIT_DIFF}" >> $GITHUB_ENV
     - name: Production -- Ignore Non-Release Tags and Branches

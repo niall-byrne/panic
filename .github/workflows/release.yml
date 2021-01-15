@@ -18,7 +18,7 @@ jobs:
           touch ${HOME}/.gitconfig_global
       - name: Ensure File System is Writable by the Container
         run: |
-          sudo chmod -R 777 .
+          sudo chmod -R o+w .
       - name: Build Container
         run: |
           docker-compose build
