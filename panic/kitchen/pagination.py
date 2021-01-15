@@ -33,7 +33,3 @@ class PagePaginationWithOverride(PagePagination):
       return None
 
     return super().paginate_queryset(queryset, request, view)
-
-
-class TransactionQueryPagination(PagePagination):
-  page_size = settings.PAGE_SIZE_TRANSACTIONS

@@ -109,6 +109,12 @@ class PrivateItemTest(TestCase):
         'item': cls.item2,
         'quantity': 5
     }
+    cls.object_def4 = {
+        'user': cls.user,
+        'transaction_date': timezone.now() - timezone.timedelta(days=11),
+        'item': cls.item1,
+        'quantity': 5
+    }
 
   def setUp(self):
     self.objects = list()
@@ -138,7 +144,7 @@ class PrivateItemTest(TestCase):
     self.assertEqual(transaction.quantity, self.serializer_data['quantity'])
     assert transaction.item.quantity == 6  # The modified value
 
-  def test_list_all_transactions(self):
+  def test_list_all_transactions_without_item_filter(self):
     """Test retrieving a list of all user transactions."""
     self.sample_transaction(**self.object_def1)
     self.sample_transaction(**self.object_def2)
@@ -146,13 +152,21 @@ class PrivateItemTest(TestCase):
 
     res = self.client.get(transaction_query_url())
 
+    self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+  def test_list_all_transactions(self):
+    """Test retrieving a list of all user transactions."""
+    self.sample_transaction(**self.object_def1)
+    self.sample_transaction(**self.object_def2)
+
+    res = self.client.get(transaction_query_url({"item": self.item1.id}))
+
     items = Transaction.objects.all().order_by("-datetime")
     serializer = TransactionSerializer(items, many=True)
 
-    assert len(items) == 3
+    assert len(items) == 2
     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    print(res.data['results'])
-    self.assertEqual(res.data['results'], serializer.data)
+    self.assertEqual(res.data, serializer.data)
 
   def test_list_transactions_by_item_filter(self):
     """Test retrieving a list of transactions by item id."""
@@ -167,7 +181,7 @@ class PrivateItemTest(TestCase):
 
     assert len(items) == 2
     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    self.assertEqual(res.data['results'], serializer.data)
+    self.assertEqual(res.data, serializer.data)
 
   def test_list_transactions_by_another_item_filter(self):
     """Test retrieving a list of transactions by item id."""
@@ -182,19 +196,41 @@ class PrivateItemTest(TestCase):
 
     assert len(items) == 1
     self.assertEqual(res.status_code, status.HTTP_200_OK)
-    self.assertEqual(res.data['results'], serializer.data)
+    self.assertEqual(res.data, serializer.data)
 
-  def test_list_transactions_paginated_correctly(self):
-    """Test that retrieving a list of transactions is limited correctly."""
-    for _ in range(0, 11):
-      self.sample_transaction(**self.object_def1)
+  def test_list_transactions_by_history_manual_value(self):
+    """Test retrieving the last 10 days worth of transactions."""
+    self.sample_transaction(**self.object_def1)
+    self.sample_transaction(**self.object_def2)
+    self.sample_transaction(**self.object_def4)
 
     res = self.client.get(
         transaction_query_url({
             "item": self.item1.id,
-            "page_size": 10
+            "history": 10
         })
     )
-    self.assertEqual(len(res.data['results']), 10)
-    self.assertIsNotNone(res.data['next'])
-    self.assertIsNone(res.data['previous'])
+    self.assertEqual(len(res.data), 2)
+
+  def test_list_transactions_by_history_default_value(self):
+    """Test retrieving the default number of days of transactions."""
+    self.sample_transaction(**self.object_def1)
+    self.sample_transaction(**self.object_def2)
+    self.sample_transaction(**self.object_def4)
+
+    res = self.client.get(transaction_query_url({
+        "item": self.item1.id,
+    }))
+    self.assertEqual(len(res.data), 3)
+
+  def test_list_transactions_by_history_invalid_value(self):
+    """Test fall back to default when an invalid number of days is specified."""
+    self.sample_transaction(**self.object_def1)
+    self.sample_transaction(**self.object_def2)
+    self.sample_transaction(**self.object_def4)
+
+    res = self.client.get(transaction_query_url({
+        "item": self.item1.id,
+        "history": "not a number"
+    }))
+    self.assertEqual(len(res.data), 3)
