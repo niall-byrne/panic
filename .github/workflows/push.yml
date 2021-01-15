@@ -110,6 +110,7 @@ jobs:
         body: |
           ${{ steps.Changelog.outputs.changelog }}
           ## Deployment Checklist
+          - [ ] Ensure readthedocs is building correctly
           - [ ] Ensure unnecessary alerts are ignored/disabled
           - [ ] Successful Test Completed in Stage Environment
           - [ ] Use Admin environment to complete database migrations
