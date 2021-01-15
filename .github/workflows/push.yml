@@ -95,7 +95,7 @@ jobs:
         echo "{}" > package.json
     - name: Production -- Generate Changelog
       if: env.GIT_DIFF == ''
-      uses: scottbrenner/generate-changelog-action@master
+      uses: scottbrenner/generate-changelog-action@1.0.3
       id: Changelog
       env:
         REPO: ${{ github.repository }}
