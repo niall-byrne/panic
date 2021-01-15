@@ -111,6 +111,7 @@ jobs:
           ${{ steps.Changelog.outputs.changelog }}
           ## Deployment Checklist
           - [ ] Ensure unnecessary alerts are ignored/disabled
+          - [ ] Successful Test Completed in Stage Environment
           - [ ] Use Admin environment to complete database migrations
         draft: true
         prerelease: false
