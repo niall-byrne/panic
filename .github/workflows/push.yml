@@ -111,6 +111,7 @@ jobs:
           ## Deployment Checklist
           - [ ] Ensure readthedocs is building correctly
           - [ ] Ensure unnecessary alerts are ignored/disabled
+          - [ ] Ensure minimum frontend version is documented
           - [ ] Successful Test Completed in Stage Environment
           - [ ] Use Admin environment to complete database migrations
         draft: true
