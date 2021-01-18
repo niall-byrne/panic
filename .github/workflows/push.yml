@@ -114,10 +114,11 @@ jobs:
         body: |
           ${{ steps.Changelog.outputs.changelog }}
           ## Deployment Checklist
+          - [ ] Review Commit History
+          - [ ] Ensure minimum frontend version is documented
           - [ ] Ensure readthedocs is building correctly
           - [ ] Ensure unnecessary alerts are ignored/disabled
-          - [ ] Ensure minimum frontend version is documented
-          - [ ] Successful Test Completed in Stage Environment
+          - [ ] Successful web/mobile tests completed in stage environment
           - [ ] Use Admin environment to complete database migrations
         draft: true
         prerelease: false
