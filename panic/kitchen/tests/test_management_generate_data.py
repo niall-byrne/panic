@@ -6,13 +6,17 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 import kitchen
-from ..management.commands.generate_data import DATA_CONFIG, DataGenerator
+from ..management.commands.utils.generate_testdata import (
+    DATA_CONFIG,
+    DataGenerator,
+)
 from ..models.item import Item
 from ..models.shelf import Shelf
 from ..models.store import Store
 
 with patch(
-    kitchen.__name__ + '.management.commands.generate_data.DATA_CONFIG'
+    kitchen.__name__ +
+    '.management.commands.utils.generate_testdata.DATA_CONFIG'
 ) as preset:
   BULK_SIZE = 10
   preset.return_value = DATA_CONFIG.update({

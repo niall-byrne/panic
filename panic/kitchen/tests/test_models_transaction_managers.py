@@ -14,7 +14,7 @@ from ..models.shelf import Shelf
 from ..models.store import Store
 from ..models.transaction import Transaction
 from ..models.transaction_managers import ItemExpirationCalculator
-from .fixtures import fixture_create_transaction
+from .fixtures.transaction_fixtures import fixture_create_transaction
 
 
 class MockExpiryCalculator:

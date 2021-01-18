@@ -1,6 +1,6 @@
-"""Shared Test Fixtures for Kitchen"""
+"""Shared Transaction Test Fixtures for Kitchen"""
 
-from ..models.transaction import Transaction
+from kitchen.models.transaction import Transaction
 
 
 def fixture_create_transaction(user, item, date_object, quantity):

@@ -229,8 +229,10 @@ class PrivateItemTest(TestCase):
     self.sample_transaction(**self.object_def2)
     self.sample_transaction(**self.object_def4)
 
-    res = self.client.get(transaction_query_url({
-        "item": self.item1.id,
-        "history": "not a number"
-    }))
+    res = self.client.get(
+        transaction_query_url({
+            "item": self.item1.id,
+            "history": "not a number"
+        })
+    )
     self.assertEqual(len(res.data), 3)
