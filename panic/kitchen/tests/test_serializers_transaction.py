@@ -1,90 +1,32 @@
 """Test the Transaction Serializer."""
 
-import datetime
+import json
 
-import pytz
-from django.contrib.auth import get_user_model
-from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
 from rest_framework.serializers import ValidationError
 
-from ..models.item import Item
-from ..models.shelf import Shelf
-from ..models.store import Store
 from ..models.transaction import Transaction
-from ..serializers.transaction import TransactionSerializer
+from ..serializers.transaction import (
+    TransactionConsumptionHistorySerializer,
+    TransactionSerializer,
+)
+from .fixtures.django_fixtures import MockRequest, deserialize_datetime
+from .fixtures.transaction_fixtures import TransactionTestHarness
 
 
-class MockRequest:
-
-  def __init__(self, user):
-    self.user = user
-
-
-def deserialize_datetime(string):
-  return pytz.utc.localize(
-      datetime.datetime.strptime(string, "%Y-%m-%dT%H:%M:%SZ")
-  )
-
-
-class TestItem(TestCase):
-
-  # pylint: disable=R0913
-  def sample_transaction(self, user, item, transaction_date, quantity):
-    """Create a test item."""
-    if user is None:
-      user = self.user
-    transaction = Transaction.objects.create(
-        item=item,
-        user=user,
-        datetime=transaction_date,
-        quantity=quantity,
-    )
-    self.objects.append(transaction)
-    return transaction
-
-  @staticmethod
-  def generate_overload(fields):
-    return_list = []
-    for key, value in fields.items():
-      overloaded = dict()
-      overloaded[key] = "abc" * value
-      return_list.append(overloaded)
-    return return_list
+class TestTransactionSerializer(TransactionTestHarness):
 
   @classmethod
-  @freeze_time('2020-01-14')
-  def setUpTestData(cls):
+  @freeze_time("2020-01-14")
+  def create_transactions_hook(cls):
     cls.serializer = TransactionSerializer
     cls.today = timezone.now()
     cls.fields = {"name": 255}
-    cls.user = get_user_model().objects.create_user(
-        username="testuser",
-        email="test@niallbyrne.ca",
-        password="test123",
-    )
-    cls.store = Store.objects.create(
-        user=cls.user,
-        name="No Frills",
-    )
-    cls.shelf = Shelf.objects.create(
-        user=cls.user,
-        name="Pantry",
-    )
-    cls.item = Item.objects.create(
-        name="Canned Beans",
-        shelf_life=99,
-        user=cls.user,
-        shelf=cls.shelf,
-        price=2.00,
-        quantity=3
-    )
-    cls.item.preferred_stores.add(cls.store)
-    cls.item.save()
+
     cls.data = {
         'item': cls.item,
-        'transaction_date': cls.today,
+        'date_object': cls.today,
         'user': cls.user,
         'quantity': 3
     }
@@ -95,12 +37,21 @@ class TestItem(TestCase):
     }
     cls.request = MockRequest(cls.user)
 
+  @staticmethod
+  def generate_overload(fields):
+    return_list = []
+    for key, value in fields.items():
+      overloaded = dict()
+      overloaded[key] = "abc" * value
+      return_list.append(overloaded)
+    return return_list
+
   def setUp(self):
     self.objects = list()
     self.item.quantity = 3
     self.item.save()
 
-  def tearDown(self) -> None:
+  def tearDown(self):
     for obj in self.objects:
       obj.delete()
 
@@ -143,3 +94,88 @@ class TestItem(TestCase):
             data=local_data,
         )
         serialized.is_valid(raise_exception=True)
+
+
+class TestTransactionConsumptionHistorySerializer(TransactionTestHarness):
+
+  @classmethod
+  @freeze_time("2020-01-14")
+  def create_transactions_hook(cls):
+    cls.serializer = TransactionConsumptionHistorySerializer
+    cls.today = timezone.now()
+    cls.fields = {"name": 255}
+
+    cls.data = {
+        'item': cls.item,
+        'date_object': cls.today,
+        'user': cls.user,
+        'quantity': -3
+    }
+    cls.serializer_data = {
+        'item_id': cls.item.id,
+    }
+    cls.request = MockRequest(cls.user)
+
+  def setUp(self):
+    self.objects = list()
+    self.item.quantity = 3
+    self.item.save()
+
+  def tearDown(self):
+    for obj in self.objects:
+      obj.delete()
+
+  @freeze_time("2020-01-14")
+  def test_deserialize_last_two_weeks(self):
+
+    transaction = self.sample_transaction(**self.data)
+    deserialized_transaction = TransactionSerializer([transaction], many=True)
+
+    serialized = self.serializer(
+        {"item_id": self.item.id},
+        context={'request': self.request},
+    )
+    deserialized = serialized.data
+
+    self.assertEqual(
+        json.dumps(deserialized['consumption_last_two_weeks']),
+        json.dumps(deserialized_transaction.data),
+    )
+
+  @freeze_time("2020-01-14")
+  def test_deserialize_consumption_per_week(self):
+    self.sample_transaction(**self.data)
+
+    serialized = self.serializer(
+        {"item_id": self.item.id},
+        context={'request': self.request},
+    )
+    deserialized = serialized.data
+
+    self.assertEqual(
+        deserialized['first_consumption_date'],
+        self.today,
+    )
+
+  @freeze_time("2020-01-14")
+  def test_deserialize_consumption_per_month(self):
+    self.sample_transaction(**self.data)
+
+    serialized = self.serializer(
+        {"item_id": self.item.id},
+        context={'request': self.request},
+    )
+    deserialized = serialized.data
+
+    self.assertEqual(
+        deserialized['total_consumption'],
+        3,
+    )
+
+  def test_serialize_create_is_noop(self):
+    self.serializer.create(self.serializer, {})
+    assert Transaction.objects.all().count() == 0
+
+  def test_serializer_update_is_noop(self):
+    self.serializer.update(self.serializer, {}, {})
+    assert Transaction.objects.all().count() == 0
