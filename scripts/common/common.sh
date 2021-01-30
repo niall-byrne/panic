@@ -4,7 +4,8 @@
 # INSTEAD: add additional functionality by adding separate library files
 # Import your new libraries into the commander.sh script and add them to the CLI.
 
-lint() {
+
+fmt() {
 
   set -e
 
@@ -13,7 +14,11 @@ lint() {
     isort -y
   popd  > /dev/null
 
-  lint_check
+}
+
+lint() {
+
+  lint_check "$@"
 
 }
 
@@ -23,7 +28,7 @@ lint_check() {
 
   pushd "${PROJECT_HOME}"  > /dev/null
     isort -c
-    pytest --pylint --pylint-rcfile=.pylint.rc --pylint-jobs=2 "${PROJECT_NAME}"
+    pytest --pylint --pylint-rcfile=.pylint.rc --pylint-jobs=2 "${PROJECT_NAME}" "$@"
     shellcheck -x scripts/*.sh
     shellcheck -x scripts/common/*.sh
   popd  > /dev/null

@@ -39,6 +39,11 @@ case $1 in
     source_environment
     deploy_prod "$@"
     ;;
+  'fmt')
+    shift
+    source_environment
+    fmt "$@"
+    ;;
   'lint')
     shift
     source_environment
@@ -65,7 +70,7 @@ case $1 in
     setup_python "$@"
     ;;
   'shortlist')
-    echo "build-docs deploy-prod deploy-stage lint lint-validate reinstall-requirements sectest setup test test-coverage update"
+    echo "build-docs deploy-prod deploy-stage fmt lint lint-validate reinstall-requirements sectest setup test test-coverage update"
     ;;
   'test')
     shift
@@ -86,6 +91,7 @@ case $1 in
     echo ' - build-docs              (Build Documentation)'
     echo ' - deploy-prod             (Deploy to Cloud RUn)'
     echo ' - deploy-stage            (Deploy to App Engine)'
+    echo ' - fmt                     (Run the code formatters)'
     echo ' - lint                    (Run the linter)'
     echo ' - lint-validate           (Validate linting)'
     echo ' - reinstall-requirements  (Reinstall Packages'
