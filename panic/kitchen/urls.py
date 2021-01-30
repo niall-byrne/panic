@@ -21,6 +21,11 @@ router.register(
     views.TransactionViewSet,
     basename="transactions",
 )
+router.register(
+    "transaction-consumption-history",
+    views.TransactionConsumptionHistoryViewSet,
+    basename="transaction-consumption-history",
+)
 
 urlpatterns = [
     path("", include(router.urls)),

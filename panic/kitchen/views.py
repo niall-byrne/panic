@@ -3,11 +3,12 @@
 import datetime
 
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters import rest_framework as filters
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, viewsets
+from rest_framework.response import Response
 
 from spa_security.auth_cookie import CSRFMixin
 from .filters import ItemFilter, TransactionFilter
@@ -21,8 +22,11 @@ from .serializers.item import ItemSerializer
 from .serializers.shelf import ShelfSerializer
 from .serializers.store import StoreSerializer
 from .serializers.suggested import SuggestedItemSerializer
-from .serializers.transaction import TransactionSerializer
-from .swagger import openapi_ready
+from .serializers.transaction import (
+    TransactionConsumptionHistorySerializer,
+    TransactionSerializer,
+)
+from .swagger import custom_transaction_view_parm, openapi_ready
 
 
 class SuggestedItemViewSet(
@@ -119,15 +123,6 @@ class ItemViewSet(
     serializer.save(user=self.request.user)
 
 
-custom_transaction_view_parm = openapi.Parameter(
-    'history',
-    openapi.IN_QUERY,
-    description="the number of days to retrieve history for",
-    type=openapi.TYPE_STRING,
-    default=14
-)
-
-
 class TransactionViewSet(
     CSRFMixin,
     mixins.CreateModelMixin,
@@ -169,3 +164,26 @@ class TransactionViewSet(
   def perform_create(self, serializer):
     """Create a new Transaction"""
     serializer.save(user=self.request.user)
+
+
+class TransactionConsumptionHistoryViewSet(
+    CSRFMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+  """Transaction Consumption History API View"""
+  serializer_class = TransactionConsumptionHistorySerializer
+  queryset = Item.objects.all()
+
+  @openapi_ready
+  def get_object(self):
+    obj = get_object_or_404(
+        self.queryset, user=self.request.user, pk=self.kwargs.get('pk')
+    )
+    return obj
+
+  def retrieve(self, request, *args, **kwargs):
+    serializer = self.get_serializer({
+        "item_id": self.get_object().id,
+    },)
+    return Response(serializer.data)
