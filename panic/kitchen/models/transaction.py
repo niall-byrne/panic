@@ -6,7 +6,7 @@ from django.db import models, transaction
 from django.utils.timezone import now
 
 from .item import Item
-from .transaction_managers import ExpiryManager
+from .transaction_managers import ConsumptionHistoryManager, ExpiryManager
 
 User = get_user_model()
 
@@ -25,6 +25,7 @@ class Transaction(models.Model):
   quantity = models.IntegerField(validators=[validate_quantity])
   objects = models.Manager()
   expiration = ExpiryManager()
+  consumption = ConsumptionHistoryManager()
 
   class Meta:
     indexes = [
