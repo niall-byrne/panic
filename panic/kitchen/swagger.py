@@ -2,6 +2,8 @@
 
 import functools
 
+from drf_yasg import openapi
+
 
 def openapi_ready(func):
   """Openapi generation needs to be able to call some methods on the viewset
@@ -25,3 +27,12 @@ def openapi_ready(func):
     return func(self, *args, **kwargs)
 
   return wrapped
+
+
+custom_transaction_view_parm = openapi.Parameter(
+    'history',
+    openapi.IN_QUERY,
+    description="the number of days to retrieve history for",
+    type=openapi.TYPE_STRING,
+    default=14
+)
