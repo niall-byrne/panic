@@ -53,6 +53,7 @@ class Item(models.Model):
           MaxValueValidator(MAXIMUM_SHELF_LIFE),
       ],
   )
+  objects = models.Manager()
 
   # These 3 fields are recalculated on each transaction
   next_expiry_date = models.DateField(default=default_expiry)
