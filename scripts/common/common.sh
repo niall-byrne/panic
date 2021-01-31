@@ -25,10 +25,15 @@ lint() {
 lint_check() {
 
   set -e
+  if [[ $# -eq 0 ]]; then
+    ARGS=("${PROJECT_NAME}")
+  else
+    ARGS=( "$@" )
+  fi
 
   pushd "${PROJECT_HOME}"  > /dev/null
     isort -c
-    pytest --pylint --pylint-rcfile=.pylint.rc --pylint-jobs=2 "${PROJECT_NAME}" "$@"
+    pytest --pylint --pylint-rcfile=.pylint.rc --pylint-jobs=2 "${ARGS[@]}"
     shellcheck -x scripts/*.sh
     shellcheck -x scripts/common/*.sh
   popd  > /dev/null
